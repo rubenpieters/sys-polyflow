@@ -1,0 +1,24 @@
+% terms
+\newcommand{\abs}[3]{\lambda #1 : #2 . #3}
+\newcommand{\app}[2]{#1 #2}
+\newcommand{\tabs}[3]{\Lambda #1 <: #2 . #3}
+\newcommand{\tapp}[2]{#1 [#2]}
+\newcommand{\ite}[3]{\texttt{if}\ #1\ \texttt{then}\ #2\ \texttt{else}\ #3}
+\newcommand{\true}[0]{\texttt{true}}
+\newcommand{\false}[0]{\texttt{false}}
+
+% types
+\newcommand{\fun}[2]{#1 \rightarrow #2}
+\newcommand{\tfun}[3]{\forall #1 <: #2 . #3}
+\newcommand{\bool}[0]{Bool}
+
+% typing relation
+\newcommand{\hastype}[3]{#1 \vdash #2 : #3}
+\newcommand{\hassubtype}[3]{#1 \vdash #2 <: #3}
+
+% context
+\newcommand{\typeincontext}[3]{#1 : #2 \in #3}
+\newcommand{\emptycontext}[0]{\emptyset}
+\newcommand{\extendwtype}[3]{#1 , #2 : #3}
+\newcommand{\extendwsubtype}[3]{#1 , #2 <: #3}
+\newcommand{\subst}[3]{[#2 \mapsto #3]#1}

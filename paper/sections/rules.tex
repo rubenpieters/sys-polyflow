@@ -1,0 +1,40 @@
+\begin{mathpar}
+
+\inferrule*[right=T-True]
+           {  }
+           { \hastype{\Gamma}{\true}{\bool} }
+
+\inferrule*[right=T-False]
+           {  }
+           { \hastype{\Gamma}{\false}{\bool} }
+
+\inferrule*[right=T-Var]
+           { \typeincontext{x}{T}{\Gamma} }
+           { \hastype{\Gamma}{x}{T} }
+
+\inferrule*[right=T-Abs]
+           { \hastype{\extendwtype{\Gamma}{x}{T_1}}{t_2}{T_2} }
+           { \hastype{\Gamma}{\abs{x}{T_1}{t_2}}{\fun{T_1}{T_2}} }
+
+\inferrule*[right=T-App]
+           { \hastype{\extendwsubtype{\Gamma}{X}{T_1}}{t_2}{T_2} \\ \hastype{\Gamma}{t_2}{T_{11}} }
+           { \hastype{\Gamma}{\app{t_1}{t_2}}{T_{12}} }
+
+\inferrule*[right=T-TAbs]
+           { \hastype{\extendwsubtype{\Gamma}{X}{T_1}}{t_2}{T_2} }
+           { \hastype{\Gamma}{\tabs{X}{T_1}{t_2}}{\tfun{X}{T_1}{T_2}} }
+
+\inferrule*[right=T-TApp]
+           { \hastype{\Gamma}{t_1}{\tfun{X}{T_{11}}{T_{12}}} \\ \hassubtype{\Gamma}{T_2}{T_{11}} }
+           { \hastype{\Gamma}{\tapp{t_1}{T_2}}{\subst{T_{12}}{X}{T_2}} }
+
+\inferrule*[right=T-Sub]
+           { \hastype{\Gamma}{t}{S} \\ \hassubtype{\Gamma}{S}{T} }
+           { \hastype{\Gamma}{t}{T} }
+
+\inferrule*[right=T-If]
+           { \hastype{\Gamma}{t_1}{\bool} \\ \hastype{\Gamma}{t_2}{T} \\ \hastype{\Gamma}{t_3}{T} }
+           { \hastype{\Gamma}{\ite{t_1}{t_2}{t_3}}{T} }
+
+\end{mathpar}
+
