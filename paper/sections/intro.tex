@@ -1,7 +1,20 @@
-intro
+\section{Introduction}
+\label{sec:intro}
 
-\begin{minted}{ts}
-function test(x: number): number {
-  return x;
-}
-\end{minted}
+Flow-sensitive typing is a branch of type systems where the type of a variable can differ in multiple locations within the program. The Whiley language is typically considered the origin of flow-sensitive typing, and its impact is visible in other JVM languages such as Ceylon and Kotlin. This style of type system has recently also become popular for types systems added on top of untyped languages such as TypeScript, Flow and Dart (TODO: more? cite?).
+
+For the most part, the flow-sensitivity is a touted feature of the various languages employing them. However, there are still unsolved interactions with other features. A prominent and recent example is the interaction of flow-sensitivity with bounded polymorphism and indexed access types in TypeScript. Previously, it was possible to create unsoundness by combining these features. However, a recent update (TODO: ref 3.5 update, relevant issue: https://github.com/microsoft/TypeScript/pull/30769) which plugged an unsoundness hole related to indexed access types, also made a certain TypeScript pattern inexpressible without unsound type assertions. Neither reverting to the old behaviour, nor keeping the current behaviour seems satisfactory. Therefore, we believe that it is time to create a thorough study on the interaction between these features.
+
+In this paper, we discuss this problem by considering various alternatives and propose an argument for the preferred extension. In addition to this, we study this extension in traditional fashion by providing a minimal calculus and proving relevant properties about it.
+
+Specifically, the contributions of this paper are:
+
+\begin{itemize}
+\item We present a novel calculus incorporating the various features related to the main use case: flow-sensitive if statements, union types, string literal types and simple type-level functions (corresponding to indexed access types). The calculus is an extension to the base calculus system F-Sub.
+\item We contribute mechanized proofs, in the form of Agda code, of the relevant properties for this calculus.
+\item We propose a solution to the problem of interaction between these features as present in the main use case.
+\end{itemize}
+
+The paper outline is as follows. Section \ref{sec:motivation} discusses the main use case and motivation on why the current state of TypeScript is not satisfactory. Section (TODO) discusses a possible solution for which no extension to the TypeScript syntax has to be made, however we show that this solution exhibits some problems. Section (TODO) discuss an extension to TypeScript which discuss an alternative solution, but requires an additional language feature.
+
+% In Whiley, there are two statements which induce flow-sensitivity: field assignment and if-statements. In the first we can assign to a field, which causes the type of the object to change. (TODO: example?) In the second, variables used in the guard of the if-statement can have different types with the if and else branches. (TODO: example?) In this paper we are mainly concerned with the latter type of flow-sensitivity.

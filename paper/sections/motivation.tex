@@ -1,0 +1,43 @@
+\section{Motivation}
+\label{sec:motivation}
+
+In this section, we first develop some background on various TypeScript extensions and then present the main use case.
+
+\subsection{String Literal Types}
+
+String literal types allow you to attribute the exact value of a string at the type-level. For example, if we want the variable \ts{cat} to only hold the string \ts{"cat"}, then we can state \ts{let cat: "cat"}. Assigning any other string than \ts{"cat"} to \ts{cat}, for example \ts{cat = "dog"}, is a type error.
+
+\subsection{Union Types}
+
+Union types represent an untagged sum type. They are used to represent a type which can be either one type or another type, but there is no runtime tag which specifies which of the two it is. For example, if we have a variable which can either be the string \ts{"cat"} or \ts{"dog"}, then we can state that \ts{let catOrDog: "cat" | "dog"}. This uses the union type operator \ts{|} combined with the string literal types \ts{"cat"} and \ts{"dog"}. Both \ts{catOrDog = "cat"} and \ts{catOrDog = "dog"} are well-typed, but \ts{catOrDog = "bird"} is not.
+
+\subsection{Flow-Sensitive If Statement}
+
+A flow-sensitive if statement narrows the types in the scope of the then and else branch dependent on the tests in the statement. For example, if we start with \ts{catOrDog}, which has type \ts{"cat" | "dog"}, then we can test whether it is actually \ts{"cat"}. Within the then branch, the type of \ts{catOrDog} is narrowed to \ts{"cat"}, while in the else branch it is narrowed to \ts{"dog"}.
+
+\begin{minted}{ts}
+if (catOrDog === "cat") {
+  // catOrDog is narrowed to type "cat" here
+} else {
+  // catOrDog is narrowed to type "dog" here
+}
+\end{minted}
+
+\subsection{Indexed Access Types}
+
+\subsection{Use Case}
+
+\begin{minted}{ts}
+type F = {
+    "t": number,
+    "f": boolean,
+}
+
+function func<T extends "t" | "f">(kind: T): F[T] {
+  if (t === "t") {
+    return 1;
+  } else {
+    return true;
+  }
+}
+\end{minted}
