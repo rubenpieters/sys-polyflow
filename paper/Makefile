@@ -1,6 +1,6 @@
 paper.pdf: paper.tex paper.bib sections/*.tex
-	latexmk -pdf paper.tex -shell-escape
+	latexmk -pdf paper.tex
 
 .PHONY: clean
 clean:
-	rm -rf *.aux *.log *.pdf *.bbl *.blg *.out *.fls *_latexmk _minted*
+	rm -rf *.aux *.log *.pdf *.bbl *.blg *.out *.fls *.fdb_latexmk

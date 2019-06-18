@@ -1,0 +1,42 @@
+% typing rules
+\usepackage{mathpartir}
+
+% colors
+\usepackage[dvipsnames]{xcolor}
+
+% code formatting
+\usepackage{listings}
+
+\lstdefinelanguage{ts}{
+  keywords={const, typeof, new, true, false, catch, function, null, catch, switch, var, if, in, while, do, else, case, break, interface, extends, keyof, let, type},
+  keywordstyle=\color{MidnightBlue}\bfseries,
+  keywords=[2]{return},
+  keywordstyle=[2]\color{Purple}\bfseries,
+  keywords=[3]{boolean, string, number},
+  keywordstyle=[3]\color{RoyalBlue}\bfseries,
+  % formatting for types used in code
+  keywords=[99]{F, T, K, HTMLElementTagNameMap, HTMLAnchorElement, HTMLElement, Cat, Lives},
+  keywordstyle=[99]\color{ProcessBlue}\bfseries,
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{Green}\ttfamily,
+  stringstyle=\color{RedViolet}\ttfamily,
+  numberstyle=\color{YellowGreen}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=ts,
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false
+}
+
+% \url command and clickable links
+\usepackage[hidelinks]{hyperref}

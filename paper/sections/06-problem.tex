@@ -1,0 +1,71 @@
+\section{Problems}
+\label{sec:problems}
+
+This pattern is quite reminiscent of functions in dependently typed programming languages where output types can depend on the values of inputs. However, there are a few problems with it precisely because that is not exactly what the pattern expresses. In this section we illustrate what these problems are.
+
+\subsection{Problem in 3.4}
+
+In TypeScript 3.4, the \ts{depFun} code given before would compile as is. However, it was actually due to an unsound feature that it was able to compile at all. The reason is that within the function, the result type of \ts{depFun} is resolved to \ts{string | number} throughout the whole function. Even within the flow-sensitive branches the return type stays unchanged.
+
+\begin{lstlisting}
+// TypeScript 3.4
+function depFun<T extends "t" | "f">(str: T): F[T] {
+  if (str === "t") {
+    // return type stays number | boolean
+    return 1;
+  } else {
+    // return type stays number | boolean
+    return true;
+  }
+}
+\end{lstlisting}
+
+This behaviour is clearly unsound: we can swap around the branches, which will still typecheck, but the caller of the function will observe wrong type information.
+
+\begin{lstlisting}
+function depFun<T extends "t" | "f">(str: T): F[T] {
+  if (str === "t") {
+    return true;
+  } else {
+    return 1;
+  }
+}
+
+depFun("t"); // has type number, but is actually a boolean
+depFun("f"); // has type boolean, but is actually a number
+\end{lstlisting}
+
+% TODO: investigate whether this solution is sound
+% It might be appealing to wonder why we dont just narrow the result type, then it seems that the problem should be fixed. The problem, however, is that the type \ts{T} refers to a type variable where we made the assumption that it is going to be instantiated with the value of a corresponding variable. If we create a function where there are two variables of type \ts{T}, this assumption is no longer valid and narrowing the result type does not make sense.
+
+% \begin{lstlisting}
+% function depFun2<T extends "t" | "f">(str1: T, str2: T): F[T] {
+%   if (str1 === "t") {
+%     return true;
+%   } else {
+%     return 1;
+%   }
+% }
+% 
+% depFun2("t", "f");
+% \end{lstlisting}
+
+\subsection{Problem in 3.5}
+
+In TypeScript 3.5 this behaviour changed, whenever an assignment is made to something with an indexed access type then it is resolved to an intersection type instead of a union type. A value of an intersection type \ts{A \& B} is considered to be both of type \ts{A} and of type \ts{B}. In cases such as \ts{"cat" \& string} this resolves to \ts{string}, but for example \ts{number \& boolean} is uninhabited and resolves to \ts{never}. This fixes soundness issues as mentioned in the previous sections.
+
+However, the \ts{depFun} example is impossible to implement now. The type \ts{F[T]} is now considered an assignment to the result of the function. Thus, instead of the result type resolving to \ts{number | boolean} it is instead resolved to \ts{number \& boolean} (and thus \ts{never}), which makes the function unimplementable without resorting to unsafe type assertions.
+
+\begin{lstlisting}
+// TypeScript 3.5
+function depFun<T extends "t" | "f">(str: T): F[T] {
+  if (str === "t") {
+    return 1; // type error: 1 is not assignable to never
+  } else {
+    return true; // type error: true is not assignable to never
+  }
+}
+\end{lstlisting}
+
+As an aside, the browser API bindings are unaffected since they are merely TypeScript signatures on top of a JavaScript implementation. Meaning that the body of the function is never typechecked.
+
