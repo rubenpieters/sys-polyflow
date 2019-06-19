@@ -23,6 +23,7 @@ function depFun<T extends "t" | "f">(str: T): F[T] {
 This behaviour is clearly unsound: we can swap around the branches, which will still typecheck, but the caller of the function will observe wrong type information.
 
 \begin{lstlisting}
+// TypeScript 3.4
 function depFun<T extends "t" | "f">(str: T): F[T] {
   if (str === "t") {
     return true;
@@ -52,7 +53,7 @@ depFun("f"); // has type boolean, but is actually a number
 
 \subsection{Problem in 3.5}
 
-In TypeScript 3.5 this behaviour changed, whenever an assignment is made to something with an indexed access type then it is resolved to an intersection type instead of a union type. A value of an intersection type \ts{A \& B} is considered to be both of type \ts{A} and of type \ts{B}. In cases such as \ts{"cat" \& string} this resolves to \ts{string}, but for example \ts{number \& boolean} is uninhabited and resolves to \ts{never}. This fixes soundness issues as mentioned in the previous sections.
+In TypeScript 3.5 this behaviour changed, whenever an assignment is made to something with an indexed access type then it is resolved to an intersection type instead of a union type. A value of an intersection type \ts{A \& B} is considered to be both of type \ts{A} and of type \ts{B}. This intersection can resolve to a simplified version if applicable. In cases such as \ts{"cat" \& string} this resolves to \ts{string}, but for example \ts{number \& boolean} is uninhabited and resolves to \ts{never}. This fixes the soundness issue mentioned in the previous section.
 
 However, the \ts{depFun} example is impossible to implement now. The type \ts{F[T]} is now considered an assignment to the result of the function. Thus, instead of the result type resolving to \ts{number | boolean} it is instead resolved to \ts{number \& boolean} (and thus \ts{never}), which makes the function unimplementable without resorting to unsafe type assertions.
 
@@ -68,4 +69,24 @@ function depFun<T extends "t" | "f">(str: T): F[T] {
 \end{lstlisting}
 
 As an aside, the browser API bindings are unaffected since they are merely TypeScript signatures on top of a JavaScript implementation. Meaning that the body of the function is never typechecked.
+
+\subsection{General Problem}
+
+What makes this problem somewhat tricky to solve is the fact that it is not quite a dependent function as is typical in dependently typed languages. The output type of the function is dependent on the \emph{type} of one of its input variables and \emph{not the input value itself}.
+
+In fact, the intent of the function is that we query the record type \ts{F} with the \emph{value} of \ts{str}. In other words, the return type we want to write is \ts{F[str]}. In this case, it would be safe to narrow this return type in a branch where the actual value of \ts{str} is checked.
+
+Instead, however, we have to apply the trick as explained before, and the return type becomes \ts{F[T]}. But, by doing this we have prevented the possibility of doing the narrowing we expected previously. Narrowing the type \ts{T} to \ts{"t"} in a branch where \ts{str} has been checked is definitely unsound, illustrated in the following example.
+
+In this example we have two inputs: \ts{str} and \ts{str2}. Checking the value of \ts{str} does not tell us what the value of \ts{str2} might be. So, within a branch where \ts{str} is checked, it is unsafe to narrow \ts{T} since \ts{str2} also has type \ts{T} but is possibly a different value.
+
+\begin{lstlisting}
+function depFun2<T extends "t" | "f">(str: T, str2: T) {
+  if (str === "t") {
+    // if T is narrowed to "t", then str2 has type "t" in this branch while it might be the value "f"
+  } else {
+    // ...
+  }
+}
+\end{lstlisting}
 

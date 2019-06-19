@@ -1,13 +1,13 @@
 \section{Motivation}
 \label{sec:motivation}
 
-In this section, we first develop some background on various TypeScript extensions and then present the main use case.
+In this section, we first develop some background on relevant type system features in TypeScript and then present the main use case.
 
 (TODO: ref https://www.typescriptlang.org/docs/handbook/advanced-types.html )
 
 \subsection{String Literal Types}
 
-String literal types allow you to attribute the exact value of a string at the type-level. For example, if we want the variable \ts{cat} to only hold the string \ts{"cat"}, then we can state \ts{let cat: "cat"}. Assigning any other string than \ts{"cat"} to \ts{cat}, for example \ts{cat = "dog"}, is a type error.
+String literal types allow you to annotate the exact value of a string at the type-level. For example, if we want the variable \ts{cat} to only hold the string \ts{"cat"}, then we can state \ts{let cat: "cat"}. Assigning any other string than \ts{"cat"} to \ts{cat}, for example \ts{cat = "dog"}, is a type error.
 
 \subsection{Union Types}
 
@@ -28,7 +28,7 @@ if (catOrDog === "cat") {
 
 \subsection{Indexed Access Types}
 
-An indexed access type is a specific form of type-level function. It allows to retrieve the type of a record type at a specific index, at the type-level. For example, if we have a record type \lstinline+type Cat = { lives: number, tag: "cat" }+, then we can query the type of the key \ts{lives} as \ts{type Lives = Cat["lives"]} which will be the type \ts{number}.
+An indexed access type is a specific form of type-level function. It allows to retrieve the type of a record type at a specific index, at the type-level. For example, if we have a record type \lstinline+type Cat = { lives: number, tag: "cat"+\ \lstinline+}+, then we can query the type of the key \ts{lives} as \ts{type Lives = Cat["lives"]} which will be the type \ts{number}.
 
 \subsection{Use Case}
 
@@ -68,4 +68,4 @@ interface ParentNode {
 }
 \end{lstlisting}
 
-The \ts{HTMLElementTagNameMap} is a record type containing the mapping of a HTML tag to the corresponding HTML element type resulting from the selection. The \ts{keyof} operator is another type-level operator which returns all keys of a record type as a union of string literals. So in this case it corresponds to \ts{"a" | "abbr" | ... } . With this pattern, callers of the \ts{querySelector} function are given more precise type information on what the function will return.
+The \ts{HTMLElementTagNameMap} interface defines a record type containing the mapping of a HTML tag to the corresponding HTML element type resulting from the selection. The \ts{keyof} operator is another type-level operator which returns all keys of a record type as a union of string literals. So in this case it corresponds to \ts{"a"}\ \ts{|}\ \ts{"abbr"} \ts{|}\ \ts{...}\,.  With this pattern, callers of the \ts{querySelector} function are given more precise type information on what the function will return.
