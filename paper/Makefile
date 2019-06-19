@@ -1,6 +1,17 @@
-paper.pdf: paper.tex paper.bib sections/*.tex
-	latexmk -pdf paper.tex
+# based on https://tex.stackexchange.com/questions/40738/how-to-properly-make-a-latex-project
 
-.PHONY: clean
+DOCNAME = paper
+
+.PHONY: $(DOCNAME).pdf all clean
+
+all: $(DOCNAME).pdf
+
+$(DOCNAME).pdf: $(DOCNAME).tex $(DOCNAME).bib sections/*.tex
+	latexmk -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make $(DOCNAME).tex
+
+watch: $(DOCNAME).tex
+	see $(DOCNAME).pdf &
+	latexmk -pvc -pdf -pdflatex="pdflatex -interaction=nonstopmode" -use-make $(DOCNAME).tex
+
 clean:
-	rm -rf *.aux *.log *.pdf *.bbl *.blg *.out *.fls *.fdb_latexmk
+	latexmk -CA
