@@ -15,3 +15,6 @@ watch: $(DOCNAME).tex
 
 clean:
 	latexmk -CA
+
+install:
+	cp $(DOCNAME).pdf ${out}/$(DOCNAME).pdf
