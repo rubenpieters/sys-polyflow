@@ -9,7 +9,8 @@ stdenv.mkDerivation {
                       scheme-small
 
                       # Add other LaTeX libraries (packages) here as needed, e.g:
-		      mathpartir
+                      mathpartir
+                      cancel
 
                       # build tools
                       latexmk
