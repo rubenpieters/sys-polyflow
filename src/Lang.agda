@@ -1,4 +1,4 @@
-module SysFlow.Lang where
+module Lang where
 
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; _≢_; refl; cong; sym)
@@ -8,6 +8,7 @@ open import Data.Sum using (_⊎_; inj₁; inj₂)
 open import Relation.Nullary using (yes; no)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Product using (∃; _,_; _×_)
+open import Data.Unit using (⊤; tt)
 
 
 Id : Set
@@ -37,6 +38,7 @@ infix 50 B′_
 infixl 40 _∙_
 infixl 40 _[_]
 infix 35 if_then_else
+infix 32 _===_
 infix 30 ƛ_∶_⋯>_
 infix 30 Λ_<:_⋯>_
 
@@ -55,6 +57,8 @@ data Term : Set where
   Λ_<:_⋯>_ : Id → Type → Term → Term
   -- type application
   _[_] : Term → Type → Term
+  -- equality check
+  _===_ : Term → Term → Term
 
 prog1 : Term
 prog1 =
@@ -286,6 +290,10 @@ data _⊢_∶_ : Context → Term → Type → Set where
     → Γ ⊢ t ∶ S
     → Γ ⊢ S <: T
     → Γ ⊢ t ∶ T
+  T-Eq : ∀ {Γ t₁ t₂ T}
+    → Γ ⊢ t₁ ∶ T
+    → Γ ⊢ t₂ ∶ T
+    → Γ ⊢ t₁ === t₂ ∶ TBool
 
 -- inversion helpers
 
@@ -310,6 +318,29 @@ inversion-:-tabs (T-Sub s₂:S S<:T) T<:AX<:U₁∶U₂ = inversion-:-tabs s₂:
 -- -------------------------------------
 
 -- -------------------------------------
+-- VALUES
+
+data Value : Term → Set where
+  V-Abs : ∀ {x T t}
+    → Value (ƛ x ∶ T ⋯> t)
+  V-Bool : ∀ {b}
+    → Value (B′ b)
+  V-TAbs : ∀ {X t T}
+    → Value (Λ X <: T ⋯> t)
+
+data V-Eq : Term → Term → Set where
+  Eq-Bool : ∀ {b₁ b₂}
+    → b₁ ≡ b₂
+    → V-Eq (B′ b₁) (B′ b₂)
+
+v-eq : ∀ {v₁ v₂} → Value v₁ → Value v₂ → V-Eq v₁ v₂ ⊎ ⊤
+v-eq (V-Bool {true}) (V-Bool {true}) = inj₁ (Eq-Bool refl)
+v-eq (V-Bool {false}) (V-Bool {false}) = inj₁ (Eq-Bool refl)
+v-eq _ _ = inj₂ tt
+
+-- -------------------------------------
+
+-- -------------------------------------
 -- EVALUATION
 
 -- term term substitution
@@ -329,6 +360,7 @@ _[_:=_] : Term → Id → Term → Term
 (t₁ ∙ t₂) [ y := s ] = (t₁ [ y := s ]) ∙ (t₂ [ y := s ])
 (Λ x <: T₁ ⋯> x₁) [ y := s ] = Λ x <: T₁ ⋯> x₁ [ y := s ]
 (x [ x₁ ]) [ y := s ] = (x [ y := s ]) [ x₁ ]
+(x₁ === x₂) [ y := s ] = (x₁ [ y := s ]) === (x₂ [ y := s ])
 
 -- term type substitution
 
@@ -343,7 +375,7 @@ _[_:τ=_] : Term → Id → Type → Term
 (t₁ ∙ t₂) [ y :τ= s ] = (t₁ [ y :τ= s ]) ∙ (t₂ [ y :τ= s ])
 (Λ x <: T₁ ⋯> x₁) [ y :τ= s ] = Λ x <: T₁ ⋯> x₁ [ y :τ= s ]
 (x [ x₁ ]) [ y :τ= s ] = x [ x₁ [ y τ= s ] ]
-
+(x₁ === x₂) [ y :τ= s ] = (x₁ [ y :τ= s ]) === (x₂ [ y :τ= s ])
 
 -- evaluation
 
@@ -370,19 +402,22 @@ data _—→_ : Term → Term → Set where
     → t₁ [ T₂ ] —→ t₁' [ T₂ ]
   E-TAppAbs : ∀ {X T₁ t₁₂ T₂}
     → (Λ X <: T₁ ⋯> t₁₂) [ T₂ ] —→ t₁₂ [ X :τ= T₂ ]
-
--- -------------------------------------
-
--- -------------------------------------
--- VALUES
-
-data Value : Term → Set where
-  V-Abs : ∀ {x T t}
-    → Value (ƛ x ∶ T ⋯> t)
-  V-Bool : ∀ {b}
-    → Value (B′ b)
-  V-TAbs : ∀ {X t T}
-    → Value (Λ X <: T ⋯> t)
+  E-EqL : ∀ {t₁ t₂ t₁'}
+    → t₁ —→ t₁'
+    → t₁ === t₂ —→ t₁' === t₂
+  E-EqR : ∀ {t₁ t₂ t₂'}
+    → t₂ —→ t₂'
+    → t₁ === t₂ —→ t₁ === t₂'
+  E-EqTrue : ∀ {t₁ t₂}
+    → (v₁ : Value t₁)
+    → (v₂ : Value t₂)
+    → V-Eq t₁ t₂
+    → t₁ === t₂ —→ B′ true
+  E-EqFalse : ∀ {t₁ t₂}
+    → (v₁ : Value t₁)
+    → (v₂ : Value t₂)
+--  TODO: should a proof of inequality be passed here?
+    → t₁ === t₂ —→ B′ false
 
 -- -------------------------------------
 
@@ -568,6 +603,13 @@ progress (T-TApp {X = X} ⊢t₁ ⊢X<:) with progress ⊢t₁
 ... | done v₁ with canonical-form-tabs v₁ ⊢t₁
 ...   | (_ , refl) =  step (E-TAppAbs)
 progress (T-Sub t:S S<:T) = progress t:S
+progress (T-Eq {t₁ = t₁} {t₂ = t₂} t₁:T t₂:T) with progress t₁:T
+... | step t₁—→t₁' = step (E-EqL t₁—→t₁')
+... | done v₁ with progress t₂:T
+...   | step t₂—→t₂' = step (E-EqR t₂—→t₂')
+...   | done v₂ with v-eq v₁ v₂
+...     | inj₁ eq-proof = step (E-EqTrue v₁ v₂ eq-proof)
+...     | inj₂ _ = step (E-EqFalse v₁ v₂)
 
 -- -------------------------------------
 
@@ -628,6 +670,10 @@ preserve (T-TApp (T-Sub M:S S<:AX<:T₁₁:T₁₂) T₂<:T₁) (E-TAppAbs) with
       t₁₂:T₁₂ = T-Sub t₁₂:S₂ S₂<:T₁₂
     in type-subst-preserves-typing T₂<:T₁ t₁₂:T₁₂
 preserve (T-Sub M:S S<:A) M—→N = T-Sub (preserve M:S M—→N) S<:A
+preserve (T-Eq t₁:T t₂:T) (E-EqL t—→t') = T-Eq (preserve t₁:T t—→t') t₂:T
+preserve (T-Eq t₁:T t₂:T) (E-EqR t—→t') = T-Eq t₁:T (preserve t₂:T t—→t')
+preserve (T-Eq t₁:T t₂:T) (E-EqTrue v₁ v₂ _) = T-Bool
+preserve (T-Eq t₁:T t₂:T) (E-EqFalse v₁ v₂) = T-Bool
 
 -- -------------------------------------
 
@@ -661,4 +707,5 @@ symbols:
 ⊥ = \bot
 — = \em
 ≢ = \==n
+⊤ = \top
 -}
