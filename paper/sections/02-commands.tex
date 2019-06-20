@@ -3,25 +3,34 @@
 
 % terms
 \newcommand{\abs}[3]{\lambda #1 : #2 . #3}
-\newcommand{\app}[2]{#1 #2}
+\newcommand{\app}[2]{#1\,#2}
 \newcommand{\tabs}[3]{\Lambda #1 <: #2 . #3}
-\newcommand{\tapp}[2]{#1 [#2]}
+\newcommand{\tapp}[2]{#1\,[#2]}
 \newcommand{\ite}[3]{\texttt{if}\ #1\ \texttt{then}\ #2\ \texttt{else}\ #3}
 \newcommand{\true}[0]{\texttt{true}}
 \newcommand{\false}[0]{\texttt{false}}
+\newcommand{\eq}[2]{#1\,\texttt{==}\,#2}
 
 % types
 \newcommand{\fun}[2]{#1 \rightarrow #2}
 \newcommand{\tfun}[3]{\forall #1 <: #2 . #3}
-\newcommand{\bool}[0]{Bool}
+\newcommand{\tbool}[0]{Bool}
+\newcommand{\ttrue}[0]{True}
+\newcommand{\tfalse}[0]{False}
+\newcommand{\union}[2]{#1 \lor #2}
+\newcommand{\tmap}[3]{\{ \texttt{true}: #1, \texttt{false}: #2 \}[#3]}
 
 % typing relation
 \newcommand{\hastype}[3]{#1 \vdash #2 : #3}
 \newcommand{\hassubtype}[3]{#1 \vdash #2 <: #3}
+\newcommand{\nothassubtype}[3]{#1\ \cancel{\vdash}\ #2 <: #3}
 
 % context
 \newcommand{\typeincontext}[3]{#1 : #2 \in #3}
+\newcommand{\subtypeincontext}[3]{#1 <: #2 \in #3}
+\newcommand{\supertypeincontext}[3]{#1 :> #2 \in #3}
 \newcommand{\emptycontext}[0]{\emptyset}
 \newcommand{\extendwtype}[3]{#1 , #2 : #3}
 \newcommand{\extendwsubtype}[3]{#1 , #2 <: #3}
+\newcommand{\extendwsupertype}[3]{#1 , #2 :> #3}
 \newcommand{\subst}[3]{[#2 \mapsto #3]#1}

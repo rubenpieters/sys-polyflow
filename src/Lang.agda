@@ -75,11 +75,13 @@ prog1 =
 
 infixl 50 _,_∶_
 infixl 50 _,_<:_
+infixl 50 _,_:>_
 
 data Context : Set where
   ∅ : Context
   _,_∶_ : Context → Id → Type → Context
   _,_<:_ : Context → Id → Type → Context
+  _,_:>_ : Context → Id → Type → Context
 
 -- has-type-in-context relation
 
@@ -101,6 +103,17 @@ data _<:_∈_ : Id → Type → Context → Set where
     → X <: T ∈ Γ
     → X <: T ∈ Γ , Y <: U
 
+-- is-supertype-in-context relation
+
+data _:>_∈_ : Id → Type → Context → Set where
+  Z:> : ∀ {Γ X T}
+    → X :> T ∈ Γ , X :> T
+  S:> : ∀ {Γ X T Y U}
+    → X ≢ Y
+    → X :> T ∈ Γ
+    → X :> T ∈ Γ , Y :> U
+
+
 -- -------------------------------------
 
 -- -------------------------------------
@@ -118,6 +131,9 @@ data _⊢_<:_ : Context → Type → Type → Set where
   S-TVar : ∀ {Γ X T}
     → X <: T ∈ Γ
     → Γ ⊢ ′′ X <: T
+  S-TVar2 : ∀ {Γ X T}
+    → X :> T ∈ Γ
+    → Γ ⊢ T <: ′′ X
   S-Arrow : ∀ {Γ S₁ S₂ T₁ T₂}
     → Γ ⊢ T₁ <: S₁
     → Γ ⊢ S₂ <: T₂
@@ -140,6 +156,7 @@ inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
 ... | (_ , refl) = inversion-<:-var S<:U
 -- in case of S-TVar, then trivially S is a type variable
 inversion-<:-var (S-TVar {X = X} _) = (X , refl)
+inversion-<:-var (S-TVar2 {X = X} _) = (X , {!!})
 
 -- if S is a subtype of TBool, then S is a type variable or TBool
 inversion-<:-bool : ∀ {Γ S}
@@ -279,6 +296,11 @@ data _⊢_∶_ : Context → Term → Type → Set where
     → Γ ⊢ t₂ ∶ T
     → Γ ⊢ t₃ ∶ T
     → Γ ⊢ if t₁ then t₂ else t₃ ∶ T
+  T-IfTrueR : ∀ {Γ T t₂ t₃ x X}
+    → Γ ⊢ ′ x ∶ ′′ X
+    → Γ , X :> TBool ⊢ t₂ ∶ T
+    → Γ , X :> TBool ⊢ t₃ ∶ T
+    → Γ ⊢ if (′ x === B′ true) then t₂ else t₃ ∶ T
   T-TAbs : ∀ {Γ X t₂ T₁ T₂}
     → Γ , X <: T₁ ⊢ t₂ ∶ T₂
     → Γ ⊢ Λ X <: T₁ ⋯> t₂ ∶ A X <: T₁ ∶ T₂
