@@ -5,7 +5,7 @@ This pattern is quite reminiscent of functions in dependently typed programming 
 
 \subsection{Problem in 3.4}
 
-In TypeScript 3.4, the \ts{depFun} code given before would compile as is. However, it was actually due to an unsound feature that it was able to compile at all. The reason is that within the function, the result type of \ts{depFun} is resolved to \ts{string | number} throughout the whole function. Even within the flow-sensitive branches the return type stays unchanged.
+In TypeScript 3.4, the \ts{depFun} code given before would compile as is. However, it was actually because of allowed unsoundness that it was able to compile at all. The reason is that within the function, the result type of \ts{depFun} is resolved to \ts{string | number} throughout the whole function. Even within the flow-sensitive branches the return type stays unchanged.
 
 \begin{lstlisting}
 // TypeScript 3.4
@@ -53,7 +53,7 @@ depFun("f"); // has type boolean, but is actually a number
 
 \subsection{Problem in 3.5}
 
-In TypeScript 3.5 this behaviour changed, whenever an assignment is made to something with an indexed access type then it is resolved to an intersection type instead of a union type. A value of an intersection type \ts{A \& B} is considered to be both of type \ts{A} and of type \ts{B}. This intersection can resolve to a simplified version if applicable. In cases such as \ts{"cat" \& string} this resolves to \ts{string}, but for example \ts{number \& boolean} is uninhabited and resolves to \ts{never}. This fixes the soundness issue mentioned in the previous section.
+In TypeScript 3.5 this behaviour changed, whenever an assignment is made to something with an indexed access type then it is resolved to an intersection type instead of a union type. A value of an intersection type \ts{A \& B} is considered to be both of type \ts{A} and of type \ts{B}. This intersection can resolve to a simplified version if applicable. For example, \ts{"cat" \& string} resolves to \ts{"cat"}, but \ts{number \& boolean} is uninhabited and resolves to \ts{never}. This fixes the soundness issue mentioned in the previous section.
 
 However, the \ts{depFun} example is impossible to implement now. The type \ts{F[T]} is now considered an assignment to the result of the function. Thus, instead of the result type resolving to \ts{number | boolean} it is instead resolved to \ts{number \& boolean} (and thus \ts{never}), which makes the function unimplementable without resorting to unsafe type assertions.
 

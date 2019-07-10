@@ -32,7 +32,7 @@ An indexed access type is a specific form of type-level function. It allows to r
 
 \subsection{Use Case}
 
-The main use case we want to consider is that of creating a function for which the output type depends in the value of the input. For example, in the \ts{depFun} function below we have a function which takes a \ts{"t"} or \ts{"f"} string as input. The input value \ts{str} does not have type \ts{"t" | "f"} as might be expected, but instead has type \ts{T} which is a type variable bounded by \ts{"t" | "f"} (TODO: ref bounded quantification?). This is necessary since we want to refer to the type \ts{T} in the result type. This result type is \ts{F[T]} which encodes a type-level mapping for the output type dependent on the input type. In summary, the result type when called as \ts{depFun("t")} is \ts{number}, and \ts{boolean} when called as \ts{depFun("f")}.
+The main use case we want to consider is that of creating a function for which the output type depends on the value of the input. For example, in the \ts{depFun} function below we have a function which takes a \ts{"t"} or \ts{"f"} string as input. The input value \ts{str} does not have type \ts{"t" | "f"} as might be expected, but instead has type \ts{T} which is a type variable bounded by \ts{"t" | "f"} (TODO: ref bounded quantification?). This is necessary since we want to refer to the type \ts{T} in the result type. The result type, which is \ts{F[T]}, encodes a type-level mapping for the output type dependent on the input type. In summary, the result type when the function is called as \ts{depFun("t")} is \ts{number}, and \ts{boolean} when called as \ts{depFun("f")}.
 
 \begin{lstlisting}
 interface F {

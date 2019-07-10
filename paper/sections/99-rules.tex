@@ -6,11 +6,11 @@
 
 \inferrule*[right=T-True]
            {  }
-           { \hastype{\Gamma}{\true}{\tbool} }
+           { \hastype{\Gamma}{\true}{\ttrue} }
 
 \inferrule*[right=T-False]
            {  }
-           { \hastype{\Gamma}{\false}{\tbool} }
+           { \hastype{\Gamma}{\false}{\tfalse} }
 
 \inferrule*[right=T-Var]
            { \typeincontext{x}{T}{\Gamma} }
@@ -18,11 +18,11 @@
 
 \inferrule*[right=T-Abs]
            { \hastype{\extendwtype{\Gamma}{x}{T_1}}{t_2}{T_2} }
-           { \hastype{\Gamma}{\abs{x}{T_1}{t_2}}{\fun{T_1}{T_2}} }
+           { \hastype{\Gamma}{\abs{x}{T_1}{t_2}{T_2}}{\fun{T_1}{T_2}} }
 
 \inferrule*[right=T-App]
-           { \hastype{\extendwsubtype{\Gamma}{X}{T_1}}{t_2}{T_2} \\ \hastype{\Gamma}{t_2}{T_{11}} }
-           { \hastype{\Gamma}{\app{t_1}{t_2}}{T_{12}} }
+           { \hastype{\Gamma}{t_1}{\fun{T_{11}}{T_2}} \\ \hastype{\Gamma}{t_2}{T_{11}} }
+           { \hastype{\Gamma}{\app{t_1}{t_2}}{T_2} }
 
 \inferrule*[right=T-TAbs]
            { \hastype{\extendwsubtype{\Gamma}{X}{T_1}}{t_2}{T_2} }
@@ -45,30 +45,8 @@
            { \hastype{\Gamma}{\ite{t_1}{t_2}{t_3}}{T} }
 
 \inferrule*[right=T-IfTrueR]
-           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwsupertype{\Gamma}{X}{\tbool}}{t_2}{T} \\ \hastype{\extendwsupertype{\Gamma}{X}{\tbool}}{t_3}{T} }
+           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwsupertype{\Gamma}{X}{\ttrue}}{t_2}{T} \\ \hastype{\extendwsupertype{\Gamma}{X}{\tfalse}}{t_3}{T} }
            { \hastype{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{T} }
-
-\inferrule*[right=T-Map]
-           { \hassubtype{\Gamma}{T}{\tbool} \\ \nothassubtype{\Gamma}{T}{\ttrue} \\ \nothassubtype{\Gamma}{T}{\tfalse} \\ \nothassubtype{\Gamma}{\ttrue}{T} \\ \nothassubtype{\Gamma}{\tfalse}{T} }
-           { \hastype{\Gamma}{\tmap{T_1}{T_2}{T}}{\union{T_1}{T_2}} }
-
-\inferrule*[right=T-MapTrueSub]
-           { \hassubtype{\Gamma}{T}{\ttrue} }
-           { \hastype{\Gamma}{\tmap{T_1}{T_2}{T}}{T_1} }
-
-\inferrule*[right=T-MapFalseSub]
-           { \hassubtype{\Gamma}{T}{\tfalse} }
-           { \hastype{\Gamma}{\tmap{T_1}{T_2}{T}}{T_2} }
-
-\inferrule*[right=T-MapTrueSup]
-           { \hassubtype{\Gamma}{\ttrue}{T} }
-           { \hastype{\Gamma}{\tmap{T_1}{T_2}{T}}{T_1} }
-
-\inferrule*[right=T-MapFalseSup]
-           { \hassubtype{\Gamma}{\tfalse}{T} }
-           { \hastype{\Gamma}{\tmap{T_1}{T_2}{T}}{T_2} }
-
-
 
 \end{mathpar}
 
@@ -104,14 +82,6 @@
            { \hassubtype{\extendwsubtype{\Gamma}{X}{U_1}}{S_2}{T_2}}
            { \hassubtype{\Gamma}{(\tfun{X}{U_1}{S_2})}{(\tfun{X}{U_1}{T_2})} }
 
-\inferrule*[right=S-True]
-           {  }
-           { \hassubtype{\Gamma}{\ttrue}{\tbool} }
-
-\inferrule*[right=S-False]
-           {  }
-           { \hassubtype{\Gamma}{\tfalse}{\tbool} }
-
 \inferrule*[right=S-UnionL]
            {  }
            { \hassubtype{\Gamma}{A}{\union{A}{B}} }
@@ -120,4 +90,31 @@
            {  }
            { \hassubtype{\Gamma}{B}{\union{A}{B}} }
 
+\inferrule*[right=S-Map]
+           { \hassubtype{\Gamma}{T}{\tbool} \\ \hassubtype{\Gamma}{\tbool}{T} }
+           { \hassubtype{\Gamma}{\union{T_1}{T_2}}{\tmap{T_1}{T_2}{T}} }
+
+% is the above different from this?
+%\inferrule*[right=S-Map]
+%           { \hassubtype{\Gamma}{T}{\tbool} \\ \nothassubtype{\Gamma}{T}{\ttrue} \\ \nothassubtype{\Gamma}{T}{\tfalse} \\ \nothassubtype{\Gamma}{\ttrue}{T} \\ \nothassubtype{\Gamma}{\tfalse}{T} }
+%           { \hassubtype{\Gamma}{\union{T_1}{T_2}}{\tmap{T_1}{T_2}{T}} }
+
+\inferrule*[right=S-MapTrueSub]
+           { \hassubtype{\Gamma}{T}{\ttrue} }
+           { \hassubtype{\Gamma}{T_1}{\tmap{T_1}{T_2}{T}} }
+
+\inferrule*[right=S-MapFalseSub]
+           { \hassubtype{\Gamma}{T}{\tfalse} }
+           { \hassubtype{\Gamma}{T_2}{\tmap{T_1}{T_2}{T}} }
+
+\inferrule*[right=S-MapTrueSup]
+           { \hassubtype{\Gamma}{\ttrue}{T} }
+           { \hassubtype{\Gamma}{T_1}{\tmap{T_1}{T_2}{T}} }
+
+\inferrule*[right=S-MapFalseSup]
+           { \hassubtype{\Gamma}{\tfalse}{T} }
+           { \hassubtype{\Gamma}{T_2}{\tmap{T_1}{T_2}{T}} }
+
 \end{mathpar}
+
+\tbool\ is defined as \union{\ttrue}{\tfalse}
