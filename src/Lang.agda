@@ -113,7 +113,6 @@ data _:>_∈_ : Id → Type → Context → Set where
     → X :> T ∈ Γ
     → X :> T ∈ Γ , Y :> U
 
-
 -- -------------------------------------
 
 -- -------------------------------------
@@ -216,47 +215,6 @@ inversion-<:-forall (S-Trans S<:U U<:AX<:U₁:T₂) with inversion-<:-forall U<:
 inversion-<:-forall (S-TVar {X = X} _) = inj₁ (X , refl)
 -- in case of S-All, then trivially S has the form A X <: U₁ : S₂
 inversion-<:-forall (S-All {S₂ = S₂} S₂<:T₂) = inj₂ (S₂ , S₂<:T₂ , refl)
-
--- inversion in other direction, for empty contexts
-
-rinversion-<:-top : ∀ {X}
-  → ∅ ⊢ Top <: X
-  → X ≡ Top
-rinversion-<:-top S-Refl = refl
-rinversion-<:-top (S-Trans x y) with rinversion-<:-top x
-... | refl = rinversion-<:-top y
-rinversion-<:-top S-Top = refl
-
-rinversion-<:-bool : ∀ {X}
-  → ∅ ⊢ TBool <: X
-  → X ≡ TBool ⊎ X ≡ Top
-rinversion-<:-bool S-Refl = inj₁ refl
-rinversion-<:-bool (S-Trans x y) with rinversion-<:-bool x
-... | inj₁ refl = rinversion-<:-bool y
-... | inj₂ refl = inj₂ (rinversion-<:-top y)
-rinversion-<:-bool S-Top = inj₂ refl
-
-rinversion-<:-tvar : ∀ {a X}
-  → ∅ ⊢ ′′ a <: X
-  → X ≡ Top ⊎ X ≡ ′′ a
-rinversion-<:-tvar S-Refl = inj₂ refl
-rinversion-<:-tvar (S-Trans ′′a<:U U<:X) with rinversion-<:-tvar ′′a<:U
-... | inj₁ refl = inj₁ (rinversion-<:-top U<:X)
-... | inj₂ refl = rinversion-<:-tvar U<:X
-rinversion-<:-tvar S-Top = inj₁ refl
-rinversion-<:-tvar (S-TVar ())
-
-rinversion-<:-abs : ∀ {S₁ S₂ X}
-  → ∅ ⊢ S₁ ⇒ S₂ <: X
-  → X ≡ Top ⊎ (∃ λ T₁ → ∃ λ T₂ → X ≡ T₁ ⇒ T₂ × ∅ ⊢ T₁ <: S₁ × ∅ ⊢ S₂ <: T₂)
-rinversion-<:-abs {S₁ = S₁} {S₂ = S₂} (S-Refl) = inj₂ (S₁ , S₂ , refl , S-Refl , S-Refl)
-rinversion-<:-abs (S-Trans x y) with rinversion-<:-abs x
-... | inj₁ refl = inj₁ (rinversion-<:-top y)
-... | inj₂ (a , b , refl , c , d) with rinversion-<:-abs y
-... |   inj₁ refl = inj₁ refl
-... |   inj₂ (e , f , refl , g , h) = inj₂ (e , f , refl , S-Trans g c , S-Trans d h)
-rinversion-<:-abs (S-Top) = inj₁ refl
-rinversion-<:-abs (S-Arrow {T₁ = T₁} {T₂ = T₂} T₁<:S₁ S₂<:T₂) = inj₂ (T₁ , T₂ , refl , T₁<:S₁ , S₂<:T₂)
 
 -- -------------------------------------
 
@@ -446,138 +404,142 @@ data _—→_ : Term → Term → Set where
 -- -------------------------------------
 -- CANONICAL FORMS
 
-imp-bool:tvar : ∀ {b X T₁ T₂}
+from-bool-term : ∀ {b S}
+  → ∅ ⊢ B′ b ∶ S
+  → ∅ ⊢ TBool <: S
+from-bool-term T-Bool = S-Refl
+from-bool-term (T-Sub x y) = S-Trans (from-bool-term x) y
+
+from-abs-term : ∀ {x t A S}
+  → ∅ ⊢ ƛ x ∶ A ⋯> t ∶ S
+  → (∃ λ B → ∅ ⊢ A ⇒ B <: S)
+from-abs-term (T-Abs {T₂ = T₂} x) = (T₂ , S-Refl)
+from-abs-term (T-Sub x y) with from-abs-term x
+... | (B , z) = (B , S-Trans z y)
+
+from-forall-term : ∀ {X A t S}
+  → ∅ ⊢ Λ X <: A ⋯> t ∶ S
+  → (∃ λ B → ∅ ⊢ (A X <: A ∶ B) <: S)
+from-forall-term (T-TAbs {T₂ = T₂} x) = (T₂ , S-Refl)
+from-forall-term (T-Sub x y) with from-forall-term x
+... | (B , z) = (B , S-Trans z y)
+
+-- impossible derivations
+
+-- bool / forall
+
+imp-bool<:forall : ∀ {X T₁ T₂}
+  → ∅ ⊢ TBool <: A X <: T₁ ∶ T₂
+  → ⊥
+imp-bool<:forall (S-Trans x y) with inversion-<:-forall y
+... | inj₂ (a , b , refl) = imp-bool<:forall x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-bool:forall : ∀ {b X T₁ T₂}
   → ∅ ⊢ B′ b ∶ A X <: T₁ ∶ T₂
   → ⊥
-imp-bool:tvar (T-Sub x y) with inversion-<:-forall y
-... | inj₂ (a , b , refl) = imp-bool:tvar x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
+imp-bool:forall (T-Sub x y) = imp-bool<:forall (S-Trans (from-bool-term x) y)
 
-imp-bool<:tvar : ∀ {b S X T₁ T₂}
-  → ∅ ⊢ B′ b ∶ S
-  → ∅ ⊢ S <: A X <: T₁ ∶ T₂
-  → ⊥
-imp-bool<:tvar t:S S<:AX<:T₁:T₂ with inversion-<:-forall S<:AX<:T₁:T₂
-... | inj₂ (a , b , refl) = imp-bool:tvar t:S
-... | inj₁ (a , refl) with rinversion-<:-tvar S<:AX<:T₁:T₂
-...   | inj₁ ()
-...   | inj₂ ()
+-- abs / forall
 
-imp-abs:tvar : ∀ {x T t X T₁ T₂}
-  → ∅ ⊢ ƛ x ∶ T ⋯> t ∶ A X <: T₁ ∶ T₂
+imp-abs<:forall : ∀ {A B X T₁ T₂}
+  → ∅ ⊢ A ⇒ B <: A X <: T₁ ∶ T₂
   → ⊥
-imp-abs:tvar (T-Sub x y) with inversion-<:-forall y
-... | inj₂ (a , b , refl) = imp-abs:tvar x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
+imp-abs<:forall (S-Trans x y) with inversion-<:-forall y
+... | inj₂ (a , b , refl) = imp-abs<:forall x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
 
-imp-abs<:tvar : ∀ {x T t S X T₁ T₂}
-  → ∅ ⊢ ƛ x ∶ T ⋯> t ∶ S
-  → ∅ ⊢ S <: A X <: T₁ ∶ T₂
+imp-abs:forall : ∀ {x t A X T₁ T₂}
+  → ∅ ⊢ ƛ x ∶ A ⋯> t ∶ A X <: T₁ ∶ T₂
   → ⊥
-imp-abs<:tvar t:S S<:AX<:T₁:T₂ with inversion-<:-forall S<:AX<:T₁:T₂
-... | inj₂ (a , b , refl) = imp-abs:tvar t:S
-... | inj₁ (a , refl) with rinversion-<:-tvar S<:AX<:T₁:T₂
-...   | inj₁ ()
-...   | inj₂ ()
+imp-abs:forall (T-Sub x y) with from-abs-term x
+... | ( B , z ) = imp-abs<:forall (S-Trans z y)
+
+-- abs / bool
+
+imp-abs<:bool : ∀ {A B}
+  → ∅ ⊢ A ⇒ B <: TBool
+  → ⊥
+imp-abs<:bool (S-Trans x y) with inversion-<:-bool y
+... | inj₂ refl = imp-abs<:bool x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-abs:bool : ∀ {x t A}
+  → ∅ ⊢ ƛ x ∶ A ⋯> t ∶ TBool
+  → ⊥
+imp-abs:bool (T-Sub x y) with from-abs-term x
+... | ( B , z) = imp-abs<:bool (S-Trans z y)
+
+-- forall / bool
+
+imp-forall<:bool : ∀ {X T₁ T₂}
+  → ∅ ⊢ A X <: T₁ ∶ T₂ <: TBool
+  → ⊥
+imp-forall<:bool (S-Trans x y) with inversion-<:-bool y
+... | inj₂ refl = imp-forall<:bool x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-forall:bool : ∀ {X T₁ t}
+  → ∅ ⊢  Λ X <: T₁ ⋯> t ∶ TBool
+  → ⊥
+imp-forall:bool (T-Sub x y) with from-forall-term x
+... | (B , z) = imp-forall<:bool (S-Trans z y)
+
+-- forall / abs
+
+imp-forall<:abs : ∀ {X T₁ T₂ A B}
+  → ∅ ⊢ A X <: T₁ ∶ T₂ <: A ⇒ B
+  → ⊥
+imp-forall<:abs (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-forall<:abs x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-forall:abs : ∀ {X T₁ t A B}
+  → ∅ ⊢ Λ X <: T₁ ⋯> t ∶ A ⇒ B
+  → ⊥
+imp-forall:abs (T-Sub x y) with from-forall-term x
+... | (B , z) = imp-forall<:abs (S-Trans z y)
+
+-- bool / abs
+
+imp-bool<:abs : ∀ {A B}
+  → ∅ ⊢ TBool <: A ⇒ B
+  → ⊥
+imp-bool<:abs (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-bool<:abs x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-bool:abs : ∀ {b A B}
+  → ∅ ⊢ B′ b ∶ A ⇒ B
+  → ⊥
+imp-bool:abs (T-Sub x y) = imp-bool<:abs (S-Trans (from-bool-term x) y)
+
+-- canonical form lemmas
 
 canonical-form-tabs : ∀ {v X T₁ T₂}
   → Value v
   → ∅ ⊢ v ∶ A X <: T₁ ∶ T₂
   → ∃ λ t₂ → v ≡ Λ X <: T₁ ⋯> t₂
-canonical-form-tabs (V-Abs) (T-Sub x y) = ⊥-elim (imp-abs<:tvar x y)
-canonical-form-tabs (V-Bool) (T-Sub x y) = ⊥-elim (imp-bool<:tvar x y)
+canonical-form-tabs (V-Abs) (T-Sub x y) = ⊥-elim (imp-abs:forall (T-Sub x y))
+canonical-form-tabs (V-Bool) (T-Sub x y) = ⊥-elim (imp-bool:forall (T-Sub x y))
 canonical-form-tabs (V-TAbs {t = t}) (T-TAbs _) = (t , refl)
 canonical-form-tabs (V-TAbs {t = t}) (T-Sub x y) with inversion-:-tabs x y
 ... | (S₂ , refl , refl , s₂:S₂ , S₂<:U) = (t , refl)
-
-imp-abs:bool : ∀ {x T t}
-  → ∅ ⊢ ƛ x ∶ T ⋯> t ∶ TBool
-  → ⊥
-imp-abs:bool (T-Sub x y) with inversion-<:-bool y
-... | inj₂ refl = imp-abs:bool x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
-
-imp-abs<:bool : ∀ {x T t S}
-  → ∅ ⊢ ƛ x ∶ T ⋯> t ∶ S
-  → ∅ ⊢ S <: TBool
-  → ⊥
-imp-abs<:bool x y with inversion-<:-bool y
-... | inj₂ refl = imp-abs:bool x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
-
-imp-tabs:bool : ∀ {X T₁ T₂}
-  → ∅ ⊢ Λ X <: T₁ ⋯> T₂ ∶ TBool
-  → ⊥
-imp-tabs:bool (T-Sub x y) with inversion-<:-bool y
-... | inj₂ refl = imp-tabs:bool x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
-
-imp-tabs<:bool : ∀ {X T₁ T₂ S}
-  → ∅ ⊢ Λ X <: T₁ ⋯> T₂ ∶ S
-  → ∅ ⊢ S <: TBool
-  → ⊥
-imp-tabs<:bool x y with inversion-<:-bool y
-... | inj₂ refl = imp-tabs:bool x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
 
 canonical-form-bool : ∀ {v}
   → Value v
   → ∅ ⊢ v ∶ TBool
   → ∃ λ b → v ≡ B′ b
-canonical-form-bool (V-Abs) (T-Sub x y) = ⊥-elim (imp-abs<:bool x y)
+canonical-form-bool (V-Abs) (T-Sub x y) = ⊥-elim (imp-abs:bool (T-Sub x y))
 canonical-form-bool (V-Bool {b}) (T-Bool) = (b , refl)
 canonical-form-bool (V-Bool {b}) (T-Sub _ _) = (b , refl)
-canonical-form-bool (V-TAbs) (T-Sub x y) = ⊥-elim (imp-tabs<:bool x y)
-
-imp-tabs:abs : ∀ {X T₁ T₂ A B}
-  → ∅ ⊢ Λ X <: T₁ ⋯> T₂ ∶ A ⇒ B
-  → ⊥
-imp-tabs:abs (T-Sub x y) with inversion-<:-abs y
-... | inj₂ (a , b , c , d , refl) = imp-tabs:abs x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
-
-imp-tabs<:abs : ∀ {X T₁ T₂ S A B}
-  → ∅ ⊢ Λ X <: T₁ ⋯> T₂ ∶ S
-  → ∅ ⊢ S <: A ⇒ B
-  → ⊥
-imp-tabs<:abs x y with inversion-<:-abs y
-... | inj₂ (a , b , c , d , refl) = imp-tabs:abs x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
-
-imp-bool:abs : ∀ {b A B}
-  → ∅ ⊢ B′ b ∶ A ⇒ B
-  → ⊥
-imp-bool:abs (T-Sub x y) with inversion-<:-abs y
-... | inj₂ (a , b , c , d , refl) = imp-bool:abs x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
-
-imp-bool<:abs : ∀ {b S A B}
-  → ∅ ⊢ B′ b ∶ S
-  → ∅ ⊢ S <: A ⇒ B
-  → ⊥
-imp-bool<:abs x y with inversion-<:-abs y
-... | inj₂ (a , b , c , d , refl) = imp-bool:abs x
-... | inj₁ (a , refl) with rinversion-<:-tvar y
-...   | inj₁ ()
-...   | inj₂ ()
+canonical-form-bool (V-TAbs) (T-Sub x y) = ⊥-elim (imp-forall:bool (T-Sub x y))
 
 canonical-form-abs : ∀ {v A B}
   → Value v
@@ -586,8 +548,8 @@ canonical-form-abs : ∀ {v A B}
 canonical-form-abs (V-Abs {x} {T} {t}) (T-Abs a) = (x , t , T , refl , S-Refl)
 canonical-form-abs (V-Abs {x} {T} {t}) (T-Sub a b) with inversion-:-abs a b
 ... | (S₂ , c , d , e) = (x , t , T , refl , c)
-canonical-form-abs V-Bool (T-Sub x y) = ⊥-elim (imp-bool<:abs x y)
-canonical-form-abs V-TAbs (T-Sub x y) = ⊥-elim (imp-tabs<:abs x y)
+canonical-form-abs V-Bool (T-Sub x y) = ⊥-elim (imp-bool:abs (T-Sub x y))
+canonical-form-abs V-TAbs (T-Sub x y) = ⊥-elim (imp-forall:abs (T-Sub x y))
 
 -- -------------------------------------
 
