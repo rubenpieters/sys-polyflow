@@ -24,6 +24,8 @@
 \newcommand{\hastype}[3]{#1 \vdash #2 : #3}
 \newcommand{\hassubtype}[3]{#1 \vdash #2 <: #3}
 \newcommand{\nothassubtype}[3]{#1\ \cancel{\vdash}\ #2 <: #3}
+\newcommand{\isatleast}[3]{#1 \vdash #2 \subset #3}
+\newcommand{\notatleast}[3]{#1\ \cancel{\vdash}\ #2 \subset #3}
 
 % context
 \newcommand{\typeincontext}[3]{#1 : #2 \in #3}
@@ -33,4 +35,5 @@
 \newcommand{\extendwtype}[3]{#1 , #2 : #3}
 \newcommand{\extendwsubtype}[3]{#1 , #2 <: #3}
 \newcommand{\extendwsupertype}[3]{#1 , #2 :> #3}
+\newcommand{\extendwatleast}[3]{#1 , #2 \subset #3}
 \newcommand{\subst}[3]{[#2 \mapsto #3]#1}

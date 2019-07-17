@@ -45,7 +45,7 @@
            { \hastype{\Gamma}{\ite{t_1}{t_2}{t_3}}{T} }
 
 \inferrule*[right=T-IfTrueR]
-           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwsupertype{\Gamma}{X}{\ttrue}}{t_2}{T} \\ \hastype{\extendwsupertype{\Gamma}{X}{\tfalse}}{t_3}{T} }
+           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwatleast{\Gamma}{\ttrue}{X}}{t_2}{T} \\ \hastype{\Gamma}{t_3}{T} }
            { \hastype{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{T} }
 
 \end{mathpar}
@@ -91,13 +91,8 @@
            { \hassubtype{\Gamma}{B}{\union{A}{B}} }
 
 \inferrule*[right=S-Map]
-           { \hassubtype{\Gamma}{T}{\tbool} \\ \hassubtype{\Gamma}{\tbool}{T} }
+           { \hassubtype{\Gamma}{T}{\tbool} \\ \nothassubtype{\Gamma}{T}{\ttrue} \\ \nothassubtype{\Gamma}{T}{\tfalse} \\ \notatleast{\Gamma}{\ttrue}{T} \\ \notatleast{\Gamma}{\tfalse}{T} }
            { \hassubtype{\Gamma}{\union{T_1}{T_2}}{\tmap{T_1}{T_2}{T}} }
-
-% is the above different from this?
-%\inferrule*[right=S-Map]
-%           { \hassubtype{\Gamma}{T}{\tbool} \\ \nothassubtype{\Gamma}{T}{\ttrue} \\ \nothassubtype{\Gamma}{T}{\tfalse} \\ \nothassubtype{\Gamma}{\ttrue}{T} \\ \nothassubtype{\Gamma}{\tfalse}{T} }
-%           { \hassubtype{\Gamma}{\union{T_1}{T_2}}{\tmap{T_1}{T_2}{T}} }
 
 \inferrule*[right=S-MapTrueSub]
            { \hassubtype{\Gamma}{T}{\ttrue} }
@@ -108,11 +103,11 @@
            { \hassubtype{\Gamma}{T_2}{\tmap{T_1}{T_2}{T}} }
 
 \inferrule*[right=S-MapTrueSup]
-           { \hassubtype{\Gamma}{\ttrue}{T} }
+           { \isatleast{\Gamma}{\ttrue}{T} }
            { \hassubtype{\Gamma}{T_1}{\tmap{T_1}{T_2}{T}} }
 
 \inferrule*[right=S-MapFalseSup]
-           { \hassubtype{\Gamma}{\tfalse}{T} }
+           { \isatleast{\Gamma}{\tfalse}{T} }
            { \hassubtype{\Gamma}{T_2}{\tmap{T_1}{T_2}{T}} }
 
 \end{mathpar}

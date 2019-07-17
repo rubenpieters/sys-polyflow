@@ -75,13 +75,13 @@ prog1 =
 
 infixl 50 _,_∶_
 infixl 50 _,_<:_
-infixl 50 _,_:>_
+infixl 50 _,_⊂_
 
 data Context : Set where
   ∅ : Context
   _,_∶_ : Context → Id → Type → Context
   _,_<:_ : Context → Id → Type → Context
-  _,_:>_ : Context → Id → Type → Context
+  _,_⊂_ : Context → Type → Id → Context
 
 -- has-type-in-context relation
 
@@ -103,15 +103,15 @@ data _<:_∈_ : Id → Type → Context → Set where
     → X <: T ∈ Γ
     → X <: T ∈ Γ , Y <: U
 
--- is-supertype-in-context relation
+-- is-atleast-in-context relation
 
-data _:>_∈_ : Id → Type → Context → Set where
-  Z:> : ∀ {Γ X T}
-    → X :> T ∈ Γ , X :> T
-  S:> : ∀ {Γ X T Y U}
+data _⊂_∈_ : Type → Id → Context → Set where
+  Z⊂ : ∀ {Γ X T}
+    → T ⊂ X ∈ Γ , T ⊂ X
+  S⊂ : ∀ {Γ X T Y U}
     → X ≢ Y
-    → X :> T ∈ Γ
-    → X :> T ∈ Γ , Y :> U
+    → T ⊂ X ∈ Γ
+    → T ⊂ X ∈ Γ , U ⊂ Y
 
 -- -------------------------------------
 
@@ -130,9 +130,6 @@ data _⊢_<:_ : Context → Type → Type → Set where
   S-TVar : ∀ {Γ X T}
     → X <: T ∈ Γ
     → Γ ⊢ ′′ X <: T
-  S-TVar2 : ∀ {Γ X T}
-    → X :> T ∈ Γ
-    → Γ ⊢ T <: ′′ X
   S-Arrow : ∀ {Γ S₁ S₂ T₁ T₂}
     → Γ ⊢ T₁ <: S₁
     → Γ ⊢ S₂ <: T₂
@@ -155,7 +152,6 @@ inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
 ... | (_ , refl) = inversion-<:-var S<:U
 -- in case of S-TVar, then trivially S is a type variable
 inversion-<:-var (S-TVar {X = X} _) = (X , refl)
-inversion-<:-var (S-TVar2 {X = X} _) = (X , {!!})
 
 -- if S is a subtype of TBool, then S is a type variable or TBool
 inversion-<:-bool : ∀ {Γ S}
@@ -256,8 +252,8 @@ data _⊢_∶_ : Context → Term → Type → Set where
     → Γ ⊢ if t₁ then t₂ else t₃ ∶ T
   T-IfTrueR : ∀ {Γ T t₂ t₃ x X}
     → Γ ⊢ ′ x ∶ ′′ X
-    → Γ , X :> TBool ⊢ t₂ ∶ T
-    → Γ , X :> TBool ⊢ t₃ ∶ T
+    → Γ , TBool ⊂ X ⊢ t₂ ∶ T
+    → Γ ⊢ t₃ ∶ T
     → Γ ⊢ if (′ x === B′ true) then t₂ else t₃ ∶ T
   T-TAbs : ∀ {Γ X t₂ T₁ T₂}
     → Γ , X <: T₁ ⊢ t₂ ∶ T₂
@@ -270,9 +266,9 @@ data _⊢_∶_ : Context → Term → Type → Set where
     → Γ ⊢ t ∶ S
     → Γ ⊢ S <: T
     → Γ ⊢ t ∶ T
-  T-Eq : ∀ {Γ t₁ t₂ T}
-    → Γ ⊢ t₁ ∶ T
-    → Γ ⊢ t₂ ∶ T
+  T-Eq : ∀ {Γ t₁ t₂ T₁ T₂}
+    → Γ ⊢ t₁ ∶ T₁
+    → Γ ⊢ t₂ ∶ T₂
     → Γ ⊢ t₁ === t₂ ∶ TBool
 
 -- inversion helpers
@@ -564,6 +560,12 @@ data Progress (t : Term) : Set where
        Value t
     → Progress t
 
+var-empty-ctx : ∀ {x T}
+  → ∅ ⊢ ′ x ∶ T
+  → ⊥
+var-empty-ctx (T-Var ())
+var-empty-ctx (T-Sub x y) = var-empty-ctx x
+
 progress : ∀ {t T}
   → ∅ ⊢ t ∶ T
   → Progress t
@@ -587,13 +589,14 @@ progress (T-TApp {X = X} ⊢t₁ ⊢X<:) with progress ⊢t₁
 ... | done v₁ with canonical-form-tabs v₁ ⊢t₁
 ...   | (_ , refl) =  step (E-TAppAbs)
 progress (T-Sub t:S S<:T) = progress t:S
-progress (T-Eq {t₁ = t₁} {t₂ = t₂} t₁:T t₂:T) with progress t₁:T
+progress (T-Eq t₁:T t₂:T) with progress t₁:T
 ... | step t₁—→t₁' = step (E-EqL t₁—→t₁')
 ... | done v₁ with progress t₂:T
 ...   | step t₂—→t₂' = step (E-EqR t₂—→t₂')
 ...   | done v₂ with v-eq v₁ v₂
 ...     | inj₁ eq-proof = step (E-EqTrue v₁ v₂ eq-proof)
 ...     | inj₂ _ = step (E-EqFalse v₁ v₂)
+progress (T-IfTrueR x:X t₂:T t₃:T) = ⊥-elim (var-empty-ctx x:X)
 
 -- -------------------------------------
 
@@ -658,6 +661,7 @@ preserve (T-Eq t₁:T t₂:T) (E-EqL t—→t') = T-Eq (preserve t₁:T t—→t
 preserve (T-Eq t₁:T t₂:T) (E-EqR t—→t') = T-Eq t₁:T (preserve t₂:T t—→t')
 preserve (T-Eq t₁:T t₂:T) (E-EqTrue v₁ v₂ _) = T-Bool
 preserve (T-Eq t₁:T t₂:T) (E-EqFalse v₁ v₂) = T-Bool
+preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If t—→t') = {!T-If (preserve (T-Eq (x:X) (T-Bool {b = true})) t—→t') t₂:T t₃:T!}
 
 -- -------------------------------------
 
