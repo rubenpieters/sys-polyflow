@@ -661,7 +661,10 @@ preserve (T-Eq t₁:T t₂:T) (E-EqL t—→t') = T-Eq (preserve t₁:T t—→t
 preserve (T-Eq t₁:T t₂:T) (E-EqR t—→t') = T-Eq t₁:T (preserve t₂:T t—→t')
 preserve (T-Eq t₁:T t₂:T) (E-EqTrue v₁ v₂ _) = T-Bool
 preserve (T-Eq t₁:T t₂:T) (E-EqFalse v₁ v₂) = T-Bool
-preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If t—→t') = {!T-If (preserve (T-Eq (x:X) (T-Bool {b = true})) t—→t') t₂:T t₃:T!}
+preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqL ()))
+preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqR ()))
+preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqTrue () _ _))
+preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqFalse () _))
 
 -- -------------------------------------
 
