@@ -21,6 +21,7 @@ infix 55 _∨_
 infix 50 _⇒_
 infix 50 ′′_
 infix 40 A_<:_∶_
+infix 40 [T=_,F=_][_]
 
 data Type : Set where
   TTrue : Type
@@ -30,6 +31,7 @@ data Type : Set where
   A_<:_∶_ : Id → Type → Type → Type
   Top : Type
   _∨_ : Type → Type → Type
+  [T=_,F=_][_] : Type → Type → Type → Type
 
 TBool : Type
 TBool = TTrue ∨ TFalse
@@ -147,6 +149,9 @@ data _⊢_<:_ : Context → Type → Type → Set where
     → Γ ⊢ A <: A ∨ B
   S-UnionR : ∀ {Γ A B}
     → Γ ⊢ B <: A ∨ B
+  S-MapTrueSub : ∀ {Γ T T₁ T₂}
+    → TTrue ⊂ T ∈ Γ
+    → Γ ⊢ T₁ <: [T= T₁ ,F= T₂ ][ ′′ T ]
 
 -- inversion of subtyping relation
 
@@ -181,7 +186,7 @@ inversion-<:-false (S-Trans S<:U U<:TFalse) with inversion-<:-false U<:TFalse
 ... | inj₂ refl = inversion-<:-false S<:U
 inversion-<:-false (S-TVar {X = X} X<:TFalse) = inj₁ (X , refl)
 
--- if S is a subtype of TBool, then S is a type variable or TBool
+-- if S is a subtype of TBool, then S is a type variable or TBool/TTrue/TFalse
 inversion-<:-bool : ∀ {Γ S}
   → Γ ⊢ S <: TBool
   → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TBool ⊎ S ≡ TTrue ⊎ S ≡ TFalse
@@ -267,6 +272,7 @@ TFalse [ y τ= s ] = TFalse
 (A x <: X ∶ x₁) [ y τ= s ] = A x <: (X [ y τ= s ]) ∶ x₁ [ y τ= s ]
 Top [ y τ= s ] = Top
 (a ∨ b) [ y τ= s ] = (a [ y τ= s ]) ∨ (b [ y τ= s ])
+[T= a ,F= b ][ x ] [ y τ= s ] = [T= a [ y τ= s ] ,F= b [ y τ= s ] ][ x [ y τ= s ] ]
 
 -- typing relation
 
