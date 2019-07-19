@@ -17,16 +17,22 @@ Id = String
 -- -------------------------------------
 -- TYPES
 
+infix 55 _∨_
 infix 50 _⇒_
 infix 50 ′′_
 infix 40 A_<:_∶_
 
 data Type : Set where
-  TBool : Type
+  TTrue : Type
+  TFalse : Type
   _⇒_ : Type → Type → Type
   ′′_ : Id → Type
   A_<:_∶_ : Id → Type → Type → Type
   Top : Type
+  _∨_ : Type → Type → Type
+
+TBool : Type
+TBool = TTrue ∨ TFalse
 
 -- -------------------------------------
 
@@ -137,6 +143,10 @@ data _⊢_<:_ : Context → Type → Type → Set where
   S-All : ∀ {Γ X U₁ S₂ T₂}
     → Γ , X <: U₁ ⊢ S₂ <: T₂
     → Γ ⊢ (A X <: U₁ ∶ S₂) <: (A X <: U₁ ∶ T₂)
+  S-UnionL : ∀ {Γ A B}
+    → Γ ⊢ A <: A ∨ B
+  S-UnionR : ∀ {Γ A B}
+    → Γ ⊢ B <: A ∨ B
 
 -- inversion of subtyping relation
 
@@ -153,20 +163,46 @@ inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
 -- in case of S-TVar, then trivially S is a type variable
 inversion-<:-var (S-TVar {X = X} _) = (X , refl)
 
+inversion-<:-true : ∀ {Γ S}
+  → Γ ⊢ S <: TTrue
+  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TTrue
+inversion-<:-true S-Refl = inj₂ refl
+inversion-<:-true (S-Trans S<:U U<:TTrue) with inversion-<:-true U<:TTrue
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ refl = inversion-<:-true S<:U
+inversion-<:-true (S-TVar {X = X} X<:TTrue) = inj₁ (X , refl)
+
+inversion-<:-false : ∀ {Γ S}
+  → Γ ⊢ S <: TFalse
+  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TFalse
+inversion-<:-false S-Refl = inj₂ refl
+inversion-<:-false (S-Trans S<:U U<:TFalse) with inversion-<:-false U<:TFalse
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ refl = inversion-<:-false S<:U
+inversion-<:-false (S-TVar {X = X} X<:TFalse) = inj₁ (X , refl)
+
 -- if S is a subtype of TBool, then S is a type variable or TBool
 inversion-<:-bool : ∀ {Γ S}
   → Γ ⊢ S <: TBool
-  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TBool
+  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TBool ⊎ S ≡ TTrue ⊎ S ≡ TFalse
 -- in case of S-Refl, then trivially S is TBool
-inversion-<:-bool (S-Refl) = inj₂ refl
+inversion-<:-bool (S-Refl) = inj₂ (inj₁ refl)
 -- in case of S-Trans, then by induction U is either a type variable or TBool
 inversion-<:-bool (S-Trans S<:U U<:TBool) with inversion-<:-bool U<:TBool
 -- if U is a type variable, then S is a type variable
 ... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
 -- if U is TBool, then by induction S is a type variable or TBool
-... | inj₂ refl = inversion-<:-bool S<:U
+... | inj₂ (inj₁ refl) = inversion-<:-bool S<:U
+... | inj₂ (inj₂ (inj₁ refl)) with inversion-<:-true S<:U
+...   | inj₁ (X , refl) = inj₁ (X , refl)
+...   | inj₂ refl = inj₂ (inj₂ (inj₁ refl))
+inversion-<:-bool (S-Trans S<:U U<:TBool) | inj₂ (inj₂ (inj₂ refl)) with inversion-<:-false S<:U
+...   | inj₁ (X , refl) = inj₁ (X , refl)
+...   | inj₂ refl = inj₂ (inj₂ (inj₂ refl))
 -- in case of S-TVar, then trivially S is a type variable
 inversion-<:-bool (S-TVar {X = X} _) = inj₁ (X , refl)
+inversion-<:-bool (S-UnionL) = inj₂ (inj₂ (inj₁ refl))
+inversion-<:-bool (S-UnionR) = inj₂ (inj₂ (inj₂ refl))
 
 -- if S is a subtype of T₁ ⇒ T₂, then S is a type variable or S has the form S₁ ⇒ S₂ (with T₁ a subtype of S₁ and S₂ a subtype of T₂)
 inversion-<:-abs : ∀ {Γ S T₁ T₂}
@@ -225,10 +261,12 @@ _[_τ=_] : Type → Id → Type → Type
 (′′ x) [ y τ= s ] with x ≟ y
 ... | yes _ = s
 ... | no _ = ′′ x
-TBool [ y τ= s ] = TBool
+TTrue [ y τ= s ] = TTrue
+TFalse [ y τ= s ] = TFalse
 (x ⇒ x₁) [ y τ= s ] = (x [ y τ= s ]) ⇒ (x₁ [ y τ= s ])
 (A x <: X ∶ x₁) [ y τ= s ] = A x <: (X [ y τ= s ]) ∶ x₁ [ y τ= s ]
 Top [ y τ= s ] = Top
+(a ∨ b) [ y τ= s ] = (a [ y τ= s ]) ∨ (b [ y τ= s ])
 
 -- typing relation
 
@@ -243,8 +281,10 @@ data _⊢_∶_ : Context → Term → Type → Set where
     → Γ ⊢ t₁ ∶ T₁₁ ⇒ T₁₂
     → Γ ⊢ t₂ ∶ T₁₁
     → Γ ⊢ t₁ ∙ t₂ ∶ T₁₂
-  T-Bool : ∀ {Γ b}
-    → Γ ⊢ B′ b ∶ TBool
+  T-True : ∀ {Γ}
+    → Γ ⊢ B′ true ∶ TTrue
+  T-False : ∀ {Γ}
+    → Γ ⊢ B′ false ∶ TFalse
   T-If : ∀ {Γ T t₁ t₂ t₃}
     → Γ ⊢ t₁ ∶ TBool
     → Γ ⊢ t₂ ∶ T
@@ -252,7 +292,7 @@ data _⊢_∶_ : Context → Term → Type → Set where
     → Γ ⊢ if t₁ then t₂ else t₃ ∶ T
   T-IfTrueR : ∀ {Γ T t₂ t₃ x X}
     → Γ ⊢ ′ x ∶ ′′ X
-    → Γ , TBool ⊂ X ⊢ t₂ ∶ T
+    → Γ , TTrue ⊂ X ⊢ t₂ ∶ T
     → Γ ⊢ t₃ ∶ T
     → Γ ⊢ if (′ x === B′ true) then t₂ else t₃ ∶ T
   T-TAbs : ∀ {Γ X t₂ T₁ T₂}
@@ -400,11 +440,17 @@ data _—→_ : Term → Term → Set where
 -- -------------------------------------
 -- CANONICAL FORMS
 
-from-bool-term : ∀ {b S}
-  → ∅ ⊢ B′ b ∶ S
-  → ∅ ⊢ TBool <: S
-from-bool-term T-Bool = S-Refl
-from-bool-term (T-Sub x y) = S-Trans (from-bool-term x) y
+from-true-term : ∀ {S}
+  → ∅ ⊢ B′ true ∶ S
+  → ∅ ⊢ TTrue <: S
+from-true-term T-True = S-Refl
+from-true-term (T-Sub x y) = S-Trans (from-true-term x) y
+
+from-false-term : ∀ {S}
+  → ∅ ⊢ B′ false ∶ S
+  → ∅ ⊢ TFalse <: S
+from-false-term T-False = S-Refl
+from-false-term (T-Sub x y) = S-Trans (from-false-term x) y
 
 from-abs-term : ∀ {x t A S}
   → ∅ ⊢ ƛ x ∶ A ⋯> t ∶ S
@@ -424,18 +470,27 @@ from-forall-term (T-Sub x y) with from-forall-term x
 
 -- bool / forall
 
-imp-bool<:forall : ∀ {X T₁ T₂}
-  → ∅ ⊢ TBool <: A X <: T₁ ∶ T₂
+imp-true<:forall : ∀ {X T₁ T₂}
+  → ∅ ⊢ TTrue <: A X <: T₁ ∶ T₂
   → ⊥
-imp-bool<:forall (S-Trans x y) with inversion-<:-forall y
-... | inj₂ (a , b , refl) = imp-bool<:forall x
+imp-true<:forall (S-Trans x y) with inversion-<:-forall y
+... | inj₂ (a , b , refl) = imp-true<:forall x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-false<:forall : ∀ {X T₁ T₂}
+  → ∅ ⊢ TFalse <: A X <: T₁ ∶ T₂
+  → ⊥
+imp-false<:forall (S-Trans x y) with inversion-<:-forall y
+... | inj₂ (a , b , refl) = imp-false<:forall x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
 imp-bool:forall : ∀ {b X T₁ T₂}
   → ∅ ⊢ B′ b ∶ A X <: T₁ ∶ T₂
   → ⊥
-imp-bool:forall (T-Sub x y) = imp-bool<:forall (S-Trans (from-bool-term x) y)
+imp-bool:forall {b = true} (T-Sub x y) = imp-true<:forall (S-Trans (from-true-term x) y)
+imp-bool:forall {b = false} (T-Sub x y) = imp-false<:forall (S-Trans (from-false-term x) y)
 
 -- abs / forall
 
@@ -455,11 +510,29 @@ imp-abs:forall (T-Sub x y) with from-abs-term x
 
 -- abs / bool
 
+imp-abs<:true : ∀ {A B}
+  → ∅ ⊢ A ⇒ B <: TTrue
+  → ⊥
+imp-abs<:true (S-Trans x y) with inversion-<:-true y
+... | inj₂ refl = imp-abs<:true x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-abs<:false : ∀ {A B}
+  → ∅ ⊢ A ⇒ B <: TFalse
+  → ⊥
+imp-abs<:false (S-Trans x y) with inversion-<:-false y
+... | inj₂ refl = imp-abs<:false x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
 imp-abs<:bool : ∀ {A B}
   → ∅ ⊢ A ⇒ B <: TBool
   → ⊥
 imp-abs<:bool (S-Trans x y) with inversion-<:-bool y
-... | inj₂ refl = imp-abs<:bool x
+... | inj₂ (inj₂ (inj₁ refl)) = imp-abs<:true x
+... | inj₂ (inj₂ (inj₂ refl)) = imp-abs<:false x
+... | inj₂ (inj₁ refl) = imp-abs<:bool x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
@@ -471,11 +544,29 @@ imp-abs:bool (T-Sub x y) with from-abs-term x
 
 -- forall / bool
 
+imp-forall<:true : ∀ {X T₁ T₂}
+  → ∅ ⊢ (A X <: T₁ ∶ T₂) <: TTrue
+  → ⊥
+imp-forall<:true (S-Trans x y) with inversion-<:-true y
+... | inj₂ refl = imp-forall<:true x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-forall<:false : ∀ {X T₁ T₂}
+  → ∅ ⊢ (A X <: T₁ ∶ T₂) <: TFalse
+  → ⊥
+imp-forall<:false (S-Trans x y) with inversion-<:-false y
+... | inj₂ refl = imp-forall<:false x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
 imp-forall<:bool : ∀ {X T₁ T₂}
   → ∅ ⊢ A X <: T₁ ∶ T₂ <: TBool
   → ⊥
 imp-forall<:bool (S-Trans x y) with inversion-<:-bool y
-... | inj₂ refl = imp-forall<:bool x
+... | inj₂ (inj₂ (inj₁ refl)) = imp-forall<:true x
+... | inj₂ (inj₂ (inj₂ refl)) = imp-forall<:false x
+... | inj₂ (inj₁ refl) = imp-forall<:bool x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
@@ -503,18 +594,27 @@ imp-forall:abs (T-Sub x y) with from-forall-term x
 
 -- bool / abs
 
-imp-bool<:abs : ∀ {A B}
-  → ∅ ⊢ TBool <: A ⇒ B
+imp-true<:abs : ∀ {A B}
+  → ∅ ⊢ TTrue <: A ⇒ B
   → ⊥
-imp-bool<:abs (S-Trans x y) with inversion-<:-abs y
-... | inj₂ (a , b , c , d , refl) = imp-bool<:abs x
+imp-true<:abs (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-true<:abs x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-false<:abs : ∀ {A B}
+  → ∅ ⊢ TFalse <: A ⇒ B
+  → ⊥
+imp-false<:abs (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-false<:abs x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
 imp-bool:abs : ∀ {b A B}
   → ∅ ⊢ B′ b ∶ A ⇒ B
   → ⊥
-imp-bool:abs (T-Sub x y) = imp-bool<:abs (S-Trans (from-bool-term x) y)
+imp-bool:abs {b = true} (T-Sub x y) = imp-true<:abs (S-Trans (from-true-term x) y)
+imp-bool:abs {b = false} (T-Sub x y) = imp-false<:abs (S-Trans (from-false-term x) y)
 
 -- canonical form lemmas
 
@@ -533,7 +633,6 @@ canonical-form-bool : ∀ {v}
   → ∅ ⊢ v ∶ TBool
   → ∃ λ b → v ≡ B′ b
 canonical-form-bool (V-Abs) (T-Sub x y) = ⊥-elim (imp-abs:bool (T-Sub x y))
-canonical-form-bool (V-Bool {b}) (T-Bool) = (b , refl)
 canonical-form-bool (V-Bool {b}) (T-Sub _ _) = (b , refl)
 canonical-form-bool (V-TAbs) (T-Sub x y) = ⊥-elim (imp-forall:bool (T-Sub x y))
 
@@ -577,7 +676,8 @@ progress (T-App ⊢t₁ ⊢t₂) with progress ⊢t₁
 ...   | step t₂—→t₂' = step (E-App2 t₂—→t₂')
 ...   | done v₂ with canonical-form-abs v₁ ⊢t₁
 ...     | (_ , _ , _ , refl , _) = step (E-AppAbs)
-progress (T-Bool) = done (V-Bool)
+progress (T-True) = done (V-Bool)
+progress (T-False) = done (V-Bool)
 progress (T-If ⊢t ⊢t₁ ⊢t₂) with progress ⊢t
 ... | step t—→t' = step (E-If t—→t')
 ... | done v with canonical-form-bool v ⊢t
@@ -645,7 +745,8 @@ preserve (T-App (T-Sub M:S S<:T₁₂⇒A) t₂:T₁₂) (E-AppAbs) with inversi
     t₂:T₁₁ = T-Sub t₂:T₁₂ T₁₂<:T₁₁
     t₁₂:A = T-Sub t₁₂:S₂ (ext-subt-ctx S₂<:A)
   in subst-preserves-typing t₂:T₁₁ t₁₂:A
-preserve (T-Bool) ()
+preserve (T-True) ()
+preserve (T-False) ()
 preserve (T-If ⊢L ⊢M ⊢N) E-IfTrue = ⊢M
 preserve (T-If ⊢L ⊢M ⊢N) E-IfFalse = ⊢N
 preserve (T-If ⊢L ⊢M ⊢N) (E-If t—→t') = T-If (preserve ⊢L t—→t') ⊢M ⊢N
@@ -659,8 +760,8 @@ preserve (T-TApp (T-Sub M:S S<:AX<:T₁₁:T₁₂) T₂<:T₁) (E-TAppAbs) with
 preserve (T-Sub M:S S<:A) M—→N = T-Sub (preserve M:S M—→N) S<:A
 preserve (T-Eq t₁:T t₂:T) (E-EqL t—→t') = T-Eq (preserve t₁:T t—→t') t₂:T
 preserve (T-Eq t₁:T t₂:T) (E-EqR t—→t') = T-Eq t₁:T (preserve t₂:T t—→t')
-preserve (T-Eq t₁:T t₂:T) (E-EqTrue v₁ v₂ _) = T-Bool
-preserve (T-Eq t₁:T t₂:T) (E-EqFalse v₁ v₂) = T-Bool
+preserve (T-Eq t₁:T t₂:T) (E-EqTrue v₁ v₂ _) =  T-Sub T-True S-UnionL
+preserve (T-Eq t₁:T t₂:T) (E-EqFalse v₁ v₂) = T-Sub T-False S-UnionR
 preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqL ()))
 preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqR ()))
 preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqTrue () _ _))
@@ -699,4 +800,5 @@ symbols:
 — = \em
 ≢ = \==n
 ⊤ = \top
+∨ = \or
 -}
