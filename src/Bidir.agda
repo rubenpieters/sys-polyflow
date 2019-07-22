@@ -35,38 +35,29 @@ data Type : Set where
 infix 50 ′_
 infix 50 B′_
 infixl 45 _↓_
-infix 45 _↑
 infixl 40 _∙_
 infixl 40 _[_]
 infix 35 if_then_else
 infix 30 ƛ_⋯>_
 infix 30 Λ_<:_⋯>_
 
-data Term⁺ : Set
-data Term⁻ : Set
-
-data Term⁺ where
+data Term : Set where
   -- variables
-  ′_ : Id → Term⁺
+  ′_ : Id → Term
   -- application
-  _∙_ : Term⁺ → Term⁻ → Term⁺
+  _∙_ : Term → Term → Term
   -- type application
-  _[_] : Term⁺ → Type → Term⁺
+  _[_] : Term → Type → Term
   -- annotation
-  _↓_ : Term⁻ → Type → Term⁺
+  _↓_ : Term → Type → Term
   -- bool literals
-  B′_ : Bool → Term⁺
-
-
-data Term⁻ where
+  B′_ : Bool → Term
   -- if expr
-  if_then_else : Term⁺ → Term⁻ → Term⁻ → Term⁻
+  if_then_else : Term → Term → Term → Term
   -- function abstraction
-  ƛ_⋯>_ : Id → Term⁻ → Term⁻
+  ƛ_⋯>_ : Id → Term → Term
   -- type abstraction
-  Λ_<:_⋯>_ : Id → Type → Term⁻ → Term⁻
-  -- lift
-  _↑ : Term⁺ → Term⁻
+  Λ_<:_⋯>_ : Id → Type → Term → Term
 
 -- -------------------------------------
 
@@ -131,6 +122,65 @@ data _⊢_<:_ : Context → Type → Type → Set where
     → Γ , X <: U₁ ⊢ S₂ <: T₂
     → Γ ⊢ (Φ X <: U₁ ∶ S₂) <: (Φ X <: U₁ ∶ T₂)
 
+-- inversion
+
+inversion-<:-var : ∀ {Γ S X}
+  → Γ ⊢ S <: ′′ X
+  → ∃[ Y ](S ≡ ′′ Y)
+inversion-<:-var {X = X} (S-Refl) = (X , refl)
+inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
+... | (_ , refl) = inversion-<:-var S<:U
+inversion-<:-var (S-TVar {X = X} _) = (X , refl)
+
+inversion-<:-bool : ∀ {Γ S}
+  → Γ ⊢ S <: TBool
+  → ∃[ X ](S ≡ ′′ X) ⊎ S ≡ TBool
+inversion-<:-bool (S-Refl) = inj₂ refl
+inversion-<:-bool (S-Trans S<:U U<:TBool) with inversion-<:-bool U<:TBool
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ refl = inversion-<:-bool S<:U
+inversion-<:-bool (S-TVar {X = X} _) = inj₁ (X , refl)
+
+inversion-<:-abs : ∀ {Γ S T₁ T₂}
+  → Γ ⊢ S <: T₁ ⇨ T₂
+  → ∃[ X ](S ≡ ′′ X) ⊎ ∃[ S₁ ](∃[ S₂ ](Γ ⊢ T₁ <: S₁ × Γ ⊢ S₂ <: T₂ × S ≡ S₁ ⇨ S₂))
+inversion-<:-abs {T₁ = T₁} {T₂ = T₂} (S-Refl) = inj₂ (T₁ , T₂ , S-Refl , S-Refl , refl)
+inversion-<:-abs (S-Trans S<:U U<:T₁⇨T₂) with inversion-<:-abs U<:T₁⇨T₂
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ (U₁ , U₂ , T₁<:U₁ , U₂<:T₂ , refl) with inversion-<:-abs S<:U
+...   | inj₁ (X , refl) = inj₁ (X , refl)
+...   | inj₂ (S₁ , S₂ , U₁<:S₁ , S₂<:U₂ , refl) = inj₂ (S₁ , S₂ , S-Trans T₁<:U₁ U₁<:S₁ , S-Trans S₂<:U₂ U₂<:T₂ , refl)
+inversion-<:-abs (S-TVar {X = X} _) = inj₁ (X , refl)
+inversion-<:-abs (S-Arrow {S₁ = S₁} {S₂ = S₂} T₁<:S₁ S₂<:T₂) = inj₂ (S₁ , S₂ , T₁<:S₁ , S₂<:T₂ , refl)
+
+inversion-<:-forall : ∀ {Γ S U₁ T₂ X}
+  → Γ ⊢ S <: Φ X <: U₁ ∶ T₂
+  → ∃[ X ](S ≡ ′′ X) ⊎ ∃[ S₂ ](Γ , X <: U₁ ⊢ S₂ <: T₂ × S ≡ Φ X <: U₁ ∶ S₂)
+inversion-<:-forall {T₂ = T₂} (S-Refl) = inj₂ (T₂ , S-Refl , refl)
+inversion-<:-forall (S-Trans S<:U U<:Φ) with inversion-<:-forall U<:Φ
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ (U₂ , (U₂<:T₂ , refl)) with inversion-<:-forall S<:U
+...  | inj₁ (X , refl) = inj₁ (X , refl)
+...  | inj₂ (S₂ , (S₂<:U₂ , refl)) = inj₂ (S₂ , S-Trans S₂<:U₂ U₂<:T₂ , refl)
+inversion-<:-forall (S-TVar {X = X} _) = inj₁ (X , refl)
+inversion-<:-forall (S-All {S₂ = S₂} S₂<:T₂) = inj₂ (S₂ , S₂<:T₂ , refl)
+
+-- imp subtyping
+
+imp-TBool<:⇨ : ∀ {Γ A B}
+  → Γ ⊢ TBool <: A ⇨ B
+  → ⊥
+imp-TBool<:⇨ (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-TBool<:⇨ x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-TBool<:′′ : ∀ {Γ X}
+  → Γ ⊢ TBool <: ′′ X
+  → ⊥
+imp-TBool<:′′ (S-Trans x y) with inversion-<:-var y
+... | (_ , refl) = imp-TBool<:′′ x
+
 -- -------------------------------------
 
 -- -------------------------------------
@@ -150,8 +200,8 @@ TBool [ y τ= s ] = TBool
 Top [ y τ= s ] = Top
 
 
-data _⊢_⇒_ : Context → Term⁺ → Type → Set
-data _⊢_⇐_ : Context → Term⁻ → Type → Set
+data _⊢_⇒_ : Context → Term → Type → Set
+data _⊢_⇐_ : Context → Term → Type → Set
 
 data _⊢_⇒_ where
   BT-Var : ∀ {Γ x A}
@@ -188,11 +238,11 @@ data _⊢_⇐_ where
   BT-CheckInfer : ∀ {Γ t A B}
     → Γ ⊢ t ⇒ A
     → A ≡ B
-    → Γ ⊢ t ↑ ⇐ B
+    → Γ ⊢ t ⇐ B
   BT-Sub : ∀ {Γ t A B}
     → Γ ⊢ t ⇒ A
     → Γ ⊢ A <: B
-    → Γ ⊢ t ↑ ⇐ B
+    → Γ ⊢ t ⇐ B
 
 -- -------------------------------------
 
@@ -232,17 +282,6 @@ Top ≟Tp (Φ X <: T ∶ U) = no λ()
 ... | yes _ | yes _ | no U₁≠U₂ = no λ{refl → U₁≠U₂ refl}
 ... | yes refl | yes refl | yes refl = yes refl
 
-dom≡ : ∀ {A A′ B B′} → A ⇨ B ≡ A′ ⇨ B′ → A ≡ A′
-dom≡ refl = refl
-
-rng≡ : ∀ {A A′ B B′} → A ⇨ B ≡ A′ ⇨ B′ → B ≡ B′
-rng≡ refl = refl
-
-Φ≡ : ∀ {X X' T T' U U'}
-  → Φ X <: T ∶ U ≡ Φ X' <: T' ∶ U'
-  → X ≡ X' × T ≡ T' × U ≡ U'
-Φ≡ refl = (refl , refl , refl)
-
 TBool≠⇨ : ∀ {A B}
   → TBool ≢ A ⇨ B
 TBool≠⇨ ()
@@ -250,6 +289,37 @@ TBool≠⇨ ()
 TBool≠Φ : ∀ {X T U}
   → TBool ≢ Φ X <: T ∶ U
 TBool≠Φ ()
+
+TBool≠Top : TBool ≢ Top
+TBool≠Top ()
+
+TBool≠′′ : ∀ {X}
+  → TBool ≢ ′′ X
+TBool≠′′ ()
+
+Top≠⇨ : ∀ {A B}
+  → Top ≢ A ⇨ B
+Top≠⇨ ()
+
+Top≠′′ : ∀ {X}
+  → Top ≢ ′′ X
+Top≠′′ ()
+
+Top≠Φ : ∀ {X T U}
+  → Top ≢ Φ X <: T ∶ U
+Top≠Φ ()
+
+⇨≠′′ : ∀ {A B X}
+  → A ⇨ B ≢ ′′ X
+⇨≠′′ ()
+
+⇨≠Φ : ∀ {A B X T U}
+  → A ⇨ B ≢ Φ X <: T ∶ U
+⇨≠Φ ()
+
+Φ≠′′ : ∀ {X T U Y}
+  → Φ X <: T ∶ U ≢ ′′ Y
+Φ≠′′ ()
 
 uniq-∈ : ∀ {x A B Γ}
   → x ∶ A ∈ Γ
@@ -268,10 +338,11 @@ uniq-⇒ : ∀ {Γ t A B}
 uniq-⇒ (BT-Var x:A∈Γ) (BT-Var x:B∈Γ) = uniq-∈ x:A∈Γ x:B∈Γ
 uniq-⇒ BT-True BT-True = refl
 uniq-⇒ BT-False BT-False = refl
-uniq-⇒ (BT-App t₁⇒A₁⇨B₁ _) (BT-App t₁⇒A₂⇨B₂ _) = rng≡ (uniq-⇒ t₁⇒A₁⇨B₁ t₁⇒A₂⇨B₂)
+uniq-⇒ (BT-App t₁⇒A₁⇨B₁ _) (BT-App t₁⇒A₂⇨B₂ _) with uniq-⇒ t₁⇒A₁⇨B₁ t₁⇒A₂⇨B₂
+... | refl = refl
 uniq-⇒ (BT-Ann _) (BT-Ann _) = refl
-uniq-⇒ (BT-TApp t⇒Φ₁ Y<:T₁) (BT-TApp t⇒Φ₂ Y<:T₂) with Φ≡ (uniq-⇒ t⇒Φ₁ t⇒Φ₂)
-... | (refl , refl , refl) = refl
+uniq-⇒ (BT-TApp t⇒Φ₁ Y<:T₁) (BT-TApp t⇒Φ₂ Y<:T₂) with uniq-⇒ t⇒Φ₁ t⇒Φ₂
+... | refl = refl
 
 ext∈ : ∀ {x y Γ B}
   → (x ≢ y)
@@ -301,17 +372,24 @@ app-arg-wrong-type : ∀ {Γ t₁ t₂ A B}
   → Γ ⊢ t₁ ⇒ A ⇨ B
   → ¬ Γ ⊢ t₂ ⇐ A
   → ¬ ∃[ B' ](Γ ⊢ t₁ ∙ t₂ ⇒ B')
-app-arg-wrong-type t₁⇒A⇨B ¬t₂⇐A (B' , BT-App t₁⇒A'⇨B' t₂⇐A') with dom≡ (uniq-⇒ t₁⇒A⇨B t₁⇒A'⇨B')
+app-arg-wrong-type t₁⇒A⇨B ¬t₂⇐A (B' , BT-App t₁⇒A'⇨B' t₂⇐A') with uniq-⇒ t₁⇒A⇨B t₁⇒A'⇨B'
 ... | refl = ¬t₂⇐A t₂⇐A'
+
+tapp-arg-wrong-type : ∀ {Γ t X T U Y}
+  → Γ ⊢ t ⇒ Φ X <: T ∶ U
+  → ¬ Γ ⊢ Y <: T
+  → ¬ ∃[ B ](Γ ⊢ t [ Y ] ⇒ B)
+tapp-arg-wrong-type t⇒Φ ¬Y<:T (_ , BT-TApp t⇒Φ' Y<:T) with uniq-⇒ t⇒Φ t⇒Φ'
+... | refl = ¬Y<:T Y<:T
 
 inferType :
     (Γ : Context)
-  → (t : Term⁺)
+  → (t : Term)
   → Dec (∃[ A ](Γ ⊢ t ⇒ A))
 
 checkType :
     (Γ : Context)
-  → (t : Term⁻)
+  → (t : Term)
   → (A : Type)
   → Dec (Γ ⊢ t ⇐ A)
 
@@ -326,10 +404,10 @@ inferType Γ (′ x) with lookup Γ x
 ... | no ¬x∈Γ = no λ{(A , (BT-Var x:A∈Γ)) → ¬x∈Γ (A , x:A∈Γ)}
 inferType Γ (t₁ ∙ t₂) with inferType Γ t₁
 ... | no ¬t₁⇒T = no λ{(B , BT-App t₁⇒A⇨B _) → ¬t₁⇒T (_ , t₁⇒A⇨B)}
-... | yes (TBool , t₁⇒TBool) = no λ{(B , BT-App t₁⇒A⇨B t₂⇐A) → TBool≠⇨ (uniq-⇒ t₁⇒TBool t₁⇒A⇨B)}
-... | yes (Top , b) = {!!}
-... | yes (′′ x , b) = {!!}
-... | yes (Φ x <: t ∶ t₃ , b) = {!!}
+... | yes (TBool , t₁⇒TBool) = no λ{(B , BT-App t₁⇒A⇨B _) → TBool≠⇨ (uniq-⇒ t₁⇒TBool t₁⇒A⇨B)}
+... | yes (Top , t₁⇒Top) = no λ{(B , BT-App t₁⇒A⇨B _) → Top≠⇨ (uniq-⇒ t₁⇒Top t₁⇒A⇨B)}
+... | yes (′′ x , t₁⇒′′) = no λ{(B , BT-App t₁⇒A⇨B _) → ⇨≠′′ (uniq-⇒ t₁⇒A⇨B t₁⇒′′)}
+... | yes (Φ x <: t ∶ t₃ , t₁⇒Φ) = no λ{(B , BT-App t₁⇒A⇨B _) → ⇨≠Φ (uniq-⇒ t₁⇒A⇨B t₁⇒Φ)}
 ... | yes (A ⇨ B , t₁⇒A⇨B) with checkType Γ t₂ A
 ...   | no ¬t₂⇐A = no (app-arg-wrong-type t₁⇒A⇨B ¬t₂⇐A)
 ...   | yes t₂⇐A = yes (B , BT-App t₁⇒A⇨B t₂⇐A)
@@ -339,45 +417,78 @@ inferType Γ (t ↓ T) with checkType Γ t T
 inferType Γ (B′ true) = yes (TBool , BT-True)
 inferType Γ (B′ false) = yes (TBool , BT-False)
 inferType Γ (t [ Y ]) with inferType Γ t
-... | no z = {!!}
+... | no ¬t⇒T = no λ{(_ , BT-TApp t⇒A⇨B _) → ¬t⇒T (_ , t⇒A⇨B)}
 ... | yes (TBool , t⇒TBool) = no λ{(_ , BT-TApp t⇒Φ _) → TBool≠Φ (uniq-⇒ t⇒TBool t⇒Φ)}
-... | yes (a ⇨ a₁ , b) = {!!}
-... | yes (Top , b) = {!!}
-... | yes (′′ x , b) = {!!}
+... | yes (A ⇨ B , t⇒A⇨B) = no λ{(_ , BT-TApp t⇒Φ _) → ⇨≠Φ (uniq-⇒ t⇒A⇨B t⇒Φ)}
+... | yes (Top , t⇒Top) = no λ{(_ , BT-TApp t⇒Φ _) → Top≠Φ (uniq-⇒ t⇒Top t⇒Φ)}
+... | yes (′′ x , t⇒′′) = no λ{(_ , BT-TApp t⇒Φ _) → Φ≠′′ (uniq-⇒ t⇒Φ t⇒′′)}
 ... | yes (Φ X <: T ∶ U , t⇒Φ) with isSubType Γ Y T
-...   | no ¬Y<:T = no λ{(_ , BT-TApp t⇒Φ' Y<:T) → {!uniq-⇒ t⇒Φ t⇒Φ!}}
+...   | no ¬Y<:T = no (tapp-arg-wrong-type t⇒Φ ¬Y<:T)
 ...   | yes Y<:T = yes (U [ X τ= Y ] , BT-TApp t⇒Φ Y<:T)
+inferType Γ (if x then x₁ else x₂) = no λ {(_ , ())}
+inferType Γ (ƛ x ⋯> x₁) = no λ {(_ , ())}
+inferType Γ (Λ x <: x₁ ⋯> x₂) = no λ {(_ , ())}
 
 checkType Γ (if t₁ then t₂ else t₃) T with inferType Γ t₁
-... | no ¬t₁⇒T = no λ{(BT-If t₁⇒TBool _ _) → ¬t₁⇒T (TBool , t₁⇒TBool)}
-... | yes (A ⇨ B , t₁⇒A⇨B) = no λ{(BT-If t₁⇒TBool _ _) → TBool≠⇨ (uniq-⇒ t₁⇒TBool t₁⇒A⇨B)}
+... | no ¬t₁⇒T = no λ{(BT-If t₁⇒TBool _ _) → ¬t₁⇒T (TBool , t₁⇒TBool) ; (BT-CheckInfer () refl) ; (BT-Sub () _)}
+... | yes (A ⇨ B , t₁⇒A⇨B) = no λ{(BT-If t₁⇒TBool _ _) → TBool≠⇨ (uniq-⇒ t₁⇒TBool t₁⇒A⇨B) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+... | yes (Top , t₁⇒Top) = no λ{(BT-If t₁⇒TBool _ _) →  TBool≠Top (uniq-⇒ t₁⇒TBool t₁⇒Top) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+... | yes (′′ x , t₁⇒′′) =  no λ{(BT-If t₁⇒TBool _ _) →  TBool≠′′ (uniq-⇒ t₁⇒TBool t₁⇒′′) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+... | yes (Φ x <: x₁ ∶ x₂ , t₁⇒Φ) =  no λ{(BT-If t₁⇒TBool _ _) →  TBool≠Φ (uniq-⇒ t₁⇒TBool t₁⇒Φ) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
 ... | yes (TBool , t₁⇒TBool) with checkType Γ t₂ T | checkType Γ t₃ T
 ...   | yes t₂⇐T | yes t₃⇐T = yes (BT-If t₁⇒TBool t₂⇐T t₃⇐T)
-...   | no ¬t₂⇐T | _ = no λ{(BT-If _ t₂⇐T _) → ¬t₂⇐T t₂⇐T}
-...   | yes _ | no ¬t₃⇐T = no λ{(BT-If _ _ t₃⇐T) → ¬t₃⇐T t₃⇐T}
+...   | no ¬t₂⇐T | _ = no λ{(BT-If _ t₂⇐T _) → ¬t₂⇐T t₂⇐T ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+...   | yes _ | no ¬t₃⇐T = no λ{(BT-If _ _ t₃⇐T) → ¬t₃⇐T t₃⇐T ; (BT-CheckInfer () _) ; (BT-Sub () _)}
 checkType Γ (ƛ x ⋯> t) (A ⇨ B) with checkType (Γ , x ∶ A) t B
 ... | yes t⇐B = yes (BT-Abs t⇐B)
-... | no ¬t⇐B = no λ{(BT-Abs t⇐B) → ¬t⇐B t⇐B}
-checkType Γ (ƛ x ⋯> t) TBool = no λ()
-checkType Γ (ƛ x ⋯> a) Top = yes {!!}
-checkType Γ (ƛ x ⋯> a) (′′ X) = no λ()
-checkType Γ (ƛ x ⋯> a) (Φ X <: T ∶ U) = no λ()
+... | no ¬t⇐B = no λ{(BT-Abs t⇐B) → ¬t⇐B t⇐B ; (BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (ƛ x ⋯> t) TBool = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (ƛ x ⋯> a) Top = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (ƛ x ⋯> a) (′′ X) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (ƛ x ⋯> a) (Φ X <: T ∶ U) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> U) TBool = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> U) (A ⇨ B) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> U) Top = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> U) (′′ Y) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> t) (Φ X' <: T' ∶ U) with X ≟ X' | T ≟Tp T'
+... | no X≠X' | _ = no λ{(BT-TAbs _) → X≠X' refl ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+... | _ | no T≠T' = no λ{(BT-TAbs _) → T≠T' refl ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+... | yes refl | yes refl with checkType (Γ , X <: T) t U
+...   | yes t⇐U = yes (BT-TAbs t⇐U)
+...   | no ¬t⇐U = no λ{(BT-TAbs t⇐U) → ¬t⇐U t⇐U ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+checkType Γ (′ x) T = {!!}
+checkType Γ (t₁ ∙ t₂) T = {!!}
+checkType Γ (t [ A ]) T = {!!}
+checkType Γ (t ↓ A) T = {!!}
+checkType Γ (B′ b) TBool with inferType Γ (B′ b)
+... | yes (TBool , BT-True) = yes (BT-CheckInfer BT-True refl)
+... | yes (TBool , BT-False) = yes (BT-CheckInfer BT-False refl)
+... | no ¬B′⇒T with b
+...   | true = no λ{c → ¬B′⇒T (TBool , BT-True)}
+...   | false = no λ{c → ¬B′⇒T (TBool , BT-False)}
+checkType Γ (B′ b) (T ⇨ T₁) = no λ{(BT-CheckInfer () refl) ; (BT-Sub BT-True x) → imp-TBool<:⇨ x ; (BT-Sub BT-False x) → imp-TBool<:⇨ x}
+checkType Γ (B′ b) Top with inferType Γ (B′ b)
+... | yes (TBool , BT-True) = yes (BT-Sub BT-True S-Top)
+... | yes (TBool , BT-False) = yes (BT-Sub BT-False S-Top)
+... | no ¬B′⇒T with b
+...   | true = no λ{_ → ¬B′⇒T (TBool , BT-True)}
+...   | false = no λ{_ → ¬B′⇒T (TBool , BT-False)}
+checkType Γ (B′ b) (′′ x₁) = no λ{(BT-CheckInfer () refl) ; (BT-Sub BT-True x) → imp-TBool<:′′ x ; (BT-Sub BT-False x) → imp-TBool<:′′ x}
+checkType Γ (B′ b) (Φ X <: T ∶ U) = {!!}
+
+isSubType Γ S T = {!!}
+
+
+{-
+
 checkType Γ (t ↑) A with inferType Γ t
 -- ... | no ¬t⇒A = no λ{(BT-CheckInfer t⇒A _) → ¬t⇒A (_ , t⇒A)}
 ... | no ¬t⇒A = no λ{(BT-CheckInfer t⇒A _) → ¬t⇒A (_ , t⇒A) ; (BT-Sub t⇒A _) → ¬t⇒A (_ , t⇒A)}
 ... | yes (B , t⇒B) with A ≟Tp B
 ...   | yes refl = yes (BT-CheckInfer t⇒B refl)
 ...   | no A≠B = no λ{(BT-CheckInfer t⇒A refl) → A≠B (uniq-⇒ t⇒A t⇒B)}
-checkType Γ (Λ x <: x₁ ⋯> a) b = {!!}
 
-isSubType Γ S T = {!!}
-
-
-test_prog1 : Term⁺
-test_prog1 = ((ƛ "x" ⋯> ′"x"↑)↓ TBool ⇨ TBool) ∙ (B′ true ↑)
-
-test_infer1 : inferType ∅ test_prog1 ≡ yes (TBool , _)
-test_infer1 = refl
+-}
 
 {-
 symbols:
