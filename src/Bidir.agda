@@ -382,6 +382,19 @@ tapp-arg-wrong-type : ∀ {Γ t X T U Y}
 tapp-arg-wrong-type t⇒Φ ¬Y<:T (_ , BT-TApp t⇒Φ' Y<:T) with uniq-⇒ t⇒Φ t⇒Φ'
 ... | refl = ¬Y<:T Y<:T
 
+helper2 : ∀ {Γ A B}
+  → A ≡ B
+  → ¬ Γ ⊢ A <: B
+  → ⊥
+helper2 refl ¬A<:B = ¬A<:B S-Refl
+
+helper3 : ∀ {Γ A B T}
+  → A ≡ B
+  → ¬ Γ ⊢ A <: T
+  → Γ ⊢ B <: T
+  → ⊥
+helper3 refl ¬A<:T B<:T = ¬A<:T B<:T
+
 inferType :
     (Γ : Context)
   → (t : Term)
@@ -456,25 +469,32 @@ checkType Γ (Λ X <: T ⋯> t) (Φ X' <: T' ∶ U) with X ≟ X' | T ≟Tp T'
 ... | yes refl | yes refl with checkType (Γ , X <: T) t U
 ...   | yes t⇐U = yes (BT-TAbs t⇐U)
 ...   | no ¬t⇐U = no λ{(BT-TAbs t⇐U) → ¬t⇐U t⇐U ; (BT-CheckInfer () _) ; (BT-Sub () _)}
-checkType Γ (′ x) T = {!!}
-checkType Γ (t₁ ∙ t₂) T = {!!}
-checkType Γ (t [ A ]) T = {!!}
-checkType Γ (t ↓ A) T = {!!}
-checkType Γ (B′ b) TBool with inferType Γ (B′ b)
-... | yes (TBool , BT-True) = yes (BT-CheckInfer BT-True refl)
-... | yes (TBool , BT-False) = yes (BT-CheckInfer BT-False refl)
-... | no ¬B′⇒T with b
-...   | true = no λ{c → ¬B′⇒T (TBool , BT-True)}
-...   | false = no λ{c → ¬B′⇒T (TBool , BT-False)}
-checkType Γ (B′ b) (T ⇨ T₁) = no λ{(BT-CheckInfer () refl) ; (BT-Sub BT-True x) → imp-TBool<:⇨ x ; (BT-Sub BT-False x) → imp-TBool<:⇨ x}
-checkType Γ (B′ b) Top with inferType Γ (B′ b)
-... | yes (TBool , BT-True) = yes (BT-Sub BT-True S-Top)
-... | yes (TBool , BT-False) = yes (BT-Sub BT-False S-Top)
-... | no ¬B′⇒T with b
-...   | true = no λ{_ → ¬B′⇒T (TBool , BT-True)}
-...   | false = no λ{_ → ¬B′⇒T (TBool , BT-False)}
-checkType Γ (B′ b) (′′ x₁) = no λ{(BT-CheckInfer () refl) ; (BT-Sub BT-True x) → imp-TBool<:′′ x ; (BT-Sub BT-False x) → imp-TBool<:′′ x}
-checkType Γ (B′ b) (Φ X <: T ∶ U) = {!!}
+checkType Γ (′ x) T with inferType Γ (′ x)
+... | no ¬t⇒T = no λ{(BT-CheckInfer {A = A} t⇒T refl) → ¬t⇒T (A , t⇒T) ; (BT-Sub {A = A} t⇒T _) → ¬t⇒T (A , t⇒T)}
+... | yes (S , t⇒S) with isSubType Γ S T
+...   | yes S<:T = yes (BT-Sub t⇒S S<:T)
+...   | no ¬S<:T = no λ{(BT-CheckInfer t⇒T refl) → helper2 (uniq-⇒ t⇒S t⇒T) ¬S<:T ; (BT-Sub t⇒A A<:T) → helper3 (uniq-⇒ t⇒S t⇒A) ¬S<:T A<:T}
+checkType Γ (t [ A ]) T with inferType Γ (t [ A ])
+... | no ¬t⇒T = no λ{(BT-CheckInfer {A = A} t⇒T refl) → ¬t⇒T (A , t⇒T) ; (BT-Sub {A = A} t⇒T _) → ¬t⇒T (A , t⇒T)}
+... | yes (S , t⇒S) with isSubType Γ S T
+...   | yes S<:T = yes (BT-Sub t⇒S S<:T)
+...   | no ¬S<:T = no λ{(BT-CheckInfer t⇒T refl) → helper2 (uniq-⇒ t⇒S t⇒T) ¬S<:T ; (BT-Sub t⇒A A<:T) → helper3 (uniq-⇒ t⇒S t⇒A) ¬S<:T A<:T}
+checkType Γ (t ↓ A) T with inferType Γ (t ↓ A)
+... | no ¬t⇒T = no λ{(BT-CheckInfer {A = A} t⇒T refl) → ¬t⇒T (A , t⇒T) ; (BT-Sub {A = A} t⇒T _) → ¬t⇒T (A , t⇒T)}
+... | yes (S , t⇒S) with isSubType Γ S T
+...   | yes S<:T = yes (BT-Sub t⇒S S<:T)
+...   | no ¬S<:T = no λ{(BT-CheckInfer t⇒T refl) → helper2 (uniq-⇒ t⇒S t⇒T) ¬S<:T ; (BT-Sub t⇒A A<:T) → helper3 (uniq-⇒ t⇒S t⇒A) ¬S<:T A<:T}
+checkType Γ (B′ b) T with inferType Γ (B′ b)
+... | no ¬t⇒T = no λ{(BT-CheckInfer {A = A} t⇒T refl) → ¬t⇒T (A , t⇒T) ; (BT-Sub {A = A} t⇒T _) → ¬t⇒T (A , t⇒T)}
+... | yes (S , t⇒S) with isSubType Γ S T
+...   | yes S<:T = yes (BT-Sub t⇒S S<:T)
+...   | no ¬S<:T = no λ{(BT-CheckInfer t⇒T refl) → helper2 (uniq-⇒ t⇒S t⇒T) ¬S<:T ; (BT-Sub t⇒A A<:T) → helper3 (uniq-⇒ t⇒S t⇒A) ¬S<:T A<:T}
+checkType Γ (t₁ ∙ t₂) T with inferType Γ (t₁ ∙ t₂)
+... | no ¬t⇒T = no λ{(BT-CheckInfer {A = A} t⇒T refl) → ¬t⇒T (A , t⇒T) ; (BT-Sub {A = A} t⇒T _) → ¬t⇒T (A , t⇒T)}
+... | yes (S , t⇒S) with isSubType Γ S T
+...   | yes S<:T = yes (BT-Sub t⇒S S<:T)
+...   | no ¬S<:T = no λ{(BT-CheckInfer t⇒T refl) → helper2 (uniq-⇒ t⇒S t⇒T) ¬S<:T ; (BT-Sub t⇒A A<:T) → helper3 (uniq-⇒ t⇒S t⇒A) ¬S<:T A<:T}
+
 
 isSubType Γ S T = {!!}
 
