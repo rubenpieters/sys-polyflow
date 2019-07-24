@@ -620,6 +620,76 @@ checkType Γ (t₁ ∙ t₂) T with inferType Γ (t₁ ∙ t₂)
 ...   | yes S<:T = yes (BT-Sub t⇒S S<:T)
 ...   | no ¬S<:T = no λ{(BT-CheckInfer t⇒T refl) → helper2 (uniq-⇒ t⇒S t⇒T) ¬S<:T ; (BT-Sub t⇒A A<:T) → helper3 (uniq-⇒ t⇒S t⇒A) ¬S<:T A<:T}
 
+helper-⇨ : ∀ {Γ S₁ S₂ T₁ T₂}
+  → Γ ⊢ S₁ ⇨ S₂ <: T₁ ⇨ T₂
+  → Γ ⊢ T₁ <: S₁ × Γ ⊢ S₂ <: T₂
+helper-⇨ S-Refl = (S-Refl , S-Refl)
+helper-⇨ (S-Arrow x y) = (x , y)
+helper-⇨ (S-Trans x y) with inversion-<:-abs y
+... | inj₁ (_ , refl) = ⊥-elim (imp-⇨<:′′ x)
+... | inj₂ (U₁ , U₂ , T₁<:U₁ , U₂<:T₂ , refl) with helper-⇨ x
+...   | (U₁<:S₁ , S₂<:U₂) = (S-Trans T₁<:U₁ U₁<:S₁ , S-Trans S₂<:U₂ U₂<:T₂)
+
+imp-trans-⇨ : ∀ {Γ T₁ T₂ S₁ S₂ U}
+  → Γ ⊢ U <: T₁ ⇨ T₂
+  → Γ ⊢ S₁ ⇨ S₂ <: U
+  → ¬ Γ ⊢ T₁ <: S₁
+  → ⊥
+imp-trans-⇨ U<:⇨ ⇨<:U ¬T₁<:S₁ with inversion-<:-abs U<:⇨
+... | inj₁ (_ , refl) = imp-⇨<:′′ ⇨<:U
+... | inj₂ (_ , _ , T₁<:U₁ , _ , refl) with helper-⇨ ⇨<:U
+...   | (U₁<:S₁ , _) = ¬T₁<:S₁ (S-Trans T₁<:U₁ U₁<:S₁)
+
+imp-trans2-⇨ : ∀ {Γ T₁ T₂ S₁ S₂ U}
+  → Γ ⊢ U <: T₁ ⇨ T₂
+  → Γ ⊢ S₁ ⇨ S₂ <: U
+  → ¬ Γ ⊢ S₂ <: T₂
+  → ⊥
+imp-trans2-⇨ U<:⇨ ⇨<:U ¬S₂<:T₂ with inversion-<:-abs U<:⇨
+... | inj₁ (_ , refl) = imp-⇨<:′′ ⇨<:U
+... | inj₂ (_ , _ , _ , U₂<:T₂ , refl) with helper-⇨ ⇨<:U
+...   | (_ , S₂<:U₂) = ¬S₂<:T₂ (S-Trans S₂<:U₂ U₂<:T₂)
+
+helper-Φ : ∀ {Γ X₁ X₂ U₁ U₂ S T}
+  → Γ ⊢ Φ X₁ <: U₁ ∶ S <: Φ X₂ <: U₂ ∶ T
+  → X₁ ≡ X₂ × U₁ ≡ U₂ × Γ , X₁ <: U₁ ⊢ S <: T
+helper-Φ S-Refl = (refl , refl , S-Refl)
+helper-Φ (S-All x) = (refl , refl , x)
+helper-Φ (S-Trans x y) with inversion-<:-forall y
+... | inj₁ (_ , refl) = ⊥-elim (imp-Φ<:′′ x)
+... | inj₂ (_ , z , refl) with helper-Φ x
+...   | (refl , refl , c) = (refl , refl , S-Trans c z)
+
+imp-trans-Φ : ∀ {Γ X₁ X₂ U₁ U₂ S T U}
+  → Γ ⊢ U <: (Φ X₁ <: U₁ ∶ S)
+  → Γ ⊢ (Φ X₂ <: U₂ ∶ T) <: U
+  → ¬ X₂ ≡ X₁
+  → ⊥
+imp-trans-Φ U<:Φ Φ<:U ¬X₁≠X₂ with inversion-<:-forall U<:Φ
+... | inj₁ (_ , refl) = imp-Φ<:′′ Φ<:U
+... | inj₂ (_ , _ , refl) with helper-Φ Φ<:U
+...   | (refl , refl , _) = ¬X₁≠X₂ refl
+
+imp-trans2-Φ : ∀ {Γ X₁ X₂ U₁ U₂ S T U}
+  → Γ ⊢ U <: (Φ X₁ <: U₁ ∶ S)
+  → Γ ⊢ (Φ X₂ <: U₂ ∶ T) <: U
+  → ¬ U₂ ≡ U₁
+  → ⊥
+imp-trans2-Φ U<:Φ Φ<:U ¬U₁≠U₂ with inversion-<:-forall U<:Φ
+... | inj₁ (_ , refl) = imp-Φ<:′′ Φ<:U
+... | inj₂ (_ , _ , refl) with helper-Φ Φ<:U
+...   | (refl , refl , _) = ¬U₁≠U₂ refl
+
+imp-trans3-Φ : ∀ {Γ X₁ X₂ U₁ U₂ S T U}
+  → Γ ⊢ U <: (Φ X₁ <: U₁ ∶ S)
+  → Γ ⊢ (Φ X₂ <: U₂ ∶ T) <: U
+  → ¬ (Γ , X₂ <: U₂) ⊢ T <: S
+  → ⊥
+imp-trans3-Φ U<:Φ Φ<:U ¬T<:S with inversion-<:-forall U<:Φ
+... | inj₁ (_ , refl) = imp-Φ<:′′ Φ<:U
+... | inj₂ (_ , U<:S , refl) with helper-Φ Φ<:U
+...   | (refl , refl , T<:U) = ¬T<:S (S-Trans T<:U U<:S)
+
 {-# TERMINATING #-}
 isSubType Γ TBool TBool = yes S-Refl
 isSubType Γ TBool (A ⇨ B) = no imp-TBool<:⇨
@@ -632,8 +702,8 @@ isSubType Γ (A ⇨ B) (′′ x) = no imp-⇨<:′′
 isSubType Γ (A ⇨ B) (Φ x <: T ∶ T₁) = no imp-⇨<:Φ
 isSubType Γ (S₁ ⇨ S₂) (T₁ ⇨ T₂) with isSubType Γ T₁ S₁ | isSubType Γ S₂ T₂
 ... | yes T₁<:S₁ | yes S₂<:T₂ = yes (S-Arrow T₁<:S₁ S₂<:T₂)
-... | no ¬T₁<:S₁ | _ = no λ{S-Refl → ¬T₁<:S₁ S-Refl ; (S-Trans c c₁) → {!!} ; (S-Arrow T₁<:S₁ _) → ¬T₁<:S₁ T₁<:S₁}
-... | _ | no ¬S₂<:T₂ = no λ{S-Refl → ¬S₂<:T₂ S-Refl ; (S-Trans c c₁) → {!!} ; (S-Arrow _ S₂<:T₂) → ¬S₂<:T₂ S₂<:T₂}
+... | no ¬T₁<:S₁ | _ = no λ{S-Refl → ¬T₁<:S₁ S-Refl ; (S-Trans x y) → imp-trans-⇨ y x ¬T₁<:S₁ ; (S-Arrow T₁<:S₁ _) → ¬T₁<:S₁ T₁<:S₁}
+... | _ | no ¬S₂<:T₂ = no λ{S-Refl → ¬S₂<:T₂ S-Refl ; (S-Trans x y) → imp-trans2-⇨ y x ¬S₂<:T₂ ; (S-Arrow _ S₂<:T₂) → ¬S₂<:T₂ S₂<:T₂}
 isSubType Γ Top TBool = no imp-Top<:TBool
 isSubType Γ Top (A ⇨ B) = no imp-Top<:⇨
 isSubType Γ Top Top = yes S-Refl
@@ -643,23 +713,23 @@ isSubType Γ (′′ X) T with T ≟Tp Top | T ≟Tp ′′ X
 ... | yes refl | _ = yes S-Top
 ... | _ | yes refl = yes S-Refl
 ... | no T≠Top | no T≠X with lookup<: Γ X
-...   | no ¬X<:S∈Γ = no λ{S-Refl → T≠X refl ; (S-Trans c c₁) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → ¬X<:S∈Γ (T , X<:T∈Γ)}
+...   | no ¬X<:S∈Γ = no λ{S-Refl → T≠X refl ; (S-Trans x y) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → ¬X<:S∈Γ (T , X<:T∈Γ)}
 ...   | yes (S , X<:S∈Γ) with S ≟Tp ′′ X
---      TODO: X <: ′′ X should be made impossible and thus lead to a contradiction
+--      TODO: X <: ′′ X and other cycles* should be made impossible and thus lead to a contradiction
+--      * such as X <: ′′ Y ∈ Γ ∧ Y <: ′′ X ∈ Γ
 ...     | yes refl = no λ{c → {!!}}
---      TODO: termination checker is bothered by this call, is it possible to create cycles if X <: ′′ X ∈ Γ is disallowed?
 ...     | no S≠X with isSubType Γ S T
 ...       | yes S<:T = yes (S-Trans (S-TVar X<:S∈Γ) S<:T)
-...       | no ¬S<:T = no λ{S-Refl → T≠X refl ; (S-Trans c c₁) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → helper4 (uniq-<:∈ X<:S∈Γ X<:T∈Γ) ¬S<:T}
+...       | no ¬S<:T = no λ{S-Refl → T≠X refl ; (S-Trans x y) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → helper4 (uniq-<:∈ X<:S∈Γ X<:T∈Γ) ¬S<:T}
 isSubType Γ (Φ X <: T ∶ U) TBool = no imp-Φ<:TBool
 isSubType Γ (Φ X <: T ∶ U) (A ⇨ B) = no imp-Φ<:⇨
 isSubType Γ (Φ X <: T ∶ U) Top = yes S-Top
 isSubType Γ (Φ X <: T ∶ U) (′′ Y) = no imp-Φ<:′′
 isSubType Γ (Φ X₁ <: U₁ ∶ S) (Φ X₂ <: U₂ ∶ T) with X₁ ≟ X₂ | U₁ ≟Tp U₂ | isSubType (Γ , X₁ <: U₁) S T
 ... | yes refl | yes refl | yes S<:T = yes (S-All S<:T)
-... | no X₁≠X₂ | _ | _ = no λ{S-Refl → X₁≠X₂ refl ; (S-Trans c c₁) → {!!} ; (S-All _) → X₁≠X₂ refl}
-... | _ | no U₁≠U₂ | _ = no λ{S-Refl → U₁≠U₂ refl ; (S-Trans c c₁) → {!!} ; (S-All _) → U₁≠U₂ refl}
-... | _ | _ | no ¬S<:T = no λ{S-Refl → ¬S<:T S-Refl ; (S-Trans c c₁) → {!!} ; (S-All S<:T) → ¬S<:T S<:T}
+... | no X₁≠X₂ | _ | _ = no λ{S-Refl → X₁≠X₂ refl ; (S-Trans x y) → imp-trans-Φ y x X₁≠X₂ ; (S-All _) → X₁≠X₂ refl}
+... | _ | no U₁≠U₂ | _ = no λ{S-Refl → U₁≠U₂ refl ; (S-Trans x y) → imp-trans2-Φ y x U₁≠U₂ ; (S-All _) → U₁≠U₂ refl}
+... | _ | _ | no ¬S<:T = no λ{S-Refl → ¬S<:T S-Refl ; (S-Trans x y) → imp-trans3-Φ y x ¬S<:T ; (S-All S<:T) → ¬S<:T S<:T}
 
 test1 = isSubType ∅ TBool TBool
 
