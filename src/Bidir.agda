@@ -16,16 +16,22 @@ Id = String
 -- -------------------------------------
 -- TYPES
 
+infix 55 _∨_
 infix 50 _⇨_
 infix 50 ′′_
 infix 40 Φ_<:_∶_
 
 data Type : Set where
-  TBool : Type
+  TTrue : Type
+  TFalse : Type
   _⇨_ : Type → Type → Type
   Top : Type
   ′′_ : Id → Type
   Φ_<:_∶_ : Id → Type → Type → Type
+  _∨_ : Type → Type → Type
+
+TBool : Type
+TBool = TTrue ∨ TFalse
 
 -- -------------------------------------
 
@@ -124,6 +130,12 @@ data _⊢_<:_ : Context → Type → Type → Set where
   S-All : ∀ {Γ X U S T}
     → Γ , X <: U ⊢ S <: T
     → Γ ⊢ (Φ X <: U ∶ S) <: (Φ X <: U ∶ T)
+  S-UnionL : ∀ {Γ T A B}
+    → Γ ⊢ T <: A
+    → Γ ⊢ T <: A ∨ B
+  S-UnionR : ∀ {Γ T A B}
+    → Γ ⊢ T <: B
+    → Γ ⊢ T <: A ∨ B
 
 -- inversion
 
@@ -135,14 +147,44 @@ inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
 ... | (_ , refl) = inversion-<:-var S<:U
 inversion-<:-var (S-TVar {X = X} _) = (X , refl)
 
+inversion-<:-true : ∀ {Γ S}
+  → Γ ⊢ S <: TTrue
+  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TTrue
+inversion-<:-true S-Refl = inj₂ refl
+inversion-<:-true (S-Trans S<:U U<:TTrue) with inversion-<:-true U<:TTrue
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ refl = inversion-<:-true S<:U
+inversion-<:-true (S-TVar {X = X} X<:TTrue) = inj₁ (X , refl)
+
+inversion-<:-false : ∀ {Γ S}
+  → Γ ⊢ S <: TFalse
+  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TFalse
+inversion-<:-false S-Refl = inj₂ refl
+inversion-<:-false (S-Trans S<:U U<:TFalse) with inversion-<:-false U<:TFalse
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ refl = inversion-<:-false S<:U
+inversion-<:-false (S-TVar {X = X} X<:TFalse) = inj₁ (X , refl)
+
 inversion-<:-bool : ∀ {Γ S}
   → Γ ⊢ S <: TBool
-  → ∃[ X ](S ≡ ′′ X) ⊎ S ≡ TBool
-inversion-<:-bool (S-Refl) = inj₂ refl
+  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TBool ⊎ S ≡ TTrue ⊎ S ≡ TFalse
+inversion-<:-bool (S-Refl) = inj₂ (inj₁ refl)
 inversion-<:-bool (S-Trans S<:U U<:TBool) with inversion-<:-bool U<:TBool
 ... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
-... | inj₂ refl = inversion-<:-bool S<:U
+... | inj₂ (inj₁ refl) = inversion-<:-bool S<:U
+... | inj₂ (inj₂ (inj₁ refl)) with inversion-<:-true S<:U
+...   | inj₁ (X , refl) = inj₁ (X , refl)
+...   | inj₂ refl = inj₂ (inj₂ (inj₁ refl))
+inversion-<:-bool (S-Trans S<:U U<:TBool) | inj₂ (inj₂ (inj₂ refl)) with inversion-<:-false S<:U
+...   | inj₁ (X , refl) = inj₁ (X , refl)
+...   | inj₂ refl = inj₂ (inj₂ (inj₂ refl))
 inversion-<:-bool (S-TVar {X = X} _) = inj₁ (X , refl)
+inversion-<:-bool (S-UnionL S<:True) with inversion-<:-true S<:True
+... | inj₁ (X , refl) = inj₁ (X , refl)
+... | inj₂ refl = inj₂ (inj₂ (inj₁ refl))
+inversion-<:-bool (S-UnionR S<:False) with inversion-<:-false S<:False
+... | inj₁ (X , refl) = inj₁ (X , refl)
+... | inj₂ refl = inj₂ (inj₂ (inj₂ refl))
 
 inversion-<:-abs : ∀ {Γ S T₁ T₂}
   → Γ ⊢ S <: T₁ ⇨ T₂
@@ -168,35 +210,126 @@ inversion-<:-forall (S-Trans S<:U U<:Φ) with inversion-<:-forall U<:Φ
 inversion-<:-forall (S-TVar {X = X} _) = inj₁ (X , refl)
 inversion-<:-forall (S-All {S = S} S<:T) = inj₂ (S , S<:T , refl)
 
+inversion-<:-or : ∀ {Γ S A B}
+  → Γ ⊢ S <: A ∨ B
+  → ∃[ X ](S ≡ ′′ X) ⊎ S ≡ A ∨ B ⊎ Γ ⊢ S <: A ⊎ Γ ⊢ S <: B
+inversion-<:-or S-Refl = inj₂ (inj₁ refl)
+inversion-<:-or (S-Trans S<:U U<:A∨B) with inversion-<:-or U<:A∨B
+... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
+... | inj₂ (inj₂ (inj₁ U<:A)) = inj₂ (inj₂ (inj₁ (S-Trans S<:U U<:A)))
+... | inj₂ (inj₂ (inj₂ U<:B)) = inj₂ (inj₂ (inj₂ (S-Trans S<:U U<:B)))
+... | inj₂ (inj₁ refl) with inversion-<:-or S<:U
+...   | inj₁ (X , refl) = inj₁ (X , refl)
+...   | inj₂ (inj₂ (inj₁ S<:A)) = inj₂ (inj₂ (inj₁ S<:A))
+...   | inj₂ (inj₂ (inj₂ S<:B)) = inj₂ (inj₂ (inj₂ S<:B))
+...   | inj₂ (inj₁ refl) = inj₂ (inj₁ refl)
+inversion-<:-or (S-TVar {X = X} _) = inj₁ (X , refl)
+inversion-<:-or (S-UnionL T<:A) = inj₂ (inj₂ (inj₁ T<:A))
+inversion-<:-or (S-UnionR T<:B) = inj₂ (inj₂ (inj₂ T<:B))
+
 -- imp subtyping
 
-imp-TBool<:⇨ : ∀ {Γ A B}
-  → Γ ⊢ TBool <: A ⇨ B
+imp-TTrue<:⇨ : ∀ {Γ A B}
+  → Γ ⊢ TTrue <: A ⇨ B
   → ⊥
-imp-TBool<:⇨ (S-Trans x y) with inversion-<:-abs y
-... | inj₂ (a , b , c , d , refl) = imp-TBool<:⇨ x
+imp-TTrue<:⇨ (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-TTrue<:⇨ x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
-imp-TBool<:′′ : ∀ {Γ X}
-  → Γ ⊢ TBool <: ′′ X
+imp-TTrue<:TFalse : ∀ {Γ}
+  → Γ ⊢ TTrue <: TFalse
   → ⊥
-imp-TBool<:′′ (S-Trans x y) with inversion-<:-var y
-... | (_ , refl) = imp-TBool<:′′ x
-
-imp-TBool<:Φ : ∀ {Γ X T U}
-  → Γ ⊢ TBool <: Φ X <: T ∶ U
-  → ⊥
-imp-TBool<:Φ (S-Trans x y) with inversion-<:-forall y
-... | inj₂ (a , b , refl) = imp-TBool<:Φ x
+imp-TTrue<:TFalse (S-Trans x y) with inversion-<:-false y
+... | inj₂ refl = imp-TTrue<:TFalse x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
-imp-⇨<:TBool : ∀ {Γ A B}
-  → Γ ⊢ A ⇨ B <: TBool
+imp-TTrue<:′′ : ∀ {Γ X}
+  → Γ ⊢ TTrue <: ′′ X
   → ⊥
-imp-⇨<:TBool (S-Trans x y) with inversion-<:-bool y
-... | inj₂ refl = imp-⇨<:TBool x
+imp-TTrue<:′′ (S-Trans x y) with inversion-<:-var y
+... | (_ , refl) = imp-TTrue<:′′ x
+
+imp-TTrue<:Φ : ∀ {Γ X T U}
+  → Γ ⊢ TTrue <: Φ X <: T ∶ U
+  → ⊥
+imp-TTrue<:Φ (S-Trans x y) with inversion-<:-forall y
+... | inj₂ (a , b , refl) = imp-TTrue<:Φ x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-TTrue<:∨ : ∀ {Γ A B}
+  → Γ ⊢ TTrue <: A ∨ B
+  → ¬ Γ ⊢ TTrue <: A
+  → ¬ Γ ⊢ TTrue <: B
+  → ⊥
+imp-TTrue<:∨ (S-Trans x y) ¬True<:A ¬True<:B with inversion-<:-or y
+... | inj₂ (inj₁ refl) = imp-TTrue<:∨ x ¬True<:A ¬True<:B
+... | inj₂ (inj₂ (inj₁ U<:A)) = ¬True<:A (S-Trans x U<:A)
+... | inj₂ (inj₂ (inj₂ U<:B)) = ¬True<:B (S-Trans x U<:B)
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+imp-TTrue<:∨ (S-UnionL T<:A) ¬True<:A ¬True<:B = ¬True<:A T<:A
+imp-TTrue<:∨ (S-UnionR T<:B) ¬True<:A ¬True<:B = ¬True<:B T<:B
+
+imp-TFalse<:⇨ : ∀ {Γ A B}
+  → Γ ⊢ TFalse <: A ⇨ B
+  → ⊥
+imp-TFalse<:⇨ (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-TFalse<:⇨ x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-TFalse<:TTrue : ∀ {Γ}
+  → Γ ⊢ TFalse <: TTrue
+  → ⊥
+imp-TFalse<:TTrue (S-Trans x y) with inversion-<:-true y
+... | inj₂ refl = imp-TFalse<:TTrue x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-TFalse<:′′ : ∀ {Γ X}
+  → Γ ⊢ TFalse <: ′′ X
+  → ⊥
+imp-TFalse<:′′ (S-Trans x y) with inversion-<:-var y
+... | (_ , refl) = imp-TFalse<:′′ x
+
+imp-TFalse<:Φ : ∀ {Γ X T U}
+  → Γ ⊢ TFalse <: Φ X <: T ∶ U
+  → ⊥
+imp-TFalse<:Φ (S-Trans x y) with inversion-<:-forall y
+... | inj₂ (a , b , refl) = imp-TFalse<:Φ x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-TFalse<:∨ : ∀ {Γ A B}
+  → Γ ⊢ TFalse <: A ∨ B
+  → ¬ Γ ⊢ TFalse <: A
+  → ¬ Γ ⊢ TFalse <: B
+  → ⊥
+imp-TFalse<:∨ (S-Trans x y) ¬False<:A ¬False<:B with inversion-<:-or y
+... | inj₂ (inj₁ refl) = imp-TFalse<:∨ x ¬False<:A ¬False<:B
+... | inj₂ (inj₂ (inj₁ U<:A)) = ¬False<:A (S-Trans x U<:A)
+... | inj₂ (inj₂ (inj₂ U<:B)) = ¬False<:B (S-Trans x U<:B)
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+imp-TFalse<:∨ (S-UnionL T<:A) ¬False<:A ¬False<:B = ¬False<:A T<:A
+imp-TFalse<:∨ (S-UnionR T<:B) ¬False<:A ¬False<:B = ¬False<:B T<:B
+
+imp-⇨<:TTrue : ∀ {Γ A B}
+  → Γ ⊢ A ⇨ B <: TTrue
+  → ⊥
+imp-⇨<:TTrue (S-Trans x y) with inversion-<:-true y
+... | inj₂ refl = imp-⇨<:TTrue x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-⇨<:TFalse : ∀ {Γ A B}
+  → Γ ⊢ A ⇨ B <: TFalse
+  → ⊥
+imp-⇨<:TFalse (S-Trans x y) with inversion-<:-false y
+... | inj₂ refl = imp-⇨<:TFalse x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
@@ -214,11 +347,33 @@ imp-⇨<:Φ (S-Trans x y) with inversion-<:-forall y
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
-imp-Top<:TBool : ∀ {Γ}
-  → Γ ⊢ Top <: TBool
+imp-⇨<:∨ : ∀ {Γ A B L R}
+  → Γ ⊢ A ⇨ B <: L ∨ R
+  → ¬ Γ ⊢ A ⇨ B <: L
+  → ¬ Γ ⊢ A ⇨ B <: R
   → ⊥
-imp-Top<:TBool (S-Trans x y) with inversion-<:-bool y
-... | inj₂ refl = imp-Top<:TBool x
+imp-⇨<:∨ (S-Trans x y) ¬⇨<:A ¬⇨<:B with inversion-<:-or y
+... | inj₂ (inj₁ refl) = imp-⇨<:∨ x ¬⇨<:A ¬⇨<:B
+... | inj₂ (inj₂ (inj₁ U<:A)) = ¬⇨<:A (S-Trans x U<:A)
+... | inj₂ (inj₂ (inj₂ U<:B)) = ¬⇨<:B (S-Trans x U<:B)
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+imp-⇨<:∨ (S-UnionL T<:A) ¬⇨<:A ¬⇨<:B = ¬⇨<:A T<:A
+imp-⇨<:∨ (S-UnionR T<:B) ¬⇨<:A ¬⇨<:B = ¬⇨<:B T<:B
+
+imp-Top<:TTrue : ∀ {Γ}
+  → Γ ⊢ Top <: TTrue
+  → ⊥
+imp-Top<:TTrue (S-Trans x y) with inversion-<:-true y
+... | inj₂ refl = imp-Top<:TTrue x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-Top<:TFalse : ∀ {Γ}
+  → Γ ⊢ Top <: TFalse
+  → ⊥
+imp-Top<:TFalse (S-Trans x y) with inversion-<:-false y
+... | inj₂ refl = imp-Top<:TFalse x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
@@ -244,11 +399,33 @@ imp-Top<:Φ (S-Trans x y) with inversion-<:-forall y
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
-imp-Φ<:TBool : ∀ {Γ X T U}
-  → Γ ⊢ Φ X <: T ∶ U <: TBool
+imp-Top<:∨ : ∀ {Γ L R}
+  → Γ ⊢ Top <: L ∨ R
+  → ¬ Γ ⊢ Top <: L
+  → ¬ Γ ⊢ Top <: R
   → ⊥
-imp-Φ<:TBool (S-Trans x y) with inversion-<:-bool y
-... | inj₂ refl = imp-Φ<:TBool x
+imp-Top<:∨ (S-Trans x y) ¬Top<:A ¬Top<:B with inversion-<:-or y
+... | inj₂ (inj₁ refl) = imp-Top<:∨ x ¬Top<:A ¬Top<:B
+... | inj₂ (inj₂ (inj₁ U<:A)) = ¬Top<:A (S-Trans x U<:A)
+... | inj₂ (inj₂ (inj₂ U<:B)) = ¬Top<:B (S-Trans x U<:B)
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+imp-Top<:∨ (S-UnionL T<:A) ¬Top<:A ¬Top<:B = ¬Top<:A T<:A
+imp-Top<:∨ (S-UnionR T<:B) ¬Top<:A ¬Top<:B = ¬Top<:B T<:B
+
+imp-Φ<:TTrue : ∀ {Γ X T U}
+  → Γ ⊢ Φ X <: T ∶ U <: TTrue
+  → ⊥
+imp-Φ<:TTrue (S-Trans x y) with inversion-<:-true y
+... | inj₂ refl = imp-Φ<:TTrue x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-Φ<:TFalse : ∀ {Γ X T U}
+  → Γ ⊢ Φ X <: T ∶ U <: TFalse
+  → ⊥
+imp-Φ<:TFalse (S-Trans x y) with inversion-<:-false y
+... | inj₂ refl = imp-Φ<:TFalse x
 ... | inj₁ (a , refl) with inversion-<:-var x
 ...   | ()
 
@@ -266,6 +443,58 @@ imp-Φ<:′′ : ∀ {Γ X T U Y}
 imp-Φ<:′′ (S-Trans x y) with inversion-<:-var y
 ... | (_ , refl) = imp-Φ<:′′ x
 
+imp-Φ<:∨ : ∀ {Γ X T U L R}
+  → Γ ⊢ (Φ X <: T ∶ U) <: L ∨ R
+  → ¬ Γ ⊢ (Φ X <: T ∶ U) <: L
+  → ¬ Γ ⊢ (Φ X <: T ∶ U) <: R
+  → ⊥
+imp-Φ<:∨ (S-Trans x y) ¬Φ<:A ¬Φ<:B with inversion-<:-or y
+... | inj₂ (inj₁ refl) = imp-Φ<:∨ x ¬Φ<:A ¬Φ<:B
+... | inj₂ (inj₂ (inj₁ U<:A)) = ¬Φ<:A (S-Trans x U<:A)
+... | inj₂ (inj₂ (inj₂ U<:B)) = ¬Φ<:B (S-Trans x U<:B)
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+imp-Φ<:∨ (S-UnionL T<:A) ¬Φ<:A ¬Φ<:B = ¬Φ<:A T<:A
+imp-Φ<:∨ (S-UnionR T<:B) ¬Φ<:A ¬Φ<:B = ¬Φ<:B T<:B
+
+imp-∨<:TTrue : ∀ {Γ L R}
+  → Γ ⊢ L ∨ R <: TTrue
+  → ⊥
+imp-∨<:TTrue (S-Trans x y) with inversion-<:-true y
+... | inj₂ refl = imp-∨<:TTrue x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-∨<:TFalse : ∀ {Γ L R}
+  → Γ ⊢ L ∨ R <: TFalse
+  → ⊥
+imp-∨<:TFalse (S-Trans x y) with inversion-<:-false y
+... | inj₂ refl = imp-∨<:TFalse x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-∨<:⇨ : ∀ {Γ L R A B}
+  → Γ ⊢ L ∨ R <: (A ⇨ B)
+  → ⊥
+imp-∨<:⇨ (S-Trans x y) with inversion-<:-abs y
+... | inj₂ (a , b , c , d , refl) = imp-∨<:⇨ x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
+imp-∨<:′′ : ∀ {Γ L R X}
+  → Γ ⊢ L ∨ R <: ′′ X
+  → ⊥
+imp-∨<:′′ (S-Trans x y) with inversion-<:-var y
+... | (_ , refl) = imp-∨<:′′ x
+
+imp-∨<:Φ : ∀ {Γ L R X T U}
+  → Γ ⊢ L ∨ R <: Φ X <: T ∶ U
+  → ⊥
+imp-∨<:Φ (S-Trans x y) with inversion-<:-forall y
+... | inj₂ (a , b , refl) = imp-∨<:Φ x
+... | inj₁ (a , refl) with inversion-<:-var x
+...   | ()
+
 -- -------------------------------------
 
 -- -------------------------------------
@@ -279,11 +508,12 @@ _[_τ=_] : Type → Id → Type → Type
 (′′ x) [ y τ= s ] with x ≟ y
 ... | yes _ = s
 ... | no _ = ′′ x
-TBool [ y τ= s ] = TBool
+TTrue [ y τ= s ] = TTrue
+TFalse [ y τ= s ] = TFalse
 (A ⇨ B) [ y τ= s ] = (A [ y τ= s ]) ⇨ (B [ y τ= s ])
 (Φ X <: T ∶ U) [ y τ= s ] = Φ X <: (T [ y τ= s ]) ∶ U [ y τ= s ]
 Top [ y τ= s ] = Top
-
+(A ∨ B) [ y τ= s ] = (A [ y τ= s ]) ∨ (B [ y τ= s ])
 
 data _⊢_⇒_ : Context → Term → Type → Set
 data _⊢_⇐_ : Context → Term → Type → Set
@@ -293,9 +523,9 @@ data _⊢_⇒_ where
     → x ∶ A ∈ Γ
     → Γ ⊢ ′ x ⇒ A
   BT-True : ∀ {Γ}
-    → Γ ⊢ B′ true ⇒ TBool
+    → Γ ⊢ B′ true ⇒ TTrue
   BT-False : ∀ {Γ}
-    → Γ ⊢ B′ false ⇒ TBool
+    → Γ ⊢ B′ false ⇒ TFalse
   BT-App : ∀ {Γ t₁ t₂ A B}
     → Γ ⊢ t₁ ⇒ A ⇨ B
     → Γ ⊢ t₂ ⇐ A
@@ -310,7 +540,7 @@ data _⊢_⇒_ where
 
 data _⊢_⇐_ where
   BT-If : ∀ {Γ t₁ t₂ t₃ T}
-    → Γ ⊢ t₁ ⇒ TBool
+    → Γ ⊢ t₁ ⇐ TBool
     → Γ ⊢ t₂ ⇐ T
     → Γ ⊢ t₃ ⇐ T
     → Γ ⊢ if t₁ then t₂ else t₃ ⇐ T
@@ -332,40 +562,97 @@ data _⊢_⇐_ where
 -- -------------------------------------
 
 _≟Tp_ : (A : Type) → (B : Type) → Dec (A ≡ B)
-TBool ≟Tp TBool = yes refl
-TBool ≟Tp (A ⇨ B) = no λ()
-TBool ≟Tp Top = no λ()
-TBool ≟Tp (′′ x) = no λ()
-TBool ≟Tp (Φ x <: t ∶ t₁) = no λ()
-(A ⇨ B) ≟Tp TBool = no λ()
+TTrue ≟Tp TTrue = yes refl
+TTrue ≟Tp TFalse = no λ()
+TTrue ≟Tp (A ⇨ B) = no λ()
+TTrue ≟Tp Top = no λ()
+TTrue ≟Tp (′′ x) = no λ()
+TTrue ≟Tp (Φ x <: t ∶ t₁) = no λ()
+TTrue ≟Tp (A ∨ B) = no λ()
+TFalse ≟Tp TFalse = yes refl
+TFalse ≟Tp TTrue = no λ()
+TFalse ≟Tp (A ⇨ B) = no λ()
+TFalse ≟Tp Top = no λ()
+TFalse ≟Tp (′′ x) = no λ()
+TFalse ≟Tp (Φ x <: t ∶ t₁) = no λ()
+TFalse ≟Tp (A ∨ B) = no λ()
+(A ⇨ B) ≟Tp TTrue = no λ()
+(A ⇨ B) ≟Tp TFalse = no λ()
 (A ⇨ B) ≟Tp Top = no λ()
 (A ⇨ B) ≟Tp (′′ X) = no λ()
 (A ⇨ B) ≟Tp (Φ X <: T ∶ U) = no λ()
+(A ⇨ B) ≟Tp (_ ∨ _) = no λ()
 (A₁ ⇨ B₁) ≟Tp (A₂ ⇨ B₂) with A₁ ≟Tp A₂ | B₁ ≟Tp B₂
 ... | no A₁≢A₂ | _ = no  λ{refl → A₁≢A₂ refl}
 ... | yes _    | no B₁≢B₂ = no λ{refl → B₁≢B₂ refl}
 ... | yes refl | yes refl = yes refl
 Top ≟Tp Top = yes refl
-Top ≟Tp TBool = no λ()
+Top ≟Tp TTrue = no λ()
+Top ≟Tp TFalse = no λ()
 Top ≟Tp (A ⇨ B) = no λ()
 Top ≟Tp (′′ X) = no λ()
 Top ≟Tp (Φ X <: T ∶ U) = no λ()
+Top ≟Tp (A ∨ B) = no λ()
 (′′ X₁) ≟Tp (′′ X₂) with X₁ ≟ X₂
 ... | yes refl = yes refl
 ... | no X₁≠X₂ = no (λ{refl → X₁≠X₂ refl})
-(′′ X) ≟Tp TBool = no λ()
+(′′ X) ≟Tp TTrue = no λ()
+(′′ X) ≟Tp TFalse = no λ()
 (′′ X) ≟Tp (A ⇨ B) = no λ()
 (′′ X) ≟Tp Top = no λ()
 (′′ X) ≟Tp (Φ Y <: T ∶ U) = no λ()
-(Φ X <: T ∶ U) ≟Tp TBool = no λ()
+(′′ X) ≟Tp (A ∨ B) = no λ()
+(Φ X <: T ∶ U) ≟Tp TTrue = no λ()
+(Φ X <: T ∶ U) ≟Tp TFalse = no λ()
 (Φ X <: T ∶ U) ≟Tp (A ⇨ B) = no λ()
 (Φ X <: T ∶ U) ≟Tp Top = no λ()
 (Φ X <: T ∶ U) ≟Tp (′′ _) = no λ()
+(Φ X <: T ∶ U) ≟Tp (A ∨ B) = no λ()
 (Φ X₁ <: T₁ ∶ U₁) ≟Tp (Φ X₂ <: T₂ ∶ U₂) with X₁ ≟ X₂ | T₁ ≟Tp T₂ | U₁ ≟Tp U₂
 ... | no X₁≠X₂ | _ | _ = no λ{refl → X₁≠X₂ refl}
 ... | yes _ | no T₁≠T₂ | _ = no λ{refl → T₁≠T₂ refl}
 ... | yes _ | yes _ | no U₁≠U₂ = no λ{refl → U₁≠U₂ refl}
 ... | yes refl | yes refl | yes refl = yes refl
+(A ∨ B) ≟Tp TTrue = no λ()
+(A ∨ B) ≟Tp TFalse = no λ()
+(A ∨ B) ≟Tp (_ ⇨ _) = no λ()
+(A ∨ B) ≟Tp Top = no λ()
+(A ∨ B) ≟Tp (′′ X) = no λ()
+(A ∨ B) ≟Tp (Φ X <: T ∶ U) = no λ()
+(A₁ ∨ B₁) ≟Tp (A₂ ∨ B₂) with A₁ ≟Tp A₂ | B₁ ≟Tp B₂
+... | yes refl | yes refl = yes refl
+... | no A₁≠A₂ | _ = no λ{refl → A₁≠A₂ refl}
+... | _ | no B₁≠B₂ = no λ{refl → B₁≠B₂ refl}
+
+TTrue≠⇨ : ∀ {A B}
+  → TTrue ≢ A ⇨ B
+TTrue≠⇨ ()
+
+TTrue≠Φ : ∀ {X T U}
+  → TTrue ≢ Φ X <: T ∶ U
+TTrue≠Φ ()
+
+TTrue≠Top : TTrue ≢ Top
+TTrue≠Top ()
+
+TTrue≠′′ : ∀ {X}
+  → TTrue ≢ ′′ X
+TTrue≠′′ ()
+
+TFalse≠⇨ : ∀ {A B}
+  → TFalse ≢ A ⇨ B
+TFalse≠⇨ ()
+
+TFalse≠Φ : ∀ {X T U}
+  → TFalse ≢ Φ X <: T ∶ U
+TFalse≠Φ ()
+
+TFalse≠Top : TBool ≢ Top
+TFalse≠Top ()
+
+TFalse≠′′ : ∀ {X}
+  → TFalse ≢ ′′ X
+TFalse≠′′ ()
 
 TBool≠⇨ : ∀ {A B}
   → TBool ≢ A ⇨ B
@@ -402,9 +689,21 @@ Top≠Φ ()
   → A ⇨ B ≢ Φ X <: T ∶ U
 ⇨≠Φ ()
 
+⇨≠∨ : ∀ {A B C D}
+  → A ⇨ B ≢ C ∨ D
+⇨≠∨ ()
+
 Φ≠′′ : ∀ {X T U Y}
   → Φ X <: T ∶ U ≢ ′′ Y
 Φ≠′′ ()
+
+Φ≠∨ : ∀ {X T U A B}
+  → Φ X <: T ∶ U ≢ A ∨ B
+Φ≠∨ ()
+
+∨≠′′ : ∀ {A B X}
+  → A ∨ B ≢ ′′ X
+∨≠′′ ()
 
 uniq-∈ : ∀ {x A B Γ}
   → x ∶ A ∈ Γ
@@ -542,24 +841,28 @@ inferType Γ (′ x) with lookup Γ x
 ... | no ¬x∈Γ = no λ{(A , (BT-Var x:A∈Γ)) → ¬x∈Γ (A , x:A∈Γ)}
 inferType Γ (t₁ ∙ t₂) with inferType Γ t₁
 ... | no ¬t₁⇒T = no λ{(B , BT-App t₁⇒A⇨B _) → ¬t₁⇒T (_ , t₁⇒A⇨B)}
-... | yes (TBool , t₁⇒TBool) = no λ{(B , BT-App t₁⇒A⇨B _) → TBool≠⇨ (uniq-⇒ t₁⇒TBool t₁⇒A⇨B)}
+... | yes (TTrue , t₁⇒TTrue) = no λ{(B , BT-App t₁⇒A⇨B _) → TTrue≠⇨ (uniq-⇒ t₁⇒TTrue t₁⇒A⇨B)}
+... | yes (TFalse , t₁⇒TFalse) = no λ{(B , BT-App t₁⇒A⇨B _) → TFalse≠⇨ (uniq-⇒ t₁⇒TFalse t₁⇒A⇨B)}
 ... | yes (Top , t₁⇒Top) = no λ{(B , BT-App t₁⇒A⇨B _) → Top≠⇨ (uniq-⇒ t₁⇒Top t₁⇒A⇨B)}
 ... | yes (′′ x , t₁⇒′′) = no λ{(B , BT-App t₁⇒A⇨B _) → ⇨≠′′ (uniq-⇒ t₁⇒A⇨B t₁⇒′′)}
 ... | yes (Φ x <: t ∶ t₃ , t₁⇒Φ) = no λ{(B , BT-App t₁⇒A⇨B _) → ⇨≠Φ (uniq-⇒ t₁⇒A⇨B t₁⇒Φ)}
+... | yes (A ∨ B , t₁⇒∨) = no λ{(B , BT-App t₁⇒A⇨B _) → ⇨≠∨ (uniq-⇒ t₁⇒A⇨B t₁⇒∨)}
 ... | yes (A ⇨ B , t₁⇒A⇨B) with checkType Γ t₂ A
 ...   | no ¬t₂⇐A = no (app-arg-wrong-type t₁⇒A⇨B ¬t₂⇐A)
 ...   | yes t₂⇐A = yes (B , BT-App t₁⇒A⇨B t₂⇐A)
 inferType Γ (t ↓ T) with checkType Γ t T
 ... | yes t⇐T = yes (T , BT-Ann t⇐T)
 ... | no ¬t⇐T = no λ{(_ , BT-Ann t⇐T) → ¬t⇐T t⇐T}
-inferType Γ (B′ true) = yes (TBool , BT-True)
-inferType Γ (B′ false) = yes (TBool , BT-False)
+inferType Γ (B′ true) = yes (TTrue , BT-True)
+inferType Γ (B′ false) = yes (TFalse , BT-False)
 inferType Γ (t [ Y ]) with inferType Γ t
 ... | no ¬t⇒T = no λ{(_ , BT-TApp t⇒A⇨B _) → ¬t⇒T (_ , t⇒A⇨B)}
-... | yes (TBool , t⇒TBool) = no λ{(_ , BT-TApp t⇒Φ _) → TBool≠Φ (uniq-⇒ t⇒TBool t⇒Φ)}
+... | yes (TTrue , t⇒TTrue) = no λ{(_ , BT-TApp t⇒Φ _) → TTrue≠Φ (uniq-⇒ t⇒TTrue t⇒Φ)}
+... | yes (TFalse , t⇒TFalse) = no λ{(_ , BT-TApp t⇒Φ _) → TFalse≠Φ (uniq-⇒ t⇒TFalse t⇒Φ)}
 ... | yes (A ⇨ B , t⇒A⇨B) = no λ{(_ , BT-TApp t⇒Φ _) → ⇨≠Φ (uniq-⇒ t⇒A⇨B t⇒Φ)}
 ... | yes (Top , t⇒Top) = no λ{(_ , BT-TApp t⇒Φ _) → Top≠Φ (uniq-⇒ t⇒Top t⇒Φ)}
 ... | yes (′′ x , t⇒′′) = no λ{(_ , BT-TApp t⇒Φ _) → Φ≠′′ (uniq-⇒ t⇒Φ t⇒′′)}
+... | yes (A ∨ B , t⇒∨) = no λ{(_ , BT-TApp t⇒Φ _) → Φ≠∨ (uniq-⇒ t⇒Φ t⇒∨)}
 ... | yes (Φ X <: T ∶ U , t⇒Φ) with isSubType Γ Y T
 ...   | no ¬Y<:T = no (tapp-arg-wrong-type t⇒Φ ¬Y<:T)
 ...   | yes Y<:T = yes (U [ X τ= Y ] , BT-TApp t⇒Φ Y<:T)
@@ -567,27 +870,26 @@ inferType Γ (if x then x₁ else x₂) = no λ {(_ , ())}
 inferType Γ (ƛ x ⋯> x₁) = no λ {(_ , ())}
 inferType Γ (Λ x <: x₁ ⋯> x₂) = no λ {(_ , ())}
 
-checkType Γ (if t₁ then t₂ else t₃) T with inferType Γ t₁
-... | no ¬t₁⇒T = no λ{(BT-If t₁⇒TBool _ _) → ¬t₁⇒T (TBool , t₁⇒TBool) ; (BT-CheckInfer () refl) ; (BT-Sub () _)}
-... | yes (A ⇨ B , t₁⇒A⇨B) = no λ{(BT-If t₁⇒TBool _ _) → TBool≠⇨ (uniq-⇒ t₁⇒TBool t₁⇒A⇨B) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
-... | yes (Top , t₁⇒Top) = no λ{(BT-If t₁⇒TBool _ _) →  TBool≠Top (uniq-⇒ t₁⇒TBool t₁⇒Top) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
-... | yes (′′ x , t₁⇒′′) =  no λ{(BT-If t₁⇒TBool _ _) →  TBool≠′′ (uniq-⇒ t₁⇒TBool t₁⇒′′) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
-... | yes (Φ x <: x₁ ∶ x₂ , t₁⇒Φ) =  no λ{(BT-If t₁⇒TBool _ _) →  TBool≠Φ (uniq-⇒ t₁⇒TBool t₁⇒Φ) ; (BT-CheckInfer () _) ; (BT-Sub () _)}
-... | yes (TBool , t₁⇒TBool) with checkType Γ t₂ T | checkType Γ t₃ T
-...   | yes t₂⇐T | yes t₃⇐T = yes (BT-If t₁⇒TBool t₂⇐T t₃⇐T)
-...   | no ¬t₂⇐T | _ = no λ{(BT-If _ t₂⇐T _) → ¬t₂⇐T t₂⇐T ; (BT-CheckInfer () _) ; (BT-Sub () _)}
-...   | yes _ | no ¬t₃⇐T = no λ{(BT-If _ _ t₃⇐T) → ¬t₃⇐T t₃⇐T ; (BT-CheckInfer () _) ; (BT-Sub () _)}
+checkType Γ (if t₁ then t₂ else t₃) T with checkType Γ t₁ TBool | checkType Γ t₂ T | checkType Γ t₃ T
+... | no ¬t₁⇐TBool | _ | _ = no λ{(BT-If x _ _) → ¬t₁⇐TBool x ; (BT-CheckInfer () refl); (BT-Sub () _)}
+... | _ | no ¬t₂⇐T | _ = no λ{(BT-If _ x _) → ¬t₂⇐T x ; (BT-CheckInfer () refl); (BT-Sub () _)}
+... | _ | _ | no ¬t₃⇐T = no λ{(BT-If _ _ x) → ¬t₃⇐T x ; (BT-CheckInfer () refl); (BT-Sub () _)}
+... | yes t₁⇐TBool | yes t₂⇐T | yes t₃⇐T = yes (BT-If t₁⇐TBool t₂⇐T t₃⇐T)
 checkType Γ (ƛ x ⋯> t) (A ⇨ B) with checkType (Γ , x ∶ A) t B
 ... | yes t⇐B = yes (BT-Abs t⇐B)
 ... | no ¬t⇐B = no λ{(BT-Abs t⇐B) → ¬t⇐B t⇐B ; (BT-CheckInfer () refl) ; (BT-Sub () _)}
-checkType Γ (ƛ x ⋯> t) TBool = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (ƛ x ⋯> t) TTrue = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (ƛ x ⋯> t) TFalse = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
 checkType Γ (ƛ x ⋯> a) Top = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
 checkType Γ (ƛ x ⋯> a) (′′ X) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
 checkType Γ (ƛ x ⋯> a) (Φ X <: T ∶ U) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
-checkType Γ (Λ X <: T ⋯> U) TBool = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (ƛ x ⋯> t) (A ∨ B) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> U) TTrue = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> U) TFalse = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
 checkType Γ (Λ X <: T ⋯> U) (A ⇨ B) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
 checkType Γ (Λ X <: T ⋯> U) Top = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
 checkType Γ (Λ X <: T ⋯> U) (′′ Y) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
+checkType Γ (Λ X <: T ⋯> U) (A ∨ B) = no λ{(BT-CheckInfer () refl) ; (BT-Sub () _)}
 checkType Γ (Λ X <: T ⋯> t) (Φ X' <: T' ∶ U) with X ≟ X' | T ≟Tp T'
 ... | no X≠X' | _ = no λ{(BT-TAbs _) → X≠X' refl ; (BT-CheckInfer () _) ; (BT-Sub () _)}
 ... | _ | no T≠T' = no λ{(BT-TAbs _) → T≠T' refl ; (BT-CheckInfer () _) ; (BT-Sub () _)}
@@ -691,12 +993,28 @@ imp-trans3-Φ U<:Φ Φ<:U ¬T<:S with inversion-<:-forall U<:Φ
 ...   | (refl , refl , T<:U) = ¬T<:S (S-Trans T<:U U<:S)
 
 {-# TERMINATING #-}
-isSubType Γ TBool TBool = yes S-Refl
-isSubType Γ TBool (A ⇨ B) = no imp-TBool<:⇨
-isSubType Γ TBool Top = yes S-Top
-isSubType Γ TBool (′′ X) = no imp-TBool<:′′
-isSubType Γ TBool (Φ x <: T ∶ T₁) = no imp-TBool<:Φ
-isSubType Γ (A ⇨ B) TBool = no imp-⇨<:TBool
+isSubType Γ TTrue TTrue = yes S-Refl
+isSubType Γ TTrue TFalse = no imp-TTrue<:TFalse
+isSubType Γ TTrue (A ⇨ B) = no imp-TTrue<:⇨
+isSubType Γ TTrue Top = yes S-Top
+isSubType Γ TTrue (′′ X) = no imp-TTrue<:′′
+isSubType Γ TTrue (Φ x <: T ∶ T₁) = no imp-TTrue<:Φ
+isSubType Γ TTrue (A ∨ B) with isSubType Γ TTrue A | isSubType Γ TTrue B
+... | yes True<:A | _ = yes (S-Trans True<:A (S-UnionL S-Refl))
+... | _ | yes True<:B = yes (S-Trans True<:B (S-UnionR S-Refl))
+... | no ¬True<:A | no ¬True<:B = no λ{x → imp-TTrue<:∨ x ¬True<:A ¬True<:B}
+isSubType Γ TFalse TFalse = yes S-Refl
+isSubType Γ TFalse TTrue = no imp-TFalse<:TTrue
+isSubType Γ TFalse (A ⇨ B) = no imp-TFalse<:⇨
+isSubType Γ TFalse Top = yes S-Top
+isSubType Γ TFalse (′′ X) = no imp-TFalse<:′′
+isSubType Γ TFalse (Φ x <: T ∶ T₁) = no imp-TFalse<:Φ
+isSubType Γ TFalse (A ∨ B) with isSubType Γ TFalse A | isSubType Γ TFalse B
+... | yes False<:A | _ = yes (S-Trans False<:A (S-UnionL S-Refl))
+... | _ | yes False<:B = yes (S-Trans False<:B (S-UnionR S-Refl))
+... | no ¬False<:A | no ¬False<:B = no λ{x → imp-TFalse<:∨ x ¬False<:A ¬False<:B}
+isSubType Γ (A ⇨ B) TTrue = no imp-⇨<:TTrue
+isSubType Γ (A ⇨ B) TFalse = no imp-⇨<:TFalse
 isSubType Γ (A ⇨ B) Top = yes S-Top
 isSubType Γ (A ⇨ B) (′′ x) = no imp-⇨<:′′
 isSubType Γ (A ⇨ B) (Φ x <: T ∶ T₁) = no imp-⇨<:Φ
@@ -704,24 +1022,36 @@ isSubType Γ (S₁ ⇨ S₂) (T₁ ⇨ T₂) with isSubType Γ T₁ S₁ | isSub
 ... | yes T₁<:S₁ | yes S₂<:T₂ = yes (S-Arrow T₁<:S₁ S₂<:T₂)
 ... | no ¬T₁<:S₁ | _ = no λ{S-Refl → ¬T₁<:S₁ S-Refl ; (S-Trans x y) → imp-trans-⇨ y x ¬T₁<:S₁ ; (S-Arrow T₁<:S₁ _) → ¬T₁<:S₁ T₁<:S₁}
 ... | _ | no ¬S₂<:T₂ = no λ{S-Refl → ¬S₂<:T₂ S-Refl ; (S-Trans x y) → imp-trans2-⇨ y x ¬S₂<:T₂ ; (S-Arrow _ S₂<:T₂) → ¬S₂<:T₂ S₂<:T₂}
-isSubType Γ Top TBool = no imp-Top<:TBool
+isSubType Γ (A ⇨ B) (L ∨ R) with isSubType Γ (A ⇨ B) L | isSubType Γ (A ⇨ B) R
+... | yes ⇨<:L | _ = yes (S-Trans ⇨<:L (S-UnionL S-Refl))
+... | _ | yes ⇨<:R = yes (S-Trans ⇨<:R (S-UnionR S-Refl))
+... | no ¬⇨<:L | no ¬⇨<:R = no λ{x → imp-⇨<:∨ x ¬⇨<:L ¬⇨<:R}
+isSubType Γ Top TTrue = no imp-Top<:TTrue
+isSubType Γ Top TFalse = no imp-Top<:TFalse
 isSubType Γ Top (A ⇨ B) = no imp-Top<:⇨
 isSubType Γ Top Top = yes S-Refl
 isSubType Γ Top (′′ x) = no imp-Top<:′′
 isSubType Γ Top (Φ x <: T ∶ T₁) = no imp-Top<:Φ
+isSubType Γ Top (L ∨ R) with isSubType Γ Top L | isSubType Γ Top R
+... | yes Top<:L | _ = yes (S-Trans Top<:L (S-UnionL S-Refl))
+... | _ | yes Top<:R = yes (S-Trans Top<:R (S-UnionR S-Refl))
+... | no ¬Top<:L | no ¬Top<:R = no λ{x → imp-Top<:∨ x ¬Top<:L ¬Top<:R}
 isSubType Γ (′′ X) T with T ≟Tp Top | T ≟Tp ′′ X
 ... | yes refl | _ = yes S-Top
 ... | _ | yes refl = yes S-Refl
 ... | no T≠Top | no T≠X with lookup<: Γ X
-...   | no ¬X<:S∈Γ = no λ{S-Refl → T≠X refl ; (S-Trans x y) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → ¬X<:S∈Γ (T , X<:T∈Γ)}
+...   | no ¬X<:S∈Γ = {!!}
+-- no λ{S-Refl → T≠X refl ; (S-Trans x y) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → ¬X<:S∈Γ (T , X<:T∈Γ)}
 ...   | yes (S , X<:S∈Γ) with S ≟Tp ′′ X
 --      TODO: X <: ′′ X and other cycles* should be made impossible and thus lead to a contradiction
 --      * such as X <: ′′ Y ∈ Γ ∧ Y <: ′′ X ∈ Γ
 ...     | yes refl = no λ{c → {!!}}
 ...     | no S≠X with isSubType Γ S T
 ...       | yes S<:T = yes (S-Trans (S-TVar X<:S∈Γ) S<:T)
-...       | no ¬S<:T = no λ{S-Refl → T≠X refl ; (S-Trans x y) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → helper4 (uniq-<:∈ X<:S∈Γ X<:T∈Γ) ¬S<:T}
-isSubType Γ (Φ X <: T ∶ U) TBool = no imp-Φ<:TBool
+...       | no ¬S<:T = {!!}
+-- no λ{S-Refl → T≠X refl ; (S-Trans x y) → {!!} ; S-Top → T≠Top refl ; (S-TVar X<:T∈Γ) → helper4 (uniq-<:∈ X<:S∈Γ X<:T∈Γ) ¬S<:T}
+isSubType Γ (Φ X <: T ∶ U) TTrue = no imp-Φ<:TTrue
+isSubType Γ (Φ X <: T ∶ U) TFalse = no imp-Φ<:TFalse
 isSubType Γ (Φ X <: T ∶ U) (A ⇨ B) = no imp-Φ<:⇨
 isSubType Γ (Φ X <: T ∶ U) Top = yes S-Top
 isSubType Γ (Φ X <: T ∶ U) (′′ Y) = no imp-Φ<:′′
@@ -730,6 +1060,20 @@ isSubType Γ (Φ X₁ <: U₁ ∶ S) (Φ X₂ <: U₂ ∶ T) with X₁ ≟ X₂ 
 ... | no X₁≠X₂ | _ | _ = no λ{S-Refl → X₁≠X₂ refl ; (S-Trans x y) → imp-trans-Φ y x X₁≠X₂ ; (S-All _) → X₁≠X₂ refl}
 ... | _ | no U₁≠U₂ | _ = no λ{S-Refl → U₁≠U₂ refl ; (S-Trans x y) → imp-trans2-Φ y x U₁≠U₂ ; (S-All _) → U₁≠U₂ refl}
 ... | _ | _ | no ¬S<:T = no λ{S-Refl → ¬S<:T S-Refl ; (S-Trans x y) → imp-trans3-Φ y x ¬S<:T ; (S-All S<:T) → ¬S<:T S<:T}
+isSubType Γ (Φ X <: T ∶ U) (L ∨ R) with isSubType Γ (Φ X <: T ∶ U) L | isSubType Γ (Φ X <: T ∶ U) R
+... | yes Φ<:L | _ = yes (S-Trans Φ<:L (S-UnionL S-Refl))
+... | _ | yes Φ<:R = yes (S-Trans Φ<:R (S-UnionR S-Refl))
+... | no ¬Φ<:L | no ¬Φ<:R = no λ{x → imp-Φ<:∨ x ¬Φ<:L ¬Φ<:R}
+isSubType Γ (A ∨ B) TTrue = no imp-∨<:TTrue
+isSubType Γ (A ∨ B) TFalse = no imp-∨<:TFalse
+isSubType Γ (A ∨ B) (_ ⇨ _) = no imp-∨<:⇨
+isSubType Γ (A ∨ B) Top = yes S-Top
+isSubType Γ (A ∨ B) (′′ _) = no imp-∨<:′′
+isSubType Γ (A ∨ B) (Φ _ <: _ ∶ _) = no imp-∨<:Φ
+isSubType Γ (A₁ ∨ B₁) (A₂ ∨ B₂) with isSubType Γ (A₁ ∨ B₁) A₂ | isSubType Γ (A₁ ∨ B₁) B₂
+... | yes ∨<:A₂ | _ = {!!}
+... | _ | yes ∨<:B₂ = {!!}
+... | no ¬∨<:A₂ | no ¬∨<:B₂ = {!!}
 
 test1 = isSubType ∅ TBool TBool
 
