@@ -17,20 +17,20 @@
            { \hastype{\Gamma}{x}{T} }
 
 \inferrule*[right=T-Abs]
-           { \hastype{\extendwtype{\Gamma}{x}{T_1}}{t_2}{T_2} }
-           { \hastype{\Gamma}{\abs{x}{T_1}{t_2}{T_2}}{\fun{T_1}{T_2}} }
+           { \hastype{\extendwtype{\Gamma}{x}{A}}{t}{B} }
+           { \hastype{\Gamma}{(\abs{x}{A}{t}{B})}{(\fun{A}{B})} }
 
 \inferrule*[right=T-App]
-           { \hastype{\Gamma}{t_1}{\fun{T_{11}}{T_2}} \\ \hastype{\Gamma}{t_2}{T_{11}} }
-           { \hastype{\Gamma}{\app{t_1}{t_2}}{T_2} }
+           { \hastype{\Gamma}{t_1}{\fun{A}{B}} \\ \hastype{\Gamma}{t_2}{A} }
+           { \hastype{\Gamma}{\app{t_1}{t_2}}{B} }
 
 \inferrule*[right=T-TAbs]
-           { \hastype{\extendwsubtype{\Gamma}{X}{T_1}}{t_2}{T_2} }
-           { \hastype{\Gamma}{(\tabs{X}{T_1}{t_2})}{(\tfun{X}{T_1}{T_2})} }
+           { \hastype{\extendwsubtype{\Gamma}{X}{U}}{t}{T} }
+           { \hastype{\Gamma}{(\tabs{X}{U}{t})}{(\tfun{X}{U}{T})} }
 
 \inferrule*[right=T-TApp]
-           { \hastype{\Gamma}{t_1}{\tfun{X}{T_{11}}{T_{12}}} \\ \hassubtype{\Gamma}{T_2}{T_{11}} }
-           { \hastype{\Gamma}{\tapp{t_1}{T_2}}{\subst{T_{12}}{X}{T_2}} }
+           { \hastype{\Gamma}{t}{\tfun{X}{U}{T}} \\ \hassubtype{\Gamma}{S}{U} }
+           { \hastype{\Gamma}{\tapp{t}{S}}{\subst{T}{X}{S}} }
 
 \inferrule*[right=T-Sub]
            { \hastype{\Gamma}{t}{S} \\ \hassubtype{\Gamma}{S}{T} }
@@ -41,12 +41,15 @@
            { \hastype{\Gamma}{\eq{t_1}{t_2}}{\tbool} }
 
 \inferrule*[right=T-If]
-           { \hastype{\Gamma}{t_1}{\tbool} \\ \hastype{\Gamma}{t_2}{T} \\ \hastype{\Gamma}{t_3}{T} }
-           { \hastype{\Gamma}{\ite{t_1}{t_2}{t_3}}{T} }
+           { \hastype{\Gamma}{t_1}{\tbool} \\ \hastype{\Gamma}{t_2}{A} \\ \hastype{\Gamma}{t_3}{B} }
+           { \hastype{\Gamma}{\ite{t_1}{t_2}{t_3}}{\union{A}{B}} }
 
-\inferrule*[right=T-IfTrueR]
-           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwatleast{\Gamma}{\ttrue}{X}}{t_2}{T} \\ \hastype{\Gamma}{t_3}{T} }
-           { \hastype{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{T} }
+% NOTE: in flow-typing system with intersection/negation types, it becomes Gamma [ x |-> Gamma(x) & T ] in 'x is T' branch, and Gamme [ x |-> Gamma(x) & not(T) ] in else branch
+% for example in Sound and Complete Flow Typing with Unions, Intersections and Negations           
+
+\inferrule*[right=T-IfTrue]
+           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwsubtype{\tsubst{\Gamma}{x}{True}}{\ttrue}{X}}{t_2}{A} \\ \hastype{\extendwsubtype{\tsubst{\Gamma}{x}{False}}{\tfalse}{X}}{t_3}{B} }
+           { \hastype{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{\union{A}{B}} }
 
 \end{mathpar}
 
@@ -79,38 +82,46 @@
            { \hassubtype{\Gamma}{(\fun{S_1}{S_2})}{(\fun{T_1}{T_2})} }
 
 \inferrule*[right=S-All]
-           { \hassubtype{\extendwsubtype{\Gamma}{X}{U_1}}{S_2}{T_2}}
-           { \hassubtype{\Gamma}{(\tfun{X}{U_1}{S_2})}{(\tfun{X}{U_1}{T_2})} }
+           { \hassubtype{\extendwsubtype{\Gamma}{X}{U}}{S}{T}}
+           { \hassubtype{\Gamma}{(\tfun{X}{U}{S})}{(\tfun{X}{U}{T})} }
 
 \inferrule*[right=S-UnionL]
-           {  }
-           { \hassubtype{\Gamma}{A}{\union{A}{B}} }
+           { \hassubtype{\Gamma}{T}{L} }
+           { \hassubtype{\Gamma}{T}{\union{L}{R}} }
 
 \inferrule*[right=S-UnionR]
+           { \hassubtype{\Gamma}{T}{R} }
+           { \hassubtype{\Gamma}{T}{\union{L}{R}} }
+
+\inferrule*[right=S-UnionM]
+           { \hassubtype{\Gamma}{L}{T} \\ \hassubtype{\Gamma}{R}{T} }
+           { \hassubtype{\Gamma}{\union{L}{R}}{T} }
+
+\inferrule*[right=S-MapTrueL]
            {  }
-           { \hassubtype{\Gamma}{B}{\union{A}{B}} }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{\ttrue}}{T_t} }
+
+\inferrule*[right=S-MapTrueR]
+           {  }
+           { \hassubtype{\Gamma}{T_t}{\tmap{T_t}{T_f}{\ttrue}} }
+
+\inferrule*[right=S-MapFalseL]
+           {  }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{\tfalse}}{T_f} }
+
+\inferrule*[right=S-MapFalseR]
+           {  }
+           { \hassubtype{\Gamma}{T_f}{\tmap{T_t}{T_f}{\tfalse}} }
+
+\inferrule*[right=S-MapUnion]
+           {  }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{\union{L}{R}}}{\union{T_t}{T_f}} }
 
 \inferrule*[right=S-Map]
-           { \hassubtype{\Gamma}{T}{\tbool} \\ \nothassubtype{\Gamma}{T}{\ttrue} \\ \nothassubtype{\Gamma}{T}{\tfalse} \\ \notatleast{\Gamma}{\ttrue}{T} \\ \notatleast{\Gamma}{\tfalse}{T} }
-           { \hassubtype{\Gamma}{\union{T_1}{T_2}}{\tmap{T_1}{T_2}{T}} }
-
-\inferrule*[right=S-MapTrueSub]
-           { \hassubtype{\Gamma}{T}{\ttrue} }
-           { \hassubtype{\Gamma}{T_1}{\tmap{T_1}{T_2}{T}} }
-
-\inferrule*[right=S-MapFalseSub]
-           { \hassubtype{\Gamma}{T}{\tfalse} }
-           { \hassubtype{\Gamma}{T_2}{\tmap{T_1}{T_2}{T}} }
-
-\inferrule*[right=S-MapTrueSup]
-           { \isatleast{\Gamma}{\ttrue}{T} }
-           { \hassubtype{\Gamma}{T_1}{\tmap{T_1}{T_2}{T}} }
-
-\inferrule*[right=S-MapFalseSup]
-           { \isatleast{\Gamma}{\tfalse}{T} }
-           { \hassubtype{\Gamma}{T_2}{\tmap{T_1}{T_2}{T}} }
+           { \hassubtype{\Gamma}{S}{T} }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{S}}{\tmap{T_t}{T_f}{T}} }
 
 \end{mathpar}
 
-\tbool\ is defined as $\union{\ttrue}{\tfalse}$.
+Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 
