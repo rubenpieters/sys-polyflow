@@ -113,9 +113,9 @@
            {  }
            { \hassubtype{\Gamma}{T_f}{\tmap{T_t}{T_f}{\tfalse}} }
 
-\inferrule*[right=S-MapUnion]
+\inferrule*[right=S-MapBool]
            {  }
-           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{\union{L}{R}}}{\union{T_t}{T_f}} }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
 
 \inferrule*[right=S-Map]
            { \hassubtype{\Gamma}{S}{T} }
@@ -125,3 +125,86 @@
 
 Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 
+\subsection{Sub-Typing Relation 2}
+
+\begin{mathpar}
+
+\inferrule*[right=S-Refl]
+           {  }
+           { \hassubtype{\Gamma}{S}{S} }
+
+\inferrule*[right=S-Trans]
+           { \hassubtype{\Gamma}{S}{U} \\ \hassubtype{\Gamma}{U}{T} }
+           { \hassubtype{\Gamma}{S}{T} }
+
+           \inferrule*[right=S-Top]
+           {  }
+           { \hassubtype{\Gamma}{S}{Top} }
+
+\inferrule*[right=S-TVarSub]
+           { \subtypeincontext{X}{T}{\Gamma} }
+           { \hassubtype{\Gamma}{X}{T} }
+
+\inferrule*[right=S-TVarSup]
+           { \supertypeincontext{X}{T}{\Gamma} }
+           { \hassubtype{\Gamma}{T}{X} }
+
+\inferrule*[right=S-Arrow]
+           { \hassubtype{\Gamma}{T_1}{S_1} \\ \hassubtype{\Gamma}{S_2}{T_2} }
+           { \hassubtype{\Gamma}{(\fun{S_1}{S_2})}{(\fun{T_1}{T_2})} }
+
+\inferrule*[right=S-All]
+           { \hassubtype{\extendwsubtype{\Gamma}{X}{U}}{S}{T}}
+           { \hassubtype{\Gamma}{(\tfun{X}{U}{S})}{(\tfun{X}{U}{T})} }
+
+\inferrule*[right=S-UnionL]
+           { \hassubtype{\Gamma}{T}{L} }
+           { \hassubtype{\Gamma}{T}{\tbool} }
+
+\inferrule*[right=S-UnionR]
+           { \hassubtype{\Gamma}{T}{R} }
+           { \hassubtype{\Gamma}{T}{\union{L}{R}} }
+
+\inferrule*[right=S-UnionM]
+           { \hassubtype{\Gamma}{L}{T} \\ \hassubtype{\Gamma}{R}{T} }
+           { \hassubtype{\Gamma}{\union{L}{R}}{T} }
+
+\inferrule*[right=S-TEval1]
+           { \teval{\Gamma}{T_1}{T_2} }
+           { \hassubtype{\Gamma}{T_1}{T_2} }
+
+\inferrule*[right=S-TEval2]
+           { \teval{\Gamma}{T_1}{T_2} }
+           { \hassubtype{\Gamma}{T_2}{T_1} }
+
+\end{mathpar}
+
+\subsection{Type Evaluation}
+
+\begin{mathpar}
+          
+\inferrule*[right=TE-MapTrue]
+           {  }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{\ttrue}}{T_t} }
+
+\inferrule*[right=TE-MapTrueSub]
+           { \isatleast{\Gamma}{True}{T} }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{T}}{T_t} }
+
+\inferrule*[right=TE-MapFalse]
+           {  }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{\tfalse}}{T_f} }
+
+\inferrule*[right=TE-MapFalseSub]
+           { \isatleast{\Gamma}{False}{T} }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{T}}{T_f} }
+
+\inferrule*[right=TE-MapBool]
+           {  }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
+
+\inferrule*[right=TE-Map]
+           { \teval{\Gamma}{T}{T'} }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{T}}{\tmap{T_t}{T_f}{T'}} }
+
+\end{mathpar}
