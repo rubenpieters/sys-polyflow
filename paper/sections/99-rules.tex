@@ -169,13 +169,13 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \hassubtype{\Gamma}{L}{T} \\ \hassubtype{\Gamma}{R}{T} }
            { \hassubtype{\Gamma}{\union{L}{R}}{T} }
 
-\inferrule*[right=S-TEval1]
-           { \teval{\Gamma}{T_1}{T_2} }
+\inferrule*[right=S-TEval]
+           { \teq{\Gamma}{T_1}{T_2} }
            { \hassubtype{\Gamma}{T_1}{T_2} }
 
-\inferrule*[right=S-TEval2]
-           { \teval{\Gamma}{T_1}{T_2} }
-           { \hassubtype{\Gamma}{T_2}{T_1} }
+\inferrule*[right=S-Map]
+           { \hassubtype{\Gamma}{S}{T} }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{S}}{\tmap{T_t}{T_f}{T}} }
 
 \end{mathpar}
 
@@ -187,24 +187,12 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            {  }
            { \teval{\Gamma}{\tmap{T_t}{T_f}{\ttrue}}{T_t} }
 
-\inferrule*[right=TE-MapTrueSub]
-           { \isatleast{\Gamma}{True}{T} }
-           { \teval{\Gamma}{\tmap{T_t}{T_f}{T}}{T_t} }
-
 \inferrule*[right=TE-MapFalse]
            {  }
            { \teval{\Gamma}{\tmap{T_t}{T_f}{\tfalse}}{T_f} }
 
-\inferrule*[right=TE-MapFalseSub]
-           { \isatleast{\Gamma}{False}{T} }
-           { \teval{\Gamma}{\tmap{T_t}{T_f}{T}}{T_f} }
-
 \inferrule*[right=TE-MapBool]
            {  }
            { \teval{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
-
-\inferrule*[right=TE-Map]
-           { \teval{\Gamma}{T}{T'} }
-           { \teval{\Gamma}{\tmap{T_t}{T_f}{T}}{\tmap{T_t}{T_f}{T'}} }
 
 \end{mathpar}

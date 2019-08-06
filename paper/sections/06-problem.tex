@@ -72,18 +72,18 @@ As an aside, the browser API bindings are unaffected since they are merely TypeS
 
 \subsection{General Problem}
 
-What makes this problem somewhat tricky to solve is the fact that it is not quite a dependent function as is typical in dependently typed languages. The output type of the function is dependent on the \emph{type} of one of its input variables and \emph{not the input value itself}.
+What makes this problem somewhat tricky to solve is the fact that it is not quite a dependent function as is typical in dependently typed languages. The output type of the function is dependent on the \emph{type} of one of its input variables, but \emph{not the actual value of this input}. Of course, these are linked, but it is an important difference.
 
 In fact, the intent of the function is that we query the record type \ts{F} with the \emph{value} of \ts{str}. In other words, the return type we want to write is \ts{F[str]}. In this case, it would be safe to narrow this return type in a branch where the actual value of \ts{str} is checked.
 
-Instead, however, we have to apply the trick as explained before, and the return type becomes \ts{F[T]}. But, by doing this we have prevented the possibility of doing the narrowing we expected previously. Narrowing the type \ts{T} to \ts{"t"} in a branch where \ts{str} has been checked is definitely unsound, illustrated in the following example.
+Instead, however, we have to apply the trick as explained before, and the return type becomes \ts{F[T]}, where \ts{T} is the type of \ts{str}. But, by doing this we have prevented the possibility of doing the narrowing we expected previously. Narrowing the type \ts{T} to \ts{"t"} in a branch where \ts{str} has been checked is definitely unsound, illustrated in the following example.
 
 In this example we have two inputs: \ts{str} and \ts{str2}. Checking the value of \ts{str} does not tell us what the value of \ts{str2} might be. So, within a branch where \ts{str} is checked, it is unsafe to narrow \ts{T} since \ts{str2} also has type \ts{T} but is possibly a different value.
 
 \begin{lstlisting}
-function depFun2<T extends "t" | "f">(str: T, str2: T) {
+function depFun2<T extends "t" | "f">(str: T, str2: T): F[T] {
   if (str === "t") {
-    // if T is narrowed to "t", then str2 has type "t" in this branch while it might be the value "f"
+    // if T is narrowed to "t", then str2 would have type "t" in this branch while it might actually be the value "f"
   } else {
     // ...
   }

@@ -1,2 +1,73 @@
 \section{Discussion of Solutions}
 \label{sec:solution}
+
+In the previous section, we saw that a naive solution to the problem does not work. To solve the problem there are two main paths forward: add additional syntax to ensure that the narrowing of the type parameter becomes safe, or, do a more constrained narrowing which does \emph{is} safe. We briefly discuss these in the next two sections
+
+\subsection{Uniform Generics}
+
+The first solution extends TypeScript with additional syntax for uniform generics. The programmer can write an exclamation mark \ts{!} on a generic type, which can only be instantiated with (TODO: check pr \url{https://github.com/microsoft/TypeScript/pull/30284} in more detail to give a better description) .
+
+\begin{lstlisting}
+// with Uniform Generics
+function depFun<T! extends "t" | "f">(str: T): F[T] {
+  if (str === "t") {
+    return 1;
+  } else {
+    return true;
+  }
+}
+\end{lstlisting}
+
+
+\subsection{Safer Narrowing}
+
+The second solution does a smarter narrowing within the branches to ensure that everything stays sound. Instead of replacing the type variable \ts{T} of a checked variable, we add a lower bound to the context. For instance in the \ts{depFun} example, in the \ts{str === "t"} branch we add the lower bound \ts{"t" extends T}. Using some additional typing rules, we are able to derive \ts{1 extends F[T]} and thus \ts{return 1} typechecks in this branch. This enables the wanted behaviour, while still disallowing the previous unsoundness.
+
+\begin{lstlisting}
+// with Safer Narrowing
+function depFun<T extends "t" | "f">(str: T): F[T] {
+  if (str === "t") {
+    // type of str is narrowed to "t"
+    // '"t" extends T' is added to the context
+    // this allows '1 extends F[T]'
+    return 1;
+  } else {
+    // type of str is narrowed to "f"
+    // '"f" extends T' is added to the context
+    // this allows 'true extends F[T]'
+    return true;
+  }
+}
+\end{lstlisting}
+
+In the \ts{depFun2} example, the unsoundness is avoided. The added constraint \ts{"t" extends T} is still a valid claim if \ts{str2} is the value \ts{"f"}. Because in that case the type \ts{T} can really only be \ts{"t" | "f"}, and \ts{"t" extends "t" | "f"} is valid. By the same reasoning as in the previous example, we are able to do \ts{return 1}, but this behaviour is sound since the caller of the function will be expecting \ts{number} or \ts{number | boolean} depending on whether \ts{T} is \ts{"t"} or \ts{"t" | "f"}.
+
+\begin{lstlisting}
+function depFun2<T extends "t" | "f">(str: T, str2: T): F[T] {
+  if (str === "t") {
+    // type of str is narrowed to "t"
+    // '"t" extends T' is added to the context
+    // return 1 is safe, since caller will expect either number or number | boolean
+    return 1;
+  } else {
+    // ...
+  }
+}
+
+depFun("t", "t"); // T = "t" , return type is number
+depFun("t", "f"); // T = "t" | "f" , return type is number | boolean
+\end{lstlisting}
+
+TODO: add note on difference between specification with lower bounds and actual implementation in compiler, or somewhere else?
+
+\subsection{Comparison}
+
+Pros/Cons of both approaches
+
+Uniform Generics
+\\- Pro: more general interaction with dependent-type-like features
+\\- Con: additional syntax
+
+Safer Narrowing
+\\- Pro: no additional syntax
+\\- Con: unsure on interaction with future features

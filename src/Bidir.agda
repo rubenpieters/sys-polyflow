@@ -17,8 +17,8 @@ Id = String
 -- TYPES
 
 infix 55 _∨_
+infix 51 ′′_
 infix 50 _⇨_
-infix 50 ′′_
 infix 40 Φ_<:_∶_
 
 data Type : Set where
@@ -1076,6 +1076,21 @@ isSubType Γ (A₁ ∨ B₁) (A₂ ∨ B₂) with isSubType Γ (A₁ ∨ B₁) A
 ... | no ¬∨<:A₂ | no ¬∨<:B₂ = {!!}
 
 test1 = isSubType ∅ TBool TBool
+
+test2 = (ƛ "x" ⋯> if (′"x") then (′"x") else (′"x")) ↓ (′′ "X" ⇨ ′′ "X")
+
+test3 = ((Λ "X" <: TBool ⋯> test2) ↓ (Φ "X" <: TBool ∶ (′′ "X" ⇨ ′′ "X"))) [ TTrue ]
+test3a = checkType ∅ test3 (TTrue ⇨ TTrue)
+
+test5 = (ƛ "x" ⋯> if (′"x") then (′"x") else (′"x")) ↓ (TBool ⇨ TBool)
+test5a = checkType ∅ test5 (TBool ⇨ TBool)
+test5b = checkType ∅ test5 (TTrue ⇨ TBool)
+test5c = ′"x"
+test5d = checkType (∅ , "x" ∶ TBool) test5c TBool
+
+test6 = (ƛ "x" ⋯> if (′"x") then (′"x") else (′"x")) ↓ (TTrue ⇨ TTrue)
+test6a = checkType ∅ test6 (TTrue ⇨ TTrue)
+test6b = checkType ∅ test6 (TTrue ⇨ TBool)
 
 {-
 symbols:
