@@ -113,7 +113,7 @@ function depLikeFun<T extends "t" | "f">(str: T): F[T] {
 
 ## Impact in Other Scenarios
 
-The type `F[T]` can occur elsewhere in the function. This extension retains the normal TypeScript behaviour, and is only enabled when checking the return type of a function. In the following example we have a value of type `F[T]` as second input to the function. Within the then branch, this type should not be simplified `number` when reading from the value, since it can actually be of type `boolean`. Checking the first input value does not give us any information regarding the second input value, and thus we cannot do any more simplification.
+The type `F[T]` can occur elsewhere in the function. This extension retains the normal TypeScript behaviour in those cases, and is only enabled when checking the return type of a function. In the following example we have a value of type `F[T]` as second input to the function. Within the then branch, this type should not be simplified `number` when reading from the value, since it can actually be of type `boolean`. Checking the first input value does not give us any information regarding the second input value, and thus we cannot do any more simplification.
 
 ```ts
 function depLikeFun<T extends "t" | "f">(str: T, ft: F[T]): F[T] {
