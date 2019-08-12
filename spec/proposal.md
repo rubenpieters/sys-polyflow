@@ -4,9 +4,9 @@ generic indexed access type dependent function
 
 # Suggestion
 
-TypeScript does not provide dependent types, but by combining various features such as unions, literal types and indexed access types we can obtain fairly similar behaviour from the caller point of view. Unfortunately, the implementer of such functions is faced with either the possibility of unsoundness (pre 3.5) or forced to use unsound assertions (post 3.5). Due to the slight differences, we call these _dependent-type-like_ functions. 
+TypeScript does not provide dependent types, but by combining various features such as unions, literal types and indexed access types we can obtain fairly similar behaviour to a dependent function from the caller point of view. Unfortunately, the implementer of such functions is faced with either the possibility of creating unsoundness (pre 3.5) or forced to assert the return type with unsound features (post 3.5). There are some differences with typical dependent functions, which is why we call these _dependent-type-like_ functions.
 
-This suggestion proposes an addition to the typechecking part of TypeScript, which aids the programmer in writing dependent-type-like functions. The main attractive point of this suggestion is that it does not introduce any additional syntax, and is meant to be a conservative extension. Thus it is not a breaking change with regards to the changes introduced in 3.5, but it does allow more sound behaviour to typecheck.
+This suggestion proposes an addition to the typechecking part of TypeScript, which aids the programmer in writing dependent-type-like functions. The main attractive point of this suggestion is that it does not introduce any additional syntax, and is meant to be a conservative extension. Thus it is not a breaking change with regards to the changes introduced in 3.5, but it does enable certain sound scenarios to typecheck.
 
 # Use Case
 
@@ -30,7 +30,10 @@ depFun("t"); // has type number
 depFun("f"); // has type boolean
 ```
 
-This pattern occurs in various places, such as the [TypeScript dom bindings](https://github.com/microsoft/TypeScript/blob/ca00b3248b1af2263d0223d68e792b7ca39abcab/lib/lib.dom.d.ts#L11050), in issues such as [#31672](https://github.com/microsoft/TypeScript/issues/31672) and [#32698](https://github.com/microsoft/TypeScript/issues/32698), or on [stackoverflow questions](https://stackoverflow.com/questions/56479117/how-to-fix-ts2322-when-using-a-case-switch-and-generics).
+This pattern occurs in various places, such as the [TypeScript dom bindings](https://github.com/microsoft/TypeScript/blob/ca00b3248b1af2263d0223d68e792b7ca39abcab/lib/lib.dom.d.ts#L11050), in issues such as [#31672](https://github.com/microsoft/TypeScript/issues/31672) and [#32698](https://github.com/microsoft/TypeScript/issues/32698), in comments of related issues such as [#13995](https://github.com/microsoft/TypeScript/issues/13995), or on [stackoverflow questions](https://stackoverflow.com/questions/56479117/how-to-fix-ts2322-when-using-a-case-switch-and-generics). This extension could serve as a workaround for related issues such as [#22609](https://github.com/microsoft/TypeScript/issues/22609) and [#23861](https://github.com/microsoft/TypeScript/issues/23861).
+
+TODO: does this help with [#25879](https://github.com/microsoft/TypeScript/issues/25879) ?
+TODO: does this pattern occur somewhere in [fp-ts](https://github.com/gcanti/fp-ts) ?
 
 # Problem
 
@@ -46,8 +49,8 @@ function depLikeFun<T extends "t" | "f">(str: T): F[T] {
   }
 }
 
-depFun("t"); // has type number, but is actually a boolean
-depFun("f"); // has type boolean, but is actually a number
+depLikeFun("t"); // has type number, but is actually a boolean
+depLikeFun("f"); // has type boolean, but is actually a number
 ```
 
 The post-3.5 behaviour also isn't satisfactory for this use case. It disallows the `depLikeFun` to be implemented, which means the implementer needs to use unsafe type assertions. By [#30769](https://github.com/microsoft/TypeScript/issues/30739), the `return` calls are considered writes to the result of the function. This means that the result type `F[T]` is checked against the _intersection_ of its possibilities, which is `number & boolean` and thus `never`. 
@@ -69,7 +72,7 @@ Mistakes are more likely to occur in complex situations, and thus aiding the use
 
 In a dependently typed language `depLikeFun` would be modeled as `function depFun(str: "t" | "f"): F[str]`. There are meaningful differences between depending on the actual _value_ of the input versus the _type_ of an input. This distinction makes this issue more tricky to solve than appears on first sight. In this section we showcase the expected behaviour of the addition on certain representative examples.
 
-The main idea behind the addition is as follows. in a dependent-type-like function we cannot narrow the type `T` of a variable when the value of that value is checked. For example, if `str` has type `T extends "t" | "f"` and we check whether `str === "t"`, then it is unsafe to narrow `T` to `"t"` in that branch, since `T` could also be instantiated with for example `"t" | "f"`. Instead, we add knowledge about the type `T` within the branch which is more conservative, but will still make it possible to allow the behaviour of dependent-type-like functions. In more traditional programming language theory, the knowledge we add is very similar to adding a lower bound `"t" <: T` into the context.
+The main idea behind the addition is as follows. in a dependent-type-like function we cannot narrow the type `T` of a variable when the value of that value is checked. For example, if `str` has type `T extends "t" | "f"` and we check whether `str === "t"`, then it is unsafe to narrow `T` to `"t"` in that branch, since `T` could also be instantiated with for example `"t" | "f"`. Instead, we add knowledge about the type `T` within the branch which is more conservative, but makes it possible to allow the behaviour of dependent-type-like functions. In more traditional programming language theory, the knowledge added is very similar to adding a lower bound `"t" <: T` into the context.
 
 ## Basic Use Case
 
@@ -99,7 +102,7 @@ function depLikeFun<T extends "t" | "f">(str: T, str2: T): F[T] {
 }
 ```
 
-The extension is conservative, and thus any other case disallowed in 3.5 is still disallowed. However, what might change is the error message users see when implementing dependent-type-like functions. In the situation below, instead of comparing `true` / `1` to `never`, they get compared against the simplified indexed access type within each branch. This is `number` in the then branch and `boolean` in the else branch.
+The extension is conservative, and behaviour of other cases should be the same as in 3.5. However, what might change is the error message users see when implementing dependent-type-like functions. In the situation below, instead of comparing `true` / `1` to `never`, they get compared against the simplified indexed access type within each branch. This is `number` in the then branch and `boolean` in the else branch.
 
 ```ts
 function depLikeFun<T extends "t" | "f">(str: T): F[T] {
@@ -113,7 +116,7 @@ function depLikeFun<T extends "t" | "f">(str: T): F[T] {
 
 ## Impact in Other Scenarios
 
-The type `F[T]` can occur elsewhere in the function. This extension retains the normal TypeScript behaviour in those cases, and is only enabled when checking the return type of a function. In the following example we have a value of type `F[T]` as second input to the function. Within the then branch, this type should not be simplified `number` when reading from the value, since it can actually be of type `boolean`. Checking the first input value does not give us any information regarding the second input value, and thus we cannot do any more simplification.
+The type `F[T]` can occur elsewhere in the function. This extension retains the normal TypeScript behaviour in those cases, and is only enabled when checking the return type of a function. In the following example we have a value of type `F[T]` as second input to the function. Within the then branch, this type should not be simplified to `number`, since it can actually be of type `boolean`. Checking the first input value does not give us any information regarding the second input value, and thus we cannot do any more simplification.
 
 ```ts
 function depLikeFun<T extends "t" | "f">(str: T, ft: F[T]): F[T] {
@@ -131,7 +134,7 @@ depLikeFun<"t" | "f">("t", x); // ft can be of type 'boolean'
 
 ## Transitive Type Parameters
 
-TypeScript allows an indexed access with a type parameter which has a direct transitive line to a correct bound. For example, it allows `function depLikeFun<T extends "t" | "f", B extends T>(str: B): F[B]`, but disallows `function depLikeFun<T extends "t", F extends "f", B extends T | F>(str: B): F[B]`.
+TypeScript allows an indexed access with a type parameter which has a _direct_ transitive line to a correct bound. For example, it allows `function depLikeFun<T extends "t" | "f", B extends T>(str: B): F[B]`, but disallows `function depLikeFun<T extends "t", F extends "f", B extends T | F>(str: B): F[B]`.
 
 In these situation it seems safe to let information flow through the transitive chain in both directions. For example, when checking an input of type `B`, we can add knowledge about `T`. And vice versa for checking an input of type `T` and an input of type `B`.
 
@@ -176,11 +179,13 @@ function depLikeFun<T extends "t" | "f">(str: T): F<T> {
 }
 ```
 
-This raises the question whether the addition of typechecking for dependent-type-like functions should be added for type level functions created with conditional types too, for consistency purposes. Two points worth noting is that: users were never able to implement this behaviour using conditional types (even pre-3.5), and, type level functions with conditional types are not restriced to a domain of string keys which makes things more complex. Nevertheless, we feel it is a point worth bringing up for discussion.
+This raises the question whether the addition of typechecking for dependent-type-like functions should be added for type level functions created with conditional types too, for consistency purposes. Two points worth noting is that: users were never able to implement this behaviour using conditional types (even pre-3.5), and, type level functions with conditional types are not restricted to a domain of string keys which makes things more complex. Nevertheless, we feel it is a point worth bringing up for discussion.
+
+TODO: related issue: [#21879](https://github.com/microsoft/TypeScript/issues/21879), can this feature be used as a workaround for this issue?
 
 ## Behaviour with `any`
 
-The result of instantiating a dependent-type-like function with the `any` type gives a result of `any`. Any behaviour related to interaction with the `any` type and dependent-type-like functions is supposed to be unchanged compared to 3.5.
+The result of instantiating a dependent-type-like function with the `any` type gives a result of `any`. This occurs, for example, when disabling `--strictNullChecks` and calling the function with `null`. Any behaviour related to interaction with `null`/`any` and dependent-type-like functions is supposed to be unchanged compared to 3.5.
 
 ## TODO
 
@@ -192,7 +197,7 @@ In this section we roughly outline the suspected changes to the compiler needed 
 
 - The main change is centered in the `getSimplifiedIndexedAccessType` function. When checking return types, the simplification process will now check when a generic parameter is used as `indexType`. Then, before the cache is consulted, it will look up checks of related variables with string literals in the control flow graph. The indexed access type is then simplified according to these checks as outlined in the proposal.
 - To be able to check the control flow graph, it needs to be made accessible to the `getSimplifiedIndexedAccessType` function.
-- The `getSimplifiedIndexedAccessType` must be informed to enable the additional simplification, which will be set to `true` in the `checkReturnType` function.
+- The `getSimplifiedIndexedAccessType` must be informed to enable the additional simplification, the `checkReturnType` function will enable this behaviour when calling typechecking for the return type.
 
 # Workaround
 
@@ -204,6 +209,7 @@ In this section we gather related suggestions which could be considered alternat
 
 - extending the TypeScript syntax, such as a `oneof` generic constraint: [#25879](https://github.com/microsoft/TypeScript/issues/25879), [#27808](https://github.com/microsoft/TypeScript/issues/27808) or [#30284](https://github.com/microsoft/TypeScript/pull/30284)
 - dependent types in TypeScript, which would have a huge impact on the compiler and is possibly out of scope for the TypeScript project
+- this extension is a more refined idea based on previous ideas of narrowing types based on term-level checks such as [#21879](https://github.com/microsoft/TypeScript/issues/21879)
 
 # Checklist
 
