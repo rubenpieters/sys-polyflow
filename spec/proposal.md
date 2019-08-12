@@ -10,7 +10,7 @@ This suggestion proposes an addition to the typechecking part of TypeScript, whi
 
 # Use Case
 
-The main use case are dependent-type-like functions, the `depLikeFun` example is a minimalistic scenario showcasing such a situation. In this example, we have the `depLikeFun` function which returns `number` when its input is of type `"t"` and `boolean` when its input is of type `"f"`.
+The main use case is dependent-type-like functions, the `depLikeFun` example is a minimalistic scenario showcasing such a situation. In this example, we have the `depLikeFun` function which returns `number` when its input is of type `"t"` and `boolean` when its input is of type `"f"`.
 
 ```ts
 interface F {
