@@ -32,9 +32,6 @@ depFun("f"); // has type boolean
 
 This pattern occurs in various places, such as the [TypeScript dom bindings](https://github.com/microsoft/TypeScript/blob/ca00b3248b1af2263d0223d68e792b7ca39abcab/lib/lib.dom.d.ts#L11050), in issues such as [#31672](https://github.com/microsoft/TypeScript/issues/31672) and [#32698](https://github.com/microsoft/TypeScript/issues/32698), in comments of related issues such as [#13995](https://github.com/microsoft/TypeScript/issues/13995), or on [stackoverflow questions](https://stackoverflow.com/questions/56479117/how-to-fix-ts2322-when-using-a-case-switch-and-generics). This extension could serve as a workaround for related issues such as [#22609](https://github.com/microsoft/TypeScript/issues/22609) and [#23861](https://github.com/microsoft/TypeScript/issues/23861).
 
-TODO: does this help with [#25879](https://github.com/microsoft/TypeScript/issues/25879) ?
-TODO: does this pattern occur somewhere in [fp-ts](https://github.com/gcanti/fp-ts) ?
-
 # Problem
 
 The problem lies in the implementation of the function. The pre-3.5 behaviour enabled the creation of unsoundness in these type of functions. TypeScript checked the return value against the union of its possibilities, which is `number | boolean`. However, this is unsound since the caller expects different behaviour based on the function signature.
@@ -114,7 +111,7 @@ function depLikeFun<T extends "t" | "f">(str: T): F[T] {
 }
 ```
 
-## Impact in Other Scenarios
+## Non-Return Indexed Access
 
 The type `F[T]` can occur elsewhere in the function. This extension retains the normal TypeScript behaviour in those cases, and is only enabled when checking the return type of a function. In the following example we have a value of type `F[T]` as second input to the function. Within the then branch, this type should not be simplified to `number`, since it can actually be of type `boolean`. Checking the first input value does not give us any information regarding the second input value, and thus we cannot do any more simplification.
 
@@ -181,15 +178,9 @@ function depLikeFun<T extends "t" | "f">(str: T): F<T> {
 
 This raises the question whether the addition of typechecking for dependent-type-like functions should be added for type level functions created with conditional types too, for consistency purposes. Two points worth noting is that: users were never able to implement this behaviour using conditional types (even pre-3.5), and, type level functions with conditional types are not restricted to a domain of string keys which makes things more complex. Nevertheless, we feel it is a point worth bringing up for discussion.
 
-TODO: related issue: [#21879](https://github.com/microsoft/TypeScript/issues/21879), can this feature be used as a workaround for this issue?
-
 ## Behaviour with `any`
 
 The result of instantiating a dependent-type-like function with the `any` type gives a result of `any`. This occurs, for example, when disabling `--strictNullChecks` and calling the function with `null`. Any behaviour related to interaction with `null`/`any` and dependent-type-like functions is supposed to be unchanged compared to 3.5.
-
-## TODO
-
-TODO: even more examples?
 
 # Compiler Changes
 
@@ -207,9 +198,14 @@ The current suggested workaround seems to be unsafe type assertions or overloade
 
 In this section we gather related suggestions which could be considered alternative solutions to this problem.
 
-- extending the TypeScript syntax, such as a `oneof` generic constraint: [#25879](https://github.com/microsoft/TypeScript/issues/25879), [#27808](https://github.com/microsoft/TypeScript/issues/27808) or [#30284](https://github.com/microsoft/TypeScript/pull/30284)
-- dependent types in TypeScript, which would have a huge impact on the compiler and is possibly out of scope for the TypeScript project
-- this extension is a more refined idea based on previous ideas of narrowing types based on term-level checks such as [#21879](https://github.com/microsoft/TypeScript/issues/21879)
+1. extending the TypeScript syntax, such as a `oneof` generic constraint: [#25879](https://github.com/microsoft/TypeScript/issues/25879), [#27808](https://github.com/microsoft/TypeScript/issues/27808) or [#30284](https://github.com/microsoft/TypeScript/pull/30284)
+2. dependent types in TypeScript, which would have a huge impact on the compiler and is possibly out of scope for the TypeScript project
+3. this extension is a more refined idea based on previous ideas of narrowing types based on term-level checks such as [#21879](https://github.com/microsoft/TypeScript/issues/21879)
+
+
+## Complementary to `oneof` constraints
+
+This proposal has some overlapping use cases with proposals which propose to extend TypeScript with a form of `oneof` generic constraint, as mentioned in point 1. This proposal is not competing with these, but rather should be seen as complementary. The `oneof` proposals suggest a new generic constraint which is more restrictive in which instantiations it allows. However, for many of these use cases this is only part of the solution. In addition to adding this syntax, the typechecker must also take this restriction into account to typecheck the original use cases. This proposal kickstarts the implementation of this additional behaviour by focusing on a more constrained use case which does not need this new constraint. If a `oneof` generic constraint is added to TypeScript, the behaviour defined in this proposal can be extended to take this additional constraint into account.
 
 # Checklist
 
@@ -221,4 +217,4 @@ My suggestion meets these guidelines:
 - [x] This isn't a runtime feature (e.g. library functionality, non-ECMAScript syntax with JavaScript output, etc.)
 - [x] This feature would agree with the rest of [TypeScript's Design Goals](https://github.com/Microsoft/TypeScript/wiki/TypeScript-Design-Goals).
 
-Regarding bullet point 1: the goal of this proposal is to provide more _complete_ typechecking than 3.5, and thus we want to avoid breaking any code compared to 3.5.
+NOTE: (Regarding bullet point 1) The goal of this proposal is to provide more _complete_ typechecking than 3.5, and thus we want to avoid breaking any code compared to 3.5.
