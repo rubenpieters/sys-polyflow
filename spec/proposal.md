@@ -196,7 +196,7 @@ The current suggested workaround seems to be unsafe type assertions or overloade
 
 # Related Suggestions
 
-In this section we gather related suggestions which could be considered alternative solutions to this problem.
+The following list gathers related suggestions.
 
 1. extending the TypeScript syntax, such as a `oneof` generic constraint: [#25879](https://github.com/microsoft/TypeScript/issues/25879), [#27808](https://github.com/microsoft/TypeScript/issues/27808) or [#30284](https://github.com/microsoft/TypeScript/pull/30284)
 2. dependent types in TypeScript, which would have a huge impact on the compiler and is possibly out of scope for the TypeScript project
