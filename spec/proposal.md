@@ -186,9 +186,8 @@ The result of instantiating a dependent-type-like function with the `any` type g
 
 In this section we roughly outline the suspected changes to the compiler needed to implement this extension.
 
-- The main change is centered in the `getSimplifiedIndexedAccessType` function. When checking return types, the simplification process will now check when a generic parameter is used as `indexType`. Then, before the cache is consulted, it will look up checks of related variables with string literals in the control flow graph. The indexed access type is then simplified according to these checks as outlined in the proposal.
-- To be able to check the control flow graph, it needs to be made accessible to the `getSimplifiedIndexedAccessType` function.
-- The `getSimplifiedIndexedAccessType` must be informed to enable the additional simplification, the `checkReturnType` function will enable this behaviour when calling typechecking for the return type.
+- The main change is an addition to the `checkReturnStatement` (checker.ts) function. When the criteria for enabling dependent-type-like function checking are true, we instantiate the type parameter based on a lookup of checks with literals in the control flow graph. These criteria are currently: the index type is a type parameter, this type parameter is declared in the enclosing function, the index type can be used to index the object type and the object type is concrete.
+- To be able to check the control flow graph in return statements, the graph for return statements needs to be bound in the `bindWorker` function (binder.ts).
 
 # Workaround
 
