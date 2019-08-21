@@ -1,6 +1,7 @@
 # Search Terms
 
 generic indexed access type dependent function
+generic narrowing
 
 # Suggestion
 
@@ -34,7 +35,7 @@ This pattern occurs in various places, such as the [TypeScript dom bindings](htt
 
 # Problem
 
-The problem lies in the implementation of the function. The pre-3.5 behaviour enabled the creation of unsoundness in these type of functions. TypeScript checked the return value against the union of its possibilities, which is `number | boolean`. However, this is unsound since the caller expects different behaviour based on the function signature.
+The problem lies in the implementation of the function. The pre-3.5 behaviour enabled the creation of unsoundness in these type of functions. TypeScript checked the return value using the constraint of key type `T`, simplifying `F[T]` to `number | boolean`. However, this is unsound since the caller can provide a more specific type for `T` such as `"t"`.
 
 ```ts
 // pre-3.5
@@ -50,7 +51,7 @@ depLikeFun("t"); // has type number, but is actually a boolean
 depLikeFun("f"); // has type boolean, but is actually a number
 ```
 
-The post-3.5 behaviour also isn't satisfactory for this use case. It disallows the `depLikeFun` to be implemented, which means the implementer needs to use unsafe type assertions. By [#30769](https://github.com/microsoft/TypeScript/issues/30739), the `return` calls are considered writes to the result of the function. This means that the result type `F[T]` is checked against the _intersection_ of its possibilities, which is `number & boolean` and thus `never`. 
+The post-3.5 behaviour also isn't satisfactory for this use case. It disallows the `depLikeFun` to be implemented, which means the implementer needs to use unsafe type assertions. By [#30769](https://github.com/microsoft/TypeScript/pull/30769), assigning to type `F[T]` is interpreted as a write to `F` at key `T`. This means that the result type `F[T]` is checked against the _intersection_ of its possibilities, which is `number & boolean` and thus `never`. 
 
 ```ts
 // post-3.5
@@ -69,7 +70,7 @@ Mistakes are more likely to occur in complex situations, and thus aiding the use
 
 In a dependently typed language `depLikeFun` would be modeled as `function depFun(str: "t" | "f"): F[str]`. There are meaningful differences between depending on the actual _value_ of the input versus the _type_ of an input. This distinction makes this issue more tricky to solve than appears on first sight. In this section we showcase the expected behaviour of the addition on certain representative examples.
 
-The main idea behind the addition is as follows. in a dependent-type-like function we cannot narrow the type `T` of a variable when the value of that value is checked. For example, if `str` has type `T extends "t" | "f"` and we check whether `str === "t"`, then it is unsafe to narrow `T` to `"t"` in that branch, since `T` could also be instantiated with for example `"t" | "f"`. Instead, we add knowledge about the type `T` within the branch which is more conservative, but makes it possible to allow the behaviour of dependent-type-like functions. In more traditional programming language theory, the knowledge added is very similar to adding a lower bound `"t" <: T` into the context.
+The main idea behind the addition is as follows: in a dependent-type-like function we cannot narrow the type `T` of a variable when the value of that value is checked. For example, if `str` has type `T extends "t" | "f"` and we check whether `str === "t"`, then it is unsafe to narrow `T` to `"t"` in that branch, since `T` could also be instantiated with the wider type `"t" | "f"`. Instead, we add knowledge about the type `T` within the branch which is more conservative, but makes it possible to allow the behaviour of dependent-type-like functions. In more traditional programming language theory, the knowledge added is very similar to adding a lower bound `"t" <: T` into the context.
 
 ## Basic Use Case
 
