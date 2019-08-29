@@ -62,6 +62,12 @@ module _ {i} {v : Set i} where
   initLast : Map v → Maybe (Map v × (Key × v))
   initLast = AVL.initLast
 
+  fromList : List (Key × v) → Map v
+  fromList = AVL.fromList
+
+  toList : Map v → List (Key × v)
+  toList = AVL.toList
+
 module _ {i j} {v : Set i} {w : Set j} where
 
   unionWith : (v → Maybe w → w) →

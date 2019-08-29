@@ -10,4 +10,4 @@ let
     postBuild = "agda --compile Alg.agda --no-main";
   });
 in
-  pkg.env;
+  pkg.env
