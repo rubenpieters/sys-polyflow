@@ -52,7 +52,7 @@ infix 10 _<canindex>_
 
 -- TODO
 -- need to make a distinction between _<canlookup>_ which tells us that an index can be used to look up in an object, used in safeLookup
--- and _<canindex>_ which tells us that a type can be used to index another type, used in simplify for example
+-- and _<canindex>_ which tells us that a type can be used to index another type, used in simplify for example, for this relation the context should be added
 
 data _<canindex>_ : Type → Obj → Set where
   CI-Label : ∀ {l o t}
@@ -74,6 +74,8 @@ canIndex (L' l₁) (l₂ ∶ t , o) with l₁ ≟ l₂
 canIndex ⟨ obj ⟩ _ = no λ()
 canIndex (o [ i ]) _ = no λ()
 canIndex (l ∨ r) _ = no λ()
+canIndex (′ id) _ = no λ()
+canIndex (Λ X <: T ⇨ U) _ = no λ()
 
 safeLookup : (x : Type) → (o : Obj) → x <canindex> o → Type
 safeLookup (L' _) (_ ∶ t , _) CI-Label = t
@@ -103,10 +105,14 @@ simplify Γ (boolean [ i ]) = no λ{(_ , TE-IndexedAccess () _ _)}
 simplify Γ ((L' l) [ i ]) = no λ{(_ , TE-IndexedAccess () _ _)}
 simplify Γ (o [ i₁ ] [ i₂ ]) = no λ{(_ , TE-IndexedAccess () _ _)}
 simplify Γ ((l ∨ r) [ i ]) = no λ{(_ , TE-IndexedAccess () _ _)}
+simplify Γ ((′ id) [ i ]) = no λ{(_ , TE-IndexedAccess () _ _)}
+simplify Γ ((Λ X <: T ⇨ U) [ i ]) = no λ{(_ , TE-IndexedAccess () _ _)}
 simplify Γ (⟨ obj ⟩ [ i ]) with canIndex i obj
 ... | yes canindex = yes (safeLookup i obj canindex , TE-IndexedAccess S-Refl S-Refl canindex)
 ... | no ¬canindex = no λ{(_ , TE-IndexedAccess S-Refl S-Refl canindex) → ¬canindex canindex}
 simplify Γ (l ∨ r) = no λ()
+simplify Γ (′ id) = no λ()
+simplify Γ (Λ X <: T ⇨ U) = no λ()
 
 test = simplify ∅ e1
 
