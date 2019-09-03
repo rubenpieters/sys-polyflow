@@ -116,35 +116,7 @@ simplify Γ (Λ X <: T ⇨ U) = no λ()
 
 test = simplify ∅ e1
 
-data FlowExpr : Set where
-  return : FlowExpr
-  ifₗ_===_then_else_ : Id → Label → FlowExpr → FlowExpr → FlowExpr
-  ifᵣ_===_then_else_ : Label → Id → FlowExpr → FlowExpr → FlowExpr
-
-data BranchType : Set where
-  truebranch : BranchType
-  falsebranch : BranchType
-
-data Branch : Set where
-  𝓑 : Branch
-  _►_ : (Id × Label × BranchType) → Branch → Branch
-
-b1 = ("X" , "t" , truebranch) ► 𝓑
-
-data _<branchin>_ : Branch → FlowExpr → Set where
-  BI-Empty : 𝓑 <branchin> return
-  BI-LeftTrue : ∀ {id label b e₁ e₂}
-    → b <branchin> e₁
-    → ((id , label , truebranch) ► b) <branchin> (ifₗ id === label then e₁ else e₂)
-  BI-LeftFalse : ∀ {id label b e₁ e₂}
-    → b <branchin> e₂
-    → ((id , label , falsebranch) ► b) <branchin> (ifₗ id === label then e₁ else e₂)
-  BI-RightTrue : ∀ {id label b e₁ e₂}
-    → b <branchin> e₁
-    → ((id , label , truebranch) ► b) <branchin> (ifᵣ label === id then e₁ else e₂)
-  BI-RightFalse : ∀ {id label b e₁ e₂}
-    → b <branchin> e₂
-    → ((id , label , falsebranch) ► b) <branchin> (ifᵣ label === id then e₁ else e₂)
+-- Instantiation
 
 data Function : Set where
   𝓕 : Function
@@ -165,6 +137,62 @@ data _<validinstfor>_ : Instantiation → Function → Set where
     → Γ ⊢ S <: T
     → inst <validinstfor> fun
     → (X ↦ S , inst) <validinstfor> (X <: T ▻ fun)
+
+data _<cantypelookup>_ : Id → Instantiation → Set where
+  CTL-Label : ∀ {X S inst}
+    → X <cantypelookup> (X ↦ S , inst)
+  CTL-Skip : ∀ {X₁ X₂ S inst}
+    → X₁ ≢ X₂
+    → X₁ <cantypelookup> inst
+    → X₁ <cantypelookup> (X₂ ↦ S , inst)
+
+typeLookup : (X : Id) → (inst : Instantiation) → X <cantypelookup> inst → Type
+typeLookup X (_ ↦ t , _) CTL-Label = t
+typeLookup X (_ ↦ _ , o) (CTL-Skip _ ctl) = typeLookup X o ctl
+
+-- Flow
+
+data FlowExpr : Set where
+  return : FlowExpr
+  ifₗ_===_then_else_ : Id → Label → FlowExpr → FlowExpr → FlowExpr
+  ifᵣ_===_then_else_ : Label → Id → FlowExpr → FlowExpr → FlowExpr
+
+data BranchType : Set where
+  truebranch : BranchType
+  falsebranch : BranchType
+
+data Branch : Set where
+  𝓑 : Branch
+  _►_ : (Id × Label × BranchType) → Branch → Branch
+
+b1 = ("X" , "t" , truebranch) ► 𝓑
+
+-- replace <cantypelookup> with Γ ⊢ ′ label ∶ T ?
+-- _<reachable>_<with>_ ?
+data _<in>_<branchin>_ : Instantiation → Branch → FlowExpr → Set where
+  BI-Empty : ∀ {inst} → inst <in> 𝓑 <branchin> return
+  BI-LeftTrue : ∀ {Γ inst id label b e₁ e₂}
+    → inst <in> b <branchin> e₁
+    → (ctl : label <cantypelookup> inst)
+    → Γ ⊢ L' label <: typeLookup label inst ctl
+    → inst <in> ((id , label , truebranch) ► b) <branchin> (ifₗ id === label then e₁ else e₂)
+  BI-LeftFalse : ∀ {Γ inst id label b e₁ e₂}
+    → inst <in> b <branchin> e₂
+    → (ctl : label <cantypelookup> inst)
+    → ¬ Γ ⊢ L' label <: typeLookup label inst ctl
+    → inst <in> ((id , label , falsebranch) ► b) <branchin> (ifₗ id === label then e₁ else e₂)
+  BI-RightTrue : ∀ {Γ inst id label b e₁ e₂}
+    → inst <in> b <branchin> e₁
+    → (ctl : label <cantypelookup> inst)
+    → Γ ⊢ L' label <: typeLookup label inst ctl
+    → inst <in> ((id , label , truebranch) ► b) <branchin> (ifᵣ label === id then e₁ else e₂)
+  BI-RightFalse : ∀ {Γ inst id label b e₁ e₂}
+    → inst <in> b <branchin> e₂
+    → (ctl : label <cantypelookup> inst)
+    → ¬ Γ ⊢ L' label <: typeLookup label inst ctl
+    → inst <in> ((id , label , falsebranch) ► b) <branchin> (ifᵣ label === id then e₁ else e₂)
+
+
 
 _[_↦_] : Type → Id → Type → Type
 number [ X ↦ T ] = number
