@@ -114,8 +114,28 @@ data _<valid-inst-for>_ : Instantiation → FunctionSig → Set where
 valid-inst1 : inst1 <valid-inst-for> fun1
 valid-inst1 = VI-Inst {Γ = ∅} (S-UnionR S-Refl) VI-Return
 
+_<subst-with>_ : Type → Instantiation → Type
+number <subst-with> inst = number
+boolean <subst-with> inst = boolean
+(L' l) <subst-with> inst = L' l
+⟨ obj ⟩ <subst-with> inst = ⟨ substObj obj inst ⟩
+  where
+  substObj : Obj → Instantiation → Obj
+  substObj 𝓞 _ = 𝓞
+  substObj (l ∶ t , o) inst = (l ∶ (t <subst-with> inst) , substObj o inst)
+(o [ i ]) <subst-with> inst = (o <subst-with> inst) [ (i <subst-with> inst) ]
+(l ∨ r) <subst-with> inst = (l <subst-with> inst) ∨ (r <subst-with> inst)
+(′ id) <subst-with> 𝓘 = ′ id
+(′ id) <subst-with> (X ↦ T , inst) with X ≟ id
+... | yes _ = T
+... | no _ = (′ id) <subst-with> inst
+
+applyInst' : (inst : Instantiation) → (fun : FunctionSig) → Type
+applyInst' inst (ReturnType type) = type <subst-with> inst
+applyInst' inst (X <: T , fun) = applyInst' inst fun
+
 applyInst : (inst : Instantiation) → (fun : FunctionSig) → inst <valid-inst-for> fun → Type
-applyInst inst fun valid-inst = {!!}
+applyInst inst fun valid-inst = applyInst' inst fun
 
 -- Flow
 
@@ -143,20 +163,30 @@ data <possible-path-of>_<with>_ : FlowExpr → Instantiation → Set where
 possible-path1 : <possible-path-of> flowexpr1 <with> inst1
 possible-path1 = BI-LeftFalse BI-Return IA-Base (HOI-Neq ("f" ≠ "t"))
 
-narrowedType : (flow : FlowExpr) → (fun : FunctionSig) → (inst : Instantiation) → inst <valid-inst-for> fun → <possible-path-of> flow <with> inst → Type
-narrowedType flow fun inst valid-inst path = {!!}
+narrowedType :
+  (flow : FlowExpr) →
+  (fun : FunctionSig) →
+  (inst : Instantiation) →
+  (valid-inst : inst <valid-inst-for> fun) →
+  <possible-path-of> flow <with> inst →
+  Type
+narrowedType return fun inst valid-inst BI-Return = {!!}
+narrowedType .(ifₗ _ === _ then _ else _) fun inst valid-inst (BI-LeftTrue path x x₁) = {!!}
+narrowedType .(ifₗ _ === _ then _ else _) fun inst valid-inst (BI-LeftFalse path x x₁) = {!!}
 
 -- Theorem
 
-theorem :
+theorem : ∀ {Γ} →
   (fun : FunctionSig) →
   (flow : FlowExpr) →
   (inst : Instantiation) →
-  inst <valid-inst-for> fun →
+  (valid-inst : inst <valid-inst-for> fun) →
   (path : <possible-path-of> flow <with> inst) →
-  Bool
-theorem fun flow inst valid-inst path = true
+  Γ ⊢ narrowedType flow fun inst valid-inst path <: applyInst inst fun valid-inst
+theorem fun return inst valid-inst BI-Return = {!!}
+theorem fun .(ifₗ _ === _ then _ else _) inst valid-inst (BI-LeftTrue path x x₁) = {!!}
+theorem fun .(ifₗ _ === _ then _ else _) inst valid-inst (BI-LeftFalse path x x₁) = {!!}
 
-theorem1 = theorem fun1 flowexpr1 inst1 valid-inst1 possible-path1
+theorem1 = theorem {Γ = ∅} fun1 flowexpr1 inst1 valid-inst1 possible-path1
 
 
