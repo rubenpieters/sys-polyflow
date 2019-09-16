@@ -53,7 +53,7 @@
 
 \end{mathpar}
 
-\subsection{Sub-Typing Relation}
+\subsection{Sub-Typing Relation 1: Sub-Typing Approach}
 
 \begin{mathpar}
 
@@ -125,7 +125,7 @@
 
 Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 
-\subsection{Sub-Typing Relation 2}
+\subsection{Sub-Typing Relation 2: Type Evaluation Approach}
 
 \begin{mathpar}
 
@@ -170,7 +170,7 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \hassubtype{\Gamma}{\union{L}{R}}{T} }
 
 \inferrule*[right=S-TEval]
-           { \teq{\Gamma}{T_1}{T_2} }
+           { \tevalr{\Gamma}{T_1}{T_2} \\ \tevalw{\Gamma}{T_2}{T_1} }
            { \hassubtype{\Gamma}{T_1}{T_2} }
 
 \inferrule*[right=S-Map]
@@ -191,8 +191,13 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            {  }
            { \teval{\Gamma}{\tmap{T_t}{T_f}{\tfalse}}{T_f} }
 
-\inferrule*[right=TE-MapBool]
+\inferrule*[right=TE-MapBoolRead]
            {  }
-           { \teval{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
+           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
+
+\inferrule*[right=TE-MapBoolWrite]
+           {  }
+           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\intersect{T_t}{T_f}} }
+
 
 \end{mathpar}
