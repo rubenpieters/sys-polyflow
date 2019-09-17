@@ -44,7 +44,7 @@
            { \hastype{\Gamma}{t_1}{\tbool} \\ \hastype{\Gamma}{t_2}{A} \\ \hastype{\Gamma}{t_3}{B} }
            { \hastype{\Gamma}{\ite{t_1}{t_2}{t_3}}{\union{A}{B}} }
 
-% NOTE: in flow-typing system with intersection/negation types, it becomes Gamma [ x |-> Gamma(x) & T ] in 'x is T' branch, and Gamme [ x |-> Gamma(x) & not(T) ] in else branch
+% NOTE: in flow-typing system with intersection/negation types, it becomes Gamma [ x |-> Gamma(x) & T ] in 'x is T' branch, and Gamma [ x |-> Gamma(x) & not(T) ] in else branch
 % for example in Sound and Complete Flow Typing with Unions, Intersections and Negations           
 
 \inferrule*[right=T-IfTrue]
@@ -113,9 +113,13 @@
            {  }
            { \hassubtype{\Gamma}{T_f}{\tmap{T_t}{T_f}{\tfalse}} }
 
-\inferrule*[right=S-MapBool]
+\inferrule*[right=S-MapBoolL]
            {  }
            { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
+
+\inferrule*[right=(S-MapBoolR)]
+           {  }
+           { \hassubtype{\Gamma}{\intersect{T_t}{T_f}}{\tmap{T_t}{T_f}{\tbool}} }
 
 \inferrule*[right=S-Map]
            { \hassubtype{\Gamma}{S}{T} }
@@ -169,13 +173,13 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \hassubtype{\Gamma}{L}{T} \\ \hassubtype{\Gamma}{R}{T} }
            { \hassubtype{\Gamma}{\union{L}{R}}{T} }
 
-\inferrule*[right=S-TEval]
-           { \tevalr{\Gamma}{T_1}{T_2} \\ \tevalw{\Gamma}{T_2}{T_1} }
-           { \hassubtype{\Gamma}{T_1}{T_2} }
+\inferrule*[right=S-TEvalRead]
+           { \tevalr{\Gamma}{A}{A_2} \\ \hassubtype{\Gamma}{A_2}{B} }
+           { \hassubtype{\Gamma}{A}{B} }
 
-\inferrule*[right=S-Map]
-           { \hassubtype{\Gamma}{S}{T} }
-           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{S}}{\tmap{T_t}{T_f}{T}} }
+\inferrule*[right=S-TEvalWrite]
+           { \tevalw{\Gamma}{B}{B_2} \\ \hassubtype{\Gamma}{A}{B_2} }
+           { \hassubtype{\Gamma}{A}{B} }
 
 \end{mathpar}
 
@@ -199,5 +203,12 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            {  }
            { \tevalw{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\intersect{T_t}{T_f}} }
 
+\inferrule*[right=TE-MapRead]
+           { \hassubtype{\Gamma}{A}{B} }
+           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{A}}{\tmap{T_t}{T_f}{B}} }
+
+\inferrule*[right=TE-MapWrite]
+           { \hassubtype{\Gamma}{A}{B} }
+           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{B}}{\tmap{T_t}{T_f}{A}} }
 
 \end{mathpar}
