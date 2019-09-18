@@ -10,6 +10,7 @@ open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Product using (∃; ∃-syntax; _,_; _×_; proj₁; proj₂)
 open import Data.Unit using (⊤; tt)
 open import Data.Maybe using (Maybe; just; nothing)
+open import Data.List using (List; _∷_; [])
 
 Id : Set
 Id = String
@@ -163,6 +164,28 @@ data <possible-path-of>_<with>_ : FlowExpr → Instantiation → Set where
 possible-path1 : <possible-path-of> flowexpr1 <with> inst1
 possible-path1 = BI-LeftFalse BI-Return IA-Base (HOI-Neq ("f" ≠ "t"))
 
+comparisonSets :
+  (flow : FlowExpr) →
+  (fun : FunctionSig) →
+  (inst : Instantiation) →
+  (valid-inst : inst <valid-inst-for> fun) →
+  <possible-path-of> flow <with> inst →
+  (List Label × List Label)
+comparisonSets return fun inst valid-inst BI-Return = ([] , [])
+comparisonSets (ifₗ X === lit then e₁ else e₂) fun inst valid-inst (BI-LeftTrue path x x₁) = let
+  (t , f) = comparisonSets e₁ fun inst valid-inst path
+  in (lit ∷ t , f)
+comparisonSets (ifₗ X === lit then e₁ else e₂) fun inst valid-inst (BI-LeftFalse path x x₁) = let
+  (t , f) = comparisonSets e₂ fun inst valid-inst path
+  in (t , lit ∷ f)
+
+calc :
+  (bound : List Label) →
+  (comparisons : (List Label × List Label)) →
+  Type
+calc bound ([] , f) = {!!} -- bound - f
+calc bound (t , f) = {!!} -- t - f
+
 narrowedType :
   (flow : FlowExpr) →
   (fun : FunctionSig) →
@@ -171,8 +194,8 @@ narrowedType :
   <possible-path-of> flow <with> inst →
   Type
 narrowedType return fun inst valid-inst BI-Return = {!!}
-narrowedType .(ifₗ _ === _ then _ else _) fun inst valid-inst (BI-LeftTrue path x x₁) = {!!}
-narrowedType .(ifₗ _ === _ then _ else _) fun inst valid-inst (BI-LeftFalse path x x₁) = {!!}
+narrowedType (ifₗ X === lit then e₁ else e₂) fun inst valid-inst (BI-LeftTrue path x x₁) = {!!}
+narrowedType (ifₗ X === lit then e₁ else e₂) fun inst valid-inst (BI-LeftFalse path x x₁) = {!!}
 
 -- Theorem
 
