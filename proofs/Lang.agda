@@ -83,13 +83,15 @@ prog1 =
 
 infixl 50 _,_∶_
 infixl 50 _,_<:_
-infixl 50 _,_:>_
+infixl 50 _,T<:_
+infixl 50 _,F<:_
 
 data Context : Set where
   ∅ : Context
   _,_∶_ : Context → Id → Type → Context
   _,_<:_ : Context → Id → Type → Context
-  _,_:>_ : Context → Id → Type → Context
+  _,T<:_ : Context → Id → Context
+  _,F<:_ : Context → Id → Context
 
 -- has-type-in-context relation
 
@@ -113,13 +115,14 @@ data _<:_∈_ : Id → Type → Context → Set where
 
 -- is-supertype-in-context relation
 
-data _:>_∈_ : Id → Type → Context → Set where
-  Z:> : ∀ {Γ X T}
-    → X :> T ∈ Γ , X :> T
-  S:> : ∀ {Γ X T Y U}
-    → X ≢ Y
-    → X :> T ∈ Γ
-    → X :> T ∈ Γ , Y :> U
+data T<:_∈_ : Id → Context → Set where
+  ZT<: : ∀ {Γ X}
+    → T<: X ∈ (Γ ,T<: X)
+
+data F<:_∈_ : Id → Context → Set where
+  ZF<: : ∀ {Γ X}
+    → F<: X ∈ (Γ ,F<: X)
+
 
 -- -------------------------------------
 
@@ -138,9 +141,12 @@ data _⊢_<:_ : Context → Type → Type → Set where
   S-TVarSub : ∀ {Γ X T}
     → X <: T ∈ Γ
     → Γ ⊢ ′′ X <: T
---  S-TVarSup : ∀ {Γ X T}
---    → X :> T ∈ Γ
---    → Γ ⊢ T <: ′′ X
+  S-TVarSupT : ∀ {Γ X}
+    → T<: X ∈ Γ
+    → Γ ⊢ TTrue <: ′′ X
+  S-TVarSupF : ∀ {Γ X}
+    → F<: X ∈ Γ
+    → Γ ⊢ TFalse <: ′′ X
   S-Arrow : ∀ {Γ S₁ S₂ T₁ T₂}
     → Γ ⊢ T₁ <: S₁
     → Γ ⊢ S₂ <: T₂
@@ -152,34 +158,133 @@ data _⊢_<:_ : Context → Type → Type → Set where
     → Γ ⊢ A <: A ∨ B
   S-UnionR : ∀ {Γ A B}
     → Γ ⊢ B <: A ∨ B
-  S-MapTrueSub : ∀ {Γ T T₁ T₂}
-    → T :> TTrue ∈ Γ
-    → Γ ⊢ T₁ <: [T= T₁ ,F= T₂ ][ ′′ T ]
+  S-MapTrueL : ∀ {Γ T₁ T₂}
+    → Γ ⊢ [T= T₁ ,F= T₂ ][ TTrue ] <: T₁
+  S-MapTrueR : ∀ {Γ T₁ T₂}
+    → Γ ⊢ T₁ <: [T= T₁ ,F= T₂ ][ TTrue ]
+  S-MapFalseL : ∀ {Γ T₁ T₂}
+    → Γ ⊢ [T= T₁ ,F= T₂ ][ TFalse ] <: T₂
+  S-MapFalseR : ∀ {Γ T₁ T₂}
+    → Γ ⊢ T₂ <: [T= T₁ ,F= T₂ ][ TFalse ]
+  S-MapBoolL : ∀ {Γ T₁ T₂}
+    → Γ ⊢ [T= T₁ ,F= T₂ ][ TBool ] <: T₁ ∨ T₂
+  S-Map : ∀ {Γ S T T₁ T₂}
+    → Γ ⊢ S <: T
+    → Γ ⊢ [T= T₁ ,F= T₂ ][ S ] <: [T= T₁ ,F= T₂ ][ T ]
+
+data _⊢_≅_ : Context → Type → Type → Set where
+  Sim : ∀ {Γ A B}
+    → Γ ⊢ A <: B
+    → Γ ⊢ B <: A
+    → Γ ⊢ A ≅ B
+
+¬Top<:T : ∀ {Γ}
+  → Γ ⊢ Top <: TTrue
+  → ⊥
+
+
+¬F<:T : ∀ {Γ}
+  → Γ ⊢ TFalse <: TTrue
+  → ⊥
+¬F<:T (S-Trans S-Refl b) = ¬F<:T b
+¬F<:T (S-Trans (S-Trans a a₁) b) = {!!}
+¬F<:T (S-Trans S-Top b) = {!!}
+¬F<:T (S-Trans (S-TVarSupF x) b) = {!!}
+¬F<:T (S-Trans S-UnionL b) = {!!}
+¬F<:T (S-Trans S-UnionR b) = {!!}
+¬F<:T (S-Trans S-MapTrueR b) = {!!}
+¬F<:T (S-Trans S-MapFalseR b) = {!!}
+
+swap-≅ : ∀ {Γ A B}
+  → Γ ⊢ A ≅ B
+  → Γ ⊢ B ≅ A
+swap-≅ (Sim a b) = Sim b a
 
 -- inversion of subtyping relation
 
--- if S is a subtype of ′′X in Γ, then S is a type variable
-inversion-<:-var : ∀ {Γ S X}
-  → Γ ⊢ S <: ′′ X
-  → (∃ λ Y → S ≡ ′′ Y)
--- in case of S-Refl, then trivially S is a type variable
-inversion-<:-var {X = X} (S-Refl) = (X , refl)
--- in case of S-Trans, then by induction U is a type variable
--- then again by induction S is a type variable
-inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
-... | (_ , refl) = inversion-<:-var S<:U
--- in case of S-TVar, then trivially S is a type variable
-inversion-<:-var (S-TVarSub {X = X} _) = (X , refl)
+inversion-<:-var2 : ∀ {Γ S U X}
+  → Γ ⊢ S <: U
+  → Γ ⊢ U ≅ ′′ X
+  → (∃ λ Y → Γ ⊢ S ≅ ′′ Y) ⊎ S ≡ TTrue ⊎ S ≡ TFalse
 
 inversion-<:-true : ∀ {Γ S}
   → Γ ⊢ S <: TTrue
-  → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TTrue
-inversion-<:-true S-Refl = inj₂ refl
-inversion-<:-true (S-Trans S<:U U<:TTrue) with inversion-<:-true U<:TTrue
-... | inj₁ (_ , refl) = inj₁ (inversion-<:-var S<:U)
-... | inj₂ refl = inversion-<:-true S<:U
-inversion-<:-true (S-TVarSub {X = X} X<:TTrue) = inj₁ (X , refl)
+  → (∃ λ X → Γ ⊢ S ≅ ′′ X) ⊎ Γ ⊢ S ≅ TTrue
 
+inversion-<:-true2 : ∀ {Γ S U}
+  → Γ ⊢ S <: U
+  → Γ ⊢ U ≅ TTrue
+  → (∃ λ X → Γ ⊢ S ≅ ′′ X) ⊎ Γ ⊢ S ≅ TTrue
+
+-- if S is a subtype of ′′X in Γ, then:
+-- 1. S is similar to a type variable
+-- 2. S is True
+-- 3. S is False
+{-# TERMINATING #-}
+inversion-<:-var : ∀ {Γ S X}
+  → Γ ⊢ S <: ′′ X
+  → (∃ λ Y → Γ ⊢ S ≅ ′′ Y) ⊎ S ≡ TTrue ⊎ S ≡ TFalse
+-- in case of S-Refl, then trivially S is a type variable
+inversion-<:-var {X = X} (S-Refl) = inj₁ (X , (Sim S-Refl S-Refl))
+-- in case of S-Trans, then by induction U is a type variable
+-- then again by induction S is a type variable
+inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
+-- TODO: problematic call for termination check
+-- ′′Y needs to be smaller than ′′X (e.g. ′′Y <: ′′X ?)
+-- should be the case when cycles in the context are disallowed (and no inf contexts)?
+... | inj₁ (Y , (Sim U<:′′Y ′′Y<:U)) = inversion-<:-var (S-Trans S<:U U<:′′Y)
+... | inj₂ (inj₁ refl) = {!!}
+... | inj₂ (inj₂ refl) = {!!}
+-- in case of S-TVar, then trivially S is a type variable
+inversion-<:-var (S-TVarSub {X = X} _) = inj₁ (X , (Sim S-Refl S-Refl))
+inversion-<:-var S-MapTrueL = {!!}
+inversion-<:-var S-MapFalseL = {!!}
+inversion-<:-var (S-TVarSupT _) = inj₂ (inj₁ refl)
+inversion-<:-var (S-TVarSupF _) = inj₂ (inj₂ refl)
+
+¬Top<:T (S-Trans S-Refl b) = ¬Top<:T b
+¬Top<:T (S-Trans (S-Trans a a₁) b) = {!!}
+¬Top<:T (S-Trans S-Top b) = ¬Top<:T b
+¬Top<:T (S-Trans S-UnionL (S-Trans a b)) with inversion-<:-true b
+... | inj₂ x = {!!}
+... | inj₁ (X , x) with inversion-<:-var2 a x
+...   | inj₁ (Y , y) = {!!} -- use ¬ Top ∨ B ≅ ′′Y
+...   | inj₂ (inj₁ ())
+...   | inj₂ (inj₂ ())
+¬Top<:T (S-Trans S-UnionR b) = {!!}
+¬Top<:T (S-Trans S-MapTrueR (S-Trans a b)) = {!!}
+¬Top<:T (S-Trans S-MapFalseR b) = {!!}
+
+inversion-<:-true S-Refl = inj₂ (Sim S-Refl S-Refl)
+inversion-<:-true (S-Trans S<:U U<:TTrue) with inversion-<:-true U<:TTrue
+... | inj₂ U≅True = inversion-<:-true2 S<:U U≅True
+... | inj₁ (Y , U≅′′Y) with inversion-<:-var2 S<:U U≅′′Y
+...   | inj₁ x = inj₁ x
+...   | inj₂ (inj₁ refl) = inj₂ (Sim S-Refl S-Refl)
+...   | inj₂ (inj₂ refl) =  ⊥-elim (¬F<:T (S-Trans S<:U U<:TTrue)) -- use ¬ False <: True
+inversion-<:-true (S-TVarSub {X = X} X<:TTrue) = inj₁ (X , (Sim S-Refl S-Refl))
+inversion-<:-true S-MapTrueL = inj₂ (Sim S-MapTrueL S-MapTrueR)
+inversion-<:-true S-MapFalseL = inj₂ (Sim S-MapFalseL S-MapFalseR)
+
+inversion-<:-var2 a (Sim S-Refl y) = inversion-<:-var a
+inversion-<:-var2 S<:U (Sim (S-Trans U<:T T<:′′X) ′′X<:U) with inversion-<:-var T<:′′X
+... | inj₁ (Y , Sim T<:′′Y ′′Y<:T) = inversion-<:-var (S-Trans (S-Trans S<:U U<:T) T<:′′Y)
+... | inj₂ (inj₁ x) = {!!}
+... | inj₂ (inj₂ y) = {!!}
+inversion-<:-var2 a (Sim (S-TVarSub x) y) = {!!}
+inversion-<:-var2 a (Sim (S-TVarSupT x) y) with inversion-<:-true a
+... | c = {!!}
+inversion-<:-var2 a (Sim (S-TVarSupF x) y) = {!!}
+inversion-<:-var2 a (Sim S-MapTrueL y) = {!!}
+inversion-<:-var2 a (Sim S-MapFalseL y) = {!!}
+
+inversion-<:-true2 a (Sim S-Refl y) = {!!} -- use old inversion-<:-true here?
+inversion-<:-true2 a (Sim (S-Trans x x₁) y) = {!!}
+inversion-<:-true2 a (Sim (S-TVarSub x) y) = {!!}
+inversion-<:-true2 a (Sim S-MapTrueL y) = {!!}
+inversion-<:-true2 a (Sim S-MapFalseL y) = {!!}
+
+{-
 inversion-<:-false : ∀ {Γ S}
   → Γ ⊢ S <: TFalse
   → (∃ λ X → S ≡ ′′ X) ⊎ S ≡ TFalse
@@ -301,7 +406,7 @@ data _⊢_∶_ : Context → Term → Type → Set where
     → Γ ⊢ if t₁ then t₂ else t₃ ∶ T
   T-IfTrueR : ∀ {Γ T t₂ t₃ x X}
     → Γ ⊢ ′ x ∶ ′′ X
-    → Γ , X :> TTrue ⊢ t₂ ∶ T
+    → (Γ ,T<: X) ⊢ t₂ ∶ T
     → Γ ⊢ t₃ ∶ T
     → Γ ⊢ if (′ x === B′ true) then t₂ else t₃ ∶ T
   T-TAbs : ∀ {Γ X t₂ T₁ T₂}
@@ -782,8 +887,8 @@ preserve (T-IfTrueR {x = x} x:X t₂:T t₃:T) (E-If (E-EqFalse () _))
 -- EXAMPLES
 
 ex1 : Term
-ex1 = Λ "X" <: TBool ⋯> ƛ "x" ∶ ′′"X" ⋯> if (′"x") then (B′ true) else (′"x") ∶ ′′"X"
-
+ex1 = Λ "X" <: TBool ⋯> ƛ "x" ∶ ′′"X" ⋯> if (′"x") then (B′ true) else (′"x") ∶ [T= TTrue ,F= TFalse ][ ′′"X" ]
+-}
 
 -- -------------------------------------
 
