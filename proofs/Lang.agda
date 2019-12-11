@@ -177,44 +177,48 @@ data _⊢_≅_ : Context → Type → Type → Set where
     → Γ ⊢ A <: B
     → Γ ⊢ B <: A
     → Γ ⊢ A ≅ B
+{-
+False <: True is possible in some contexts, thus ∀ {Γ} → Γ ⊢ TFalse <: TTrue → ⊥ is not provable
 
-¬Top<:T : ∀ {Γ}
-  → Γ ⊢ Top <: TTrue
-  → ⊥
+consider:
 
-
-¬F<:T : ∀ {Γ}
-  → Γ ⊢ TFalse <: TTrue
-  → ⊥
-¬F<:T (S-Trans S-Refl b) = ¬F<:T b
-¬F<:T (S-Trans (S-Trans a a₁) b) = {!!}
-¬F<:T (S-Trans S-Top b) = {!!}
-¬F<:T (S-Trans (S-TVarSupF x) b) = {!!}
-¬F<:T (S-Trans S-UnionL b) = {!!}
-¬F<:T (S-Trans S-UnionR b) = {!!}
-¬F<:T (S-Trans S-MapTrueR b) = {!!}
-¬F<:T (S-Trans S-MapFalseR b) = {!!}
+function f<X extends "true">(x: X) {
+  if (x === "true") {
+    // ...
+  } else {
+    // In this block, we have both Γ ⊢ X <: True and Γ ⊢ False <: X
+    // Thus, by S-Trans we have Γ ⊢ False <: True
+    // Within this block we are able to use Γ ⊢ false : True but the code is unreachable
+  }
+}
+-}
 
 swap-≅ : ∀ {Γ A B}
   → Γ ⊢ A ≅ B
   → Γ ⊢ B ≅ A
 swap-≅ (Sim a b) = Sim b a
 
+trans-≅ : ∀ {Γ A B C}
+  → Γ ⊢ A ≅ B
+  → Γ ⊢ B ≅ C
+  → Γ ⊢ A ≅ C
+trans-≅ (Sim A<:B B<:A) (Sim B<:C C<:B) = Sim (S-Trans A<:B B<:C) (S-Trans C<:B B<:A)
+
 -- inversion of subtyping relation
 
 inversion-<:-var2 : ∀ {Γ S U X}
   → Γ ⊢ S <: U
   → Γ ⊢ U ≅ ′′ X
-  → (∃ λ Y → Γ ⊢ S ≅ ′′ Y) ⊎ S ≡ TTrue ⊎ S ≡ TFalse
+  → (∃ λ Y → Γ ⊢ S ≅ ′′ Y) ⊎ Γ ⊢ S ≅ TTrue ⊎ Γ ⊢ S ≅ TFalse
 
 inversion-<:-true : ∀ {Γ S}
   → Γ ⊢ S <: TTrue
-  → (∃ λ X → Γ ⊢ S ≅ ′′ X) ⊎ Γ ⊢ S ≅ TTrue
+  → (∃ λ X → Γ ⊢ S ≅ ′′ X) ⊎ Γ ⊢ S ≅ TTrue ⊎ Γ ⊢ S ≅ TFalse
 
 inversion-<:-true2 : ∀ {Γ S U}
   → Γ ⊢ S <: U
   → Γ ⊢ U ≅ TTrue
-  → (∃ λ X → Γ ⊢ S ≅ ′′ X) ⊎ Γ ⊢ S ≅ TTrue
+  → (∃ λ X → Γ ⊢ S ≅ ′′ X) ⊎ Γ ⊢ S ≅ TTrue ⊎ Γ ⊢ S ≅ TFalse
 
 -- if S is a subtype of ′′X in Γ, then:
 -- 1. S is similar to a type variable
@@ -223,66 +227,55 @@ inversion-<:-true2 : ∀ {Γ S U}
 {-# TERMINATING #-}
 inversion-<:-var : ∀ {Γ S X}
   → Γ ⊢ S <: ′′ X
-  → (∃ λ Y → Γ ⊢ S ≅ ′′ Y) ⊎ S ≡ TTrue ⊎ S ≡ TFalse
+  → (∃ λ Y → Γ ⊢ S ≅ ′′ Y) ⊎ Γ ⊢ S ≅ TTrue ⊎ Γ ⊢ S ≅ TFalse
 -- in case of S-Refl, then trivially S is a type variable
 inversion-<:-var {X = X} (S-Refl) = inj₁ (X , (Sim S-Refl S-Refl))
 -- in case of S-Trans, then by induction U is a type variable
 -- then again by induction S is a type variable
 inversion-<:-var (S-Trans S<:U U<:′′X) with inversion-<:-var U<:′′X
--- TODO: problematic call for termination check
--- ′′Y needs to be smaller than ′′X (e.g. ′′Y <: ′′X ?)
--- should be the case when cycles in the context are disallowed (and no inf contexts)?
-... | inj₁ (Y , (Sim U<:′′Y ′′Y<:U)) = inversion-<:-var (S-Trans S<:U U<:′′Y)
-... | inj₂ (inj₁ refl) = {!!}
-... | inj₂ (inj₂ refl) = {!!}
+... | inj₁ (Y , U≅′′Y) = inversion-<:-var2 S<:U U≅′′Y
+... | inj₂ (inj₂ U≅False) = {!!}
+... | inj₂ (inj₁ U≅True) = inversion-<:-true2 S<:U U≅True
 -- in case of S-TVar, then trivially S is a type variable
 inversion-<:-var (S-TVarSub {X = X} _) = inj₁ (X , (Sim S-Refl S-Refl))
-inversion-<:-var S-MapTrueL = {!!}
-inversion-<:-var S-MapFalseL = {!!}
-inversion-<:-var (S-TVarSupT _) = inj₂ (inj₁ refl)
-inversion-<:-var (S-TVarSupF _) = inj₂ (inj₂ refl)
+inversion-<:-var {X = X} S-MapTrueL = inj₁ (X , Sim S-MapTrueL S-MapTrueR)
+inversion-<:-var {X = X} S-MapFalseL = inj₁ (X , Sim S-MapFalseL S-MapFalseR)
+inversion-<:-var (S-TVarSupT _) = inj₂ (inj₁ (Sim S-Refl S-Refl))
+inversion-<:-var (S-TVarSupF _) = inj₂ (inj₂ (Sim S-Refl S-Refl))
 
-¬Top<:T (S-Trans S-Refl b) = ¬Top<:T b
-¬Top<:T (S-Trans (S-Trans a a₁) b) = {!!}
-¬Top<:T (S-Trans S-Top b) = ¬Top<:T b
-¬Top<:T (S-Trans S-UnionL (S-Trans a b)) with inversion-<:-true b
-... | inj₂ x = {!!}
-... | inj₁ (X , x) with inversion-<:-var2 a x
-...   | inj₁ (Y , y) = {!!} -- use ¬ Top ∨ B ≅ ′′Y
-...   | inj₂ (inj₁ ())
-...   | inj₂ (inj₂ ())
-¬Top<:T (S-Trans S-UnionR b) = {!!}
-¬Top<:T (S-Trans S-MapTrueR (S-Trans a b)) = {!!}
-¬Top<:T (S-Trans S-MapFalseR b) = {!!}
-
-inversion-<:-true S-Refl = inj₂ (Sim S-Refl S-Refl)
+inversion-<:-true S-Refl = inj₂ (inj₁ (Sim S-Refl S-Refl))
 inversion-<:-true (S-Trans S<:U U<:TTrue) with inversion-<:-true U<:TTrue
-... | inj₂ U≅True = inversion-<:-true2 S<:U U≅True
-... | inj₁ (Y , U≅′′Y) with inversion-<:-var2 S<:U U≅′′Y
-...   | inj₁ x = inj₁ x
-...   | inj₂ (inj₁ refl) = inj₂ (Sim S-Refl S-Refl)
-...   | inj₂ (inj₂ refl) =  ⊥-elim (¬F<:T (S-Trans S<:U U<:TTrue)) -- use ¬ False <: True
+... | inj₂ (inj₁ U≅True) = inversion-<:-true2 S<:U U≅True
+... | inj₂ (inj₂ U≅False) = {!!}
+... | inj₁ (Y , U≅′′Y) = inversion-<:-var2 S<:U U≅′′Y
 inversion-<:-true (S-TVarSub {X = X} X<:TTrue) = inj₁ (X , (Sim S-Refl S-Refl))
-inversion-<:-true S-MapTrueL = inj₂ (Sim S-MapTrueL S-MapTrueR)
-inversion-<:-true S-MapFalseL = inj₂ (Sim S-MapFalseL S-MapFalseR)
+inversion-<:-true S-MapTrueL = inj₂ (inj₁ (Sim S-MapTrueL S-MapTrueR))
+inversion-<:-true S-MapFalseL = inj₂ (inj₁ (Sim S-MapFalseL S-MapFalseR))
 
 inversion-<:-var2 a (Sim S-Refl y) = inversion-<:-var a
 inversion-<:-var2 S<:U (Sim (S-Trans U<:T T<:′′X) ′′X<:U) with inversion-<:-var T<:′′X
-... | inj₁ (Y , Sim T<:′′Y ′′Y<:T) = inversion-<:-var (S-Trans (S-Trans S<:U U<:T) T<:′′Y)
-... | inj₂ (inj₁ x) = {!!}
+-- ... | inj₁ (Y , Sim T<:′′Y ′′Y<:T) = inversion-<:-var (S-Trans (S-Trans S<:U U<:T) T<:′′Y)
 ... | inj₂ (inj₂ y) = {!!}
+... | inj₁ (Y , T≅′′Y) = {!!} -- with inversion-<:-var2 U<:T T≅′′Y
+--...   | c = {!!}
+... | inj₂ (inj₁ T≅TTrue) with inversion-<:-true2 U<:T T≅TTrue
+...   | inj₁ (_ , U≅′′Z) = inversion-<:-var2 S<:U U≅′′Z
+...   | inj₂ (inj₁ U≅TTrue) = inversion-<:-true2 S<:U U≅TTrue
+...   | inj₂ (inj₂ U≅TFalse) = {!!}
 inversion-<:-var2 a (Sim (S-TVarSub x) y) = {!!}
-inversion-<:-var2 a (Sim (S-TVarSupT x) y) with inversion-<:-true a
-... | c = {!!}
+inversion-<:-var2 a (Sim (S-TVarSupT x) y) = inversion-<:-true a
 inversion-<:-var2 a (Sim (S-TVarSupF x) y) = {!!}
-inversion-<:-var2 a (Sim S-MapTrueL y) = {!!}
-inversion-<:-var2 a (Sim S-MapFalseL y) = {!!}
+inversion-<:-var2 a (Sim S-MapTrueL y) = inversion-<:-var (S-Trans a S-MapTrueL)
+inversion-<:-var2 a (Sim S-MapFalseL y) = inversion-<:-var (S-Trans a S-MapFalseL)
 
-inversion-<:-true2 a (Sim S-Refl y) = {!!} -- use old inversion-<:-true here?
-inversion-<:-true2 a (Sim (S-Trans x x₁) y) = {!!}
-inversion-<:-true2 a (Sim (S-TVarSub x) y) = {!!}
-inversion-<:-true2 a (Sim S-MapTrueL y) = {!!}
-inversion-<:-true2 a (Sim S-MapFalseL y) = {!!}
+inversion-<:-true2 a (Sim S-Refl y) = inversion-<:-true a
+inversion-<:-true2 a (Sim (S-Trans x y) z) with inversion-<:-true2 x (Sim y (S-Trans z x))
+... | inj₂ (inj₁ U≅True) = inversion-<:-true2 a U≅True
+... | inj₂ (inj₂ U≅False) = {!!}
+... | inj₁ (Y , U≅′′Y) = inversion-<:-var2 a U≅′′Y
+inversion-<:-true2 a (Sim (S-TVarSub x) y) = inversion-<:-var a
+inversion-<:-true2 a (Sim S-MapTrueL y) = inversion-<:-true2 a (Sim S-MapTrueL S-MapTrueR)
+inversion-<:-true2 a (Sim S-MapFalseL y) = inversion-<:-true2 a (Sim S-MapFalseL S-MapFalseR)
 
 {-
 inversion-<:-false : ∀ {Γ S}
