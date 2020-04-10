@@ -123,7 +123,6 @@ data F<:_∈_ : Id → Context → Set where
   ZF<: : ∀ {Γ X}
     → F<: X ∈ (Γ ,F<: X)
 
-
 -- -------------------------------------
 
 -- -------------------------------------
@@ -154,10 +153,16 @@ data _⊢_<:_ : Context → Type → Type → Set where
   S-All : ∀ {Γ X U₁ S₂ T₂}
     → Γ , X <: U₁ ⊢ S₂ <: T₂
     → Γ ⊢ (A X <: U₁ ∶ S₂) <: (A X <: U₁ ∶ T₂)
-  S-UnionL : ∀ {Γ A B}
-    → Γ ⊢ A <: A ∨ B
-  S-UnionR : ∀ {Γ A B}
-    → Γ ⊢ B <: A ∨ B
+  S-UnionL : ∀ {Γ L R T}
+    → Γ ⊢ T <: L
+    → Γ ⊢ T <: L ∨ R
+  S-UnionR : ∀ {Γ L R T}
+    → Γ ⊢ T <: R
+    → Γ ⊢ T <: L ∨ R
+  S-UnionM : ∀ {Γ L R T}
+    → Γ ⊢ L <: T
+    → Γ ⊢ R <: T
+    → Γ ⊢ L ∨ R <: T
   S-MapTrueL : ∀ {Γ T₁ T₂}
     → Γ ⊢ [T= T₁ ,F= T₂ ][ TTrue ] <: T₁
   S-MapTrueR : ∀ {Γ T₁ T₂}
@@ -172,11 +177,187 @@ data _⊢_<:_ : Context → Type → Type → Set where
     → Γ ⊢ S <: T
     → Γ ⊢ [T= T₁ ,F= T₂ ][ S ] <: [T= T₁ ,F= T₂ ][ T ]
 
+-- well-formed context
+
+data ⊢_ : Context → Set where
+  ⊢∅ : ⊢ ∅
+  ⊢T<: : ∀ {Γ T X}
+    → ⊢ Γ → X <: T ∈ Γ → ∅ ⊢ TTrue <: T → ⊢ ( Γ ,T<: X )
+  ⊢F<: : ∀ {Γ T X}
+    → ⊢ Γ → X <: T ∈ Γ → ∅ ⊢ TFalse <: T → ⊢ ( Γ ,F<: X )
+
+-- ≅
+
 data _⊢_≅_ : Context → Type → Type → Set where
   Sim : ∀ {Γ A B}
     → Γ ⊢ A <: B
     → Γ ⊢ B <: A
     → Γ ⊢ A ≅ B
+
+refl-≅ : ∀ {Γ A}
+  → Γ ⊢ A ≅ A
+refl-≅ = Sim S-Refl S-Refl
+
+swap-≅ : ∀ {Γ A B}
+  → Γ ⊢ A ≅ B
+  → Γ ⊢ B ≅ A
+swap-≅ (Sim a b) = Sim b a
+
+trans-≅ : ∀ {Γ A B C}
+  → Γ ⊢ A ≅ B
+  → Γ ⊢ B ≅ C
+  → Γ ⊢ A ≅ C
+trans-≅ (Sim A<:B B<:A) (Sim B<:C C<:B) = Sim (S-Trans A<:B B<:C) (S-Trans C<:B B<:A)
+
+map-≅ : ∀ {Γ T₁ T₂ X Y}
+  → Γ ⊢ X ≅ Y
+  → Γ ⊢ [T= T₁ ,F= T₂ ][ X ] ≅ [T= T₁ ,F= T₂ ][ Y ]
+map-≅ (Sim X<:True True<:X) = Sim (S-Map X<:True) (S-Map True<:X)
+
+true-≅ : ∀ {Γ T₁ T₂}
+  → Γ ⊢ [T= T₁ ,F= T₂ ][ TTrue ] ≅ T₁
+true-≅ = Sim S-MapTrueL S-MapTrueR
+
+false-≅ : ∀ {Γ T₁ T₂}
+  → Γ ⊢ [T= T₁ ,F= T₂ ][ TFalse ] ≅ T₂
+false-≅ = Sim S-MapFalseL S-MapFalseR
+
+bool-≅ : ∀ {Γ T₁ T₂}
+  → Γ ⊢ [T= T₁ ,F= T₂ ][ TBool ] ≅ T₁ ∨ T₂
+bool-≅ = Sim S-MapBoolL (S-UnionM (S-Trans S-MapTrueR (S-Map (S-UnionL S-Refl))) (S-Trans S-MapFalseR (S-Map (S-UnionR S-Refl))))
+
+lax-or : ∀ {Γ A B C}
+  → Γ ⊢ A ≅ C
+  → Γ ⊢ B ≅ C
+  → Γ ⊢ A ∨ B ≅ C
+lax-or (Sim A<:C C<:A) (Sim B<:C C<:B) = {!!}
+
+--
+
+-- helper record
+
+test4 : ∀ { T₁ T₂ T }
+  → ∅ ⊢ [T= T₁ ,F= T₂ ][ TTrue ] ≅ T
+  → ∅ ⊢ T₁ ≅ T
+test4 x = trans-≅ (Sim S-MapTrueR S-MapTrueL) x
+
+
+
+test5 : ∀ { T₁ T₂ T }
+  → ∅ ⊢ [T= T₁ ,F= T₂ ][ TFalse ] ≅ T
+  → ∅ ⊢ T₂ ≅ T
+test5 x = trans-≅ (Sim S-MapFalseR S-MapFalseL) x
+
+test6 : ∀ { T₁ T₂ T }
+  → ∅ ⊢ [T= T₁ ,F= T₂ ][ TBool ] ≅ T
+  → ∅ ⊢ T₁ ∨ T₂ ≅ T
+test6 (Sim <:True True<:) = let
+  T₁<:True = S-Trans S-MapTrueR (S-Trans (S-Map (S-UnionL S-Refl)) <:True)
+  T₂<:True = S-Trans S-MapFalseR (S-Trans (S-Map (S-UnionR S-Refl)) <:True)
+  T₁∨T₂<:True = S-UnionM T₁<:True T₂<:True
+  True<:T₁∨T₂ = S-Trans True<: S-MapBoolL
+  in Sim T₁∨T₂<:True True<:T₁∨T₂
+
+obj-sub-of-fields : ∀ { T₁ T₂ T }
+  → ∅ ⊢ T <: TBool
+  → ∅ ⊢ [T= T₁ ,F= T₂ ][ T ] <: T₁ ∨ T₂
+obj-sub-of-fields T<:Bool = S-Trans (S-Map T<:Bool) S-MapBoolL
+
+fields-sub-of-obj : ∀ { T₁ T₂ T }
+  → ∅ ⊢ T <: TBool
+  → ∅ ⊢ T₁ ∨ T₂ <: [T= T₁ ,F= T₂ ][ T ]
+fields-sub-of-obj T<:Bool = S-UnionM {!!} {!S-MapFalseR!}
+
+
+--
+
+test2 : ∀ {L R T}
+  → ∅ ⊢ L ∨ R <: T
+  → ∅ ⊢ L <: T × ∅ ⊢ R <: T
+test2 S-Refl = (S-UnionL S-Refl , S-UnionR S-Refl)
+test2 (S-Trans L∨R<:U U<:T) with test2 L∨R<:U
+... | (L<:U , R<:U) = (S-Trans L<:U U<:T , S-Trans R<:U U<:T)
+test2 S-Top = (S-Top , S-Top)
+test2 (S-UnionL x) = (S-Trans (S-UnionL {!!}) (S-UnionL {!!}) , S-Trans (S-UnionR {!!}) (S-UnionL {!!}))
+test2 (S-UnionR x) = (S-Trans (S-UnionL {!!}) (S-UnionR {!!}) , S-Trans (S-UnionR {!!}) (S-UnionR {!!}))
+test2 (S-UnionM x y) = {!!}
+test2 S-MapTrueR = (S-Trans (S-UnionL {!!}) S-MapTrueR , S-Trans (S-UnionR {!!}) S-MapTrueR)
+test2 S-MapFalseR = (S-Trans (S-UnionL {!!}) S-MapFalseR , S-Trans (S-UnionR {!!}) S-MapFalseR)
+
+test3 : ∀ {L R}
+  → ∅ ⊢ TTrue <: L ∨ R
+  → ∅ ⊢ L <: TTrue
+  → ∅ ⊢ R <: TTrue
+  → ∅ ⊢ TTrue <: L × ∅ ⊢ TTrue <: R
+
+test1 : ∀ {L R}
+  → ∅ ⊢ L ∨ R ≅ TTrue
+  → ∅ ⊢ L ≅ TTrue
+
+∅-inversion-true : ∀ {S}
+  → ∅ ⊢ S <: TTrue → ∅ ⊢ S ≅ TTrue
+
+∅-inversion-true2 : ∀ {S U}
+  → ∅ ⊢ S <: U → ∅ ⊢ U ≅ TTrue → ∅ ⊢ S ≅ TTrue
+
+test3 (S-Trans a b) L<:T R<:T = {!!}
+test3 (S-UnionL x) L<:T R<:T = {!!}
+test3 (S-UnionR x) L<:T R<:T = {!!}
+
+test1 (Sim L∨R<:True True<:L∨R) with test2 L∨R<:True
+... | (L<:True , R<:True) = ∅-inversion-true L<:True
+-- ∅-inversion-true L<:True
+
+∅-inversion-true S-Refl = refl-≅
+∅-inversion-true (S-Trans S<:U U<:True) with ∅-inversion-true U<:True
+... | U≅True = ∅-inversion-true2 S<:U U≅True
+∅-inversion-true S-MapTrueL = (Sim S-MapTrueL S-MapTrueR)
+∅-inversion-true S-MapFalseL = (Sim S-MapFalseL S-MapFalseR)
+∅-inversion-true (S-UnionM x y) = {!!}
+
+∅-inversion-true2 S-Refl U≅True = U≅True
+∅-inversion-true2 (S-Trans S<:U U<:T) T≅True = ∅-inversion-true2 S<:U (∅-inversion-true2 U<:T T≅True)
+∅-inversion-true2 S-Top U≅True = {!!} -- Top \≅ True
+∅-inversion-true2 (S-Arrow S<:U S<:U₁) U≅True = {!!} -- A ⇒ B \≅ True
+∅-inversion-true2 (S-All S<:U) U≅True = {!!} -- A X <: U : S \≅ True
+∅-inversion-true2 (S-UnionL x) (Sim L∨R<:True True<:L∨R) = {!!}
+-- with test2 L∨R<:True
+-- ... | (L≅True , R≅True) = ∅-inversion-true2 L≅True (Sim S-Refl S-Refl)
+∅-inversion-true2 (S-UnionR x) U≅True = {!!}
+∅-inversion-true2 (S-UnionM x y) U≅True = {!!}
+∅-inversion-true2 S-MapTrueL U≅True = trans-≅ (Sim S-MapTrueL S-MapTrueR) U≅True
+∅-inversion-true2 S-MapTrueR U≅True = trans-≅ (Sim S-MapTrueR S-MapTrueL) U≅True
+∅-inversion-true2 S-MapFalseL U≅True = trans-≅ (Sim S-MapFalseL S-MapFalseR) U≅True
+∅-inversion-true2 S-MapFalseR U≅True = trans-≅ (Sim S-MapFalseR S-MapFalseL) U≅True
+∅-inversion-true2 S-MapBoolL U≅True = trans-≅ (Sim S-MapBoolL {!!}) U≅True
+∅-inversion-true2 (S-Map {S = X} {T = T} X<:U) U≅True = let
+  -- well-formedness
+  X<:Bool : ∅ ⊢ X <: TBool
+  X<:Bool = {!!}
+  T<:Bool : ∅ ⊢ T <: TBool
+  T<:Bool = {!!}
+  T₁∨T₂≅True = test6
+  in {!!}
+--  in {!S-Trans (S-Map X<:Bool) S-MapBoolL!}
+
+{-
+∅-inversion-true2 S<:U (Sim S-Refl True<:U) = ∅-inversion-true S<:U
+∅-inversion-true2 S<:U (Sim (S-Trans x x₁) True<:U) = {!!}
+∅-inversion-true2 S<:U (Sim S-MapTrueL True<:U) = {!!}
+-- ∅-inversion-true (S-Trans S<:U S-MapTrueL)
+∅-inversion-true2 S<:U (Sim S-MapFalseL True<:U) = {!!}
+-}
+
+¬∅F<:T : ∅ ⊢ TFalse <: TTrue → ⊥
+
+¬∅F<:T (S-Trans F<:U U<:T) = {!!}
+
+¬F<:T : ∀ {Γ}
+  → ⊢ Γ → Γ ⊢ TFalse <: TTrue → ⊥
+¬F<:T ⊢∅ (S-Trans F<:U U<:T) = {!!}
+¬F<:T (⊢T<: ⊢Γ X<:T∈Γ True<:T) (S-Trans F<:U U<:T) = {!!}
+¬F<:T (⊢F<: ⊢Γ X<:T∈Γ False<:T) (S-Trans F<:U U<:T) = {!!}
+
 {-
 False <: True is possible in some contexts, thus ∀ {Γ} → Γ ⊢ TFalse <: TTrue → ⊥ is not provable
 
@@ -192,17 +373,6 @@ function f<X extends "true">(x: X) {
   }
 }
 -}
-
-swap-≅ : ∀ {Γ A B}
-  → Γ ⊢ A ≅ B
-  → Γ ⊢ B ≅ A
-swap-≅ (Sim a b) = Sim b a
-
-trans-≅ : ∀ {Γ A B C}
-  → Γ ⊢ A ≅ B
-  → Γ ⊢ B ≅ C
-  → Γ ⊢ A ≅ C
-trans-≅ (Sim A<:B B<:A) (Sim B<:C C<:B) = Sim (S-Trans A<:B B<:C) (S-Trans C<:B B<:A)
 
 -- inversion of subtyping relation
 
@@ -254,6 +424,7 @@ inversion-<:-true (S-Trans S<:U U<:TTrue) with inversion-<:-true U<:TTrue
 inversion-<:-true (S-TVarSub {X = X} X<:TTrue) = inj₁ (X , (Sim S-Refl S-Refl))
 inversion-<:-true S-MapTrueL = inj₂ (inj₁ (Sim S-MapTrueL S-MapTrueR))
 inversion-<:-true S-MapFalseL = inj₂ (inj₁ (Sim S-MapFalseL S-MapFalseR))
+
 inversion-<:-var2 a (Sim S-Refl y) = inversion-<:-var a
 inversion-<:-var2 S<:U (Sim (S-Trans U<:T T<:′′X) ′′X<:U) with inversion-<:-var T<:′′X
 inversion-<:-var2 S<:U (Sim (S-Trans U<:T T<:′′X) ′′X<:U) | inj₁ (Y , T≅′′Y) with inversion-<:-var2 U<:T T≅′′Y
