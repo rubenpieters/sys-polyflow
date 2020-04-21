@@ -282,6 +282,21 @@ read-and-write a b with (write-result a , read-result b)
 ∅-inversion-true (SA-TEvalRead x y) = Sim (SA-TEvalRead x y) (SA-TEvalWrite {!!} {!!})
 -}
 
+imp-⇒<:True : ∀ {Γ A B}
+  → Γ ⊢> A ⇒ B <: TTrue
+  → ⊥
+imp-⇒<:True ()
+
+imp-A<:True : ∀ {Γ X S T}
+  → Γ ⊢> A X <: S ∶ T <: TTrue
+  → ⊥
+imp-A<:True ()
+
+imp-A<:False : ∀ {Γ X S T}
+  → Γ ⊢> A X <: S ∶ T <: TFalse
+  → ⊥
+imp-A<:False ()
+
 -- -------------------------------------
 
 -- -------------------------------------
@@ -321,22 +336,28 @@ data _⊢>_∶_ : Context → Term → Type → Set where
     → Γ ⊢> ′ x ∶ T
   TA-Abs : ∀ {Γ x t₂ T₁ T₂}
     → Γ , x ∶ T₁ ⊢> t₂ ∶ T₂
+    -- t₂ ∶ T
+    -- T <: T₂
     → Γ ⊢> (ƛ x ∶ T₁ ⋯> t₂ ∶ T₂) ∶ T₁ ⇒ T₂
-  TA-App : ∀ {Γ t₁ t₂ T₁ T₂ T₁₁ T₁₂}
-    → Γ ⊢> t₁ ∶ T₁
-    → Γ ⊢> T₁ ↑ T₁₁ ⇒ T₁₂
+  TA-App : ∀ {Γ t₁ t₂ T₁ T₂ A B X}
+    → Γ ⊢> t₁ ∶ X
+    → Γ ⊢> X <: T₁
+    → Γ ⊢> T₁ ↑ A ⇒ B
     → Γ ⊢> t₂ ∶ T₂
-    → Γ ⊢> T₂ <: T₁₁
-    → Γ ⊢> t₁ ∙ t₂ ∶ T₁₂
+    → Γ ⊢> T₂ <: A
+    → Γ ⊢> t₁ ∙ t₂ ∶ B
   TA-True : ∀ {Γ}
     → Γ ⊢> B′ true ∶ TTrue
   TA-False : ∀ {Γ}
     → Γ ⊢> B′ false ∶ TFalse
-  TA-If : ∀ {Γ A B t₁ t₂ t₃}
-    → Γ ⊢> t₁ ∶ TBool
+  TA-If : ∀ {Γ A B t₁ t₂ t₃ T C}
+    → Γ ⊢> t₁ ∶ T
+    → Γ ⊢> T <: TBool
     → Γ ⊢> t₂ ∶ A
     → Γ ⊢> t₃ ∶ B
-    → Γ ⊢> if t₁ then t₂ else t₃ ∶ A ∨ B
+    → Γ ⊢> A <: C
+    → Γ ⊢> B <: C
+    → Γ ⊢> if t₁ then t₂ else t₃ ∶ C
   TA-IfTrueR : ∀ {Γ A B t₂ t₃ x X}
     → Γ ⊢> ′ x ∶ ′′ X
     → (Γ ,T<: X) ⊢> t₂ ∶ A
@@ -345,8 +366,9 @@ data _⊢>_∶_ : Context → Term → Type → Set where
   TA-TAbs : ∀ {Γ X t₂ T₁ T₂}
     → Γ , X <: T₁ ⊢> t₂ ∶ T₂
     → Γ ⊢> Λ X <: T₁ ⋯> t₂ ∶ A X <: T₁ ∶ T₂
-  TA-TApp : ∀ {Γ t₁ X T₁ T₁₁ T₁₂ T₂}
-    → Γ ⊢> t₁ ∶ T₁
+  TA-TApp : ∀ {Γ t₁ X T₁ T₁₁ T₁₂ T₂ S}
+    → Γ ⊢> t₁ ∶ S
+    → Γ ⊢> S <: T₁
     → Γ ⊢> T₁ ↑ (A X <: T₁₁ ∶ T₁₂)
     → Γ ⊢> T₂ <: T₁₁
     → Γ ⊢> t₁ [ T₂ ] ∶ T₁₂ [ X τ= T₂ ]
@@ -458,26 +480,55 @@ data _—→_ : Term → Term → Set where
 -- -------------------------------------
 -- CANONICAL FORMS
 
-canonical-form-bool : ∀ {v}
+canonical-form-true : ∀ {Γ v}
   → Value v
-  → ∅ ⊢> v ∶ TBool
+  → Γ ⊢> v ∶ TTrue
+  → v ≡ B′ true
+canonical-form-true V-Bool TA-True = refl
+
+canonical-form-bool<: : ∀ {Γ v T}
+  → Value v
+  → Γ ⊢> v ∶ T
+  → Γ ⊢> T <: TBool
   → v ≡ B′ true ⊎ v ≡ B′ false
-canonical-form-bool V-Abs y = {!!}
-canonical-form-bool V-Bool y = {!!}
-canonical-form-bool V-TAbs y = {!!}
+canonical-form-bool<: V-Abs (TA-Abs y) (SA-UnionL z) = ⊥-elim (imp-⇒<:True z)
+canonical-form-bool<: V-Bool TA-True z = inj₁ refl
+canonical-form-bool<: V-Bool TA-False z = inj₂ refl
+canonical-form-bool<: V-TAbs (TA-TAbs y) (SA-UnionL z) = ⊥-elim (imp-A<:True z)
+canonical-form-bool<: V-TAbs (TA-TAbs y) (SA-UnionR z) = ⊥-elim (imp-A<:False z)
 
-canonical-form-abs : ∀ {v A B}
+canonical-form-abs : ∀ {Γ v A B T}
   → Value v
-  → ∅ ⊢> v ∶ A ⇒ B
+  → Γ ⊢> v ∶ T
+  → Γ ⊢> T ↑ A ⇒ B
   → ∃ λ x → ∃ λ t → ∃ λ S₁ → ∃ λ S₂ → v ≡ ƛ x ∶ S₁ ⋯> t ∶ S₂ × ∅ ⊢> A <: S₁
-canonical-form-abs (V-Abs {x} {T₁} {T₂} {t}) (TA-Abs a) = (x , t , T₁ , T₂ , refl , refl-<:)
+canonical-form-abs (V-Abs {x} {T₁} {T₂} {t}) (TA-Abs _) (XA-Other _) = (x , t , T₁ , T₂ , refl , refl-<:)
 
-canonical-form-abs2 : ∀ {v A B T}
+canonical-form-abs2 : ∀ {Γ v A B T X}
   → Value v
-  → ∅ ⊢> v ∶ T
-  → ∅ ⊢> T ↑ A ⇒ B
-  → ∃ λ x → ∃ λ t → ∃ λ S₁ → ∃ λ S₂ → v ≡ ƛ x ∶ S₁ ⋯> t ∶ S₂ × ∅ ⊢> A <: S₁
-canonical-form-abs2 (V-Abs {x} {T₁} {T₂} {t}) (TA-Abs a) (XA-Other b) = (x , t , T₁ , T₂ , refl , refl-<:)
+  → Γ ⊢> v ∶ X
+  → Γ ⊢> X <: T
+  → Γ ⊢> T ↑ A ⇒ B
+  → ∃ λ x → ∃ λ t → ∃ λ S₁ → ∃ λ S₂ → v ≡ ƛ x ∶ S₁ ⋯> t ∶ S₂ × Γ ⊢> A <: S₁
+canonical-form-abs2 (V-Abs {x} {T₁} {T₂} {t}) (TA-Abs _) () (XA-Promote _ _)
+canonical-form-abs2 (V-Abs {x} {T₁} {T₂} {t}) (TA-Abs _) (SA-Arrow z _) (XA-Other _) = (x , t , T₁ , T₂ , refl , z)
+
+canonical-form-tabs : ∀ {Γ v X T T₁ T₂}
+  → Value v
+  → Γ ⊢> v ∶ T
+  → Γ ⊢> T ↑ A X <: T₁ ∶ T₂
+  → ∃ λ t₂ → v ≡ Λ X <: T₁ ⋯> t₂
+canonical-form-tabs (V-TAbs {t = t}) (TA-TAbs _) (XA-Other _) = (t , refl)
+
+
+canonical-form-tabs2 : ∀ {Γ v X T T₁ T₂ S}
+  → Value v
+  → Γ ⊢> v ∶ S
+  → Γ ⊢> S <: T
+  → Γ ⊢> T ↑ A X <: T₁ ∶ T₂
+  → ∃ λ t₂ → v ≡ Λ X <: T₁ ⋯> t₂
+canonical-form-tabs2 (V-TAbs {t = t}) (TA-TAbs _) () (XA-Promote _ _)
+canonical-form-tabs2 (V-TAbs {t = t}) (TA-TAbs _) (SA-All z) (XA-Other _) = (t , refl)
 
 -- -------------------------------------
 
@@ -492,29 +543,32 @@ data Progress (t : Term) : Set where
        Value t
     → Progress t
 
+var-empty-ctx : ∀ {x T}
+  → ∅ ⊢> ′ x ∶ T
+  → ⊥
+var-empty-ctx (TA-Var ())
 
 progress : ∀ {t T}
   → ∅ ⊢> t ∶ T
   → Progress t
 progress (TA-Abs d) = done V-Abs
-progress (TA-App ⊢t₁ x ⊢t₂ y) with progress ⊢t₁
+progress (TA-App ⊢t₁ x z ⊢t₂ y) with progress ⊢t₁
 ... | step t₁—→t₁' = step (E-App1 t₁—→t₁')
 ... | done v₁ with progress ⊢t₂
 ...   | step t₂—→t₂' = step (E-App2 t₂—→t₂')
-...   | done v₂ with canonical-form-abs2 v₁ ⊢t₁ x
+...   | done v₂ with canonical-form-abs2 v₁ ⊢t₁ x z
 ...     | (_ , _ , _ , _ , refl , _) = step (E-AppAbs)
 progress (TA-True) = done (V-Bool)
 progress (TA-False) = done (V-Bool)
-{-
-progress (TA-If ⊢t ⊢t₁ ⊢t₂) with progress ⊢t
+progress (TA-If ⊢t T<Bool ⊢t₁ ⊢t₂ y z) with progress ⊢t
 ... | step t—→t' = step (E-If t—→t')
-... | done v with canonical-form-bool v ⊢t
-...   | (true , refl) = step (E-IfTrue)
-...   | (false , refl) = step (E-IfFalse)
+... | done v with canonical-form-bool<: v ⊢t T<Bool
+...   | inj₁ refl = step (E-IfTrue)
+...   | inj₂ refl = step (E-IfFalse)
 progress (TA-TAbs ⊢t₂) = done (V-TAbs)
-progress (TA-TApp {X = X} ⊢t₁ ⊢X<:) with progress ⊢t₁
+progress (TA-TApp {X = X} ⊢t₁ x z ⊢X<:) with progress ⊢t₁
 ... | step t₁—→t₁' = step (E-TApp t₁—→t₁')
-... | done v₁ with canonical-form-tabs v₁ ⊢t₁
+... | done v₁ with canonical-form-tabs2 v₁ ⊢t₁ x z
 ...   | (_ , refl) =  step (E-TAppAbs)
 progress (TA-Eq t₁:T t₂:T) with progress t₁:T
 ... | step t₁—→t₁' = step (E-EqL t₁—→t₁')
@@ -524,7 +578,6 @@ progress (TA-Eq t₁:T t₂:T) with progress t₁:T
 ...     | inj₁ eq-proof = step (E-EqTrue v₁ v₂ eq-proof)
 ...     | inj₂ _ = step (E-EqFalse v₁ v₂)
 progress (TA-IfTrueR x:X t₂:T t₃:T) = ⊥-elim (var-empty-ctx x:X)
--}
 
 -- -------------------------------------
 
@@ -536,6 +589,16 @@ postulate
     → ∅ ⊢> q ∶ Q
     → Γ , x ∶ Q ⊢> t ∶ T
     → Γ ⊢> t [ x := q ] ∶ T
+
+{-
+postulate
+  subst-preserves-typing : ∀ {Γ q Q x t T}
+    → ∅ ⊢> q ∶ X
+    → ∅ ⊢> A ⇒ B ↑ C ⇒ D
+    → ∅ , x ∶ A ⊢> t ∶ B
+    → ∅ ⊢> X <: C
+    → ∅ ⊢> t [ x := q ] ∶ T
+-}
 
 postulate
   type-subst-preserves-subtyping : ∀ {Γ P Q X S T}
@@ -559,5 +622,38 @@ postulate
 -- -------------------------------------
 -- PRESERVATION
 
+preserve : ∀ {M N A}
+  → ∅ ⊢> M ∶ A
+  → M —→ N
+  → ∃ λ B → ∅ ⊢> N ∶ B × ∅ ⊢> B <: A
+preserve (TA-Var _) ()
+preserve (TA-Abs ⊢N) ()
+preserve {A = A} (TA-App ⊢L x z ⊢M y) (E-App1 L—→L′) with preserve ⊢L L—→L′
+... | a , b , c = (A , TA-App b (trans-<: c x) z ⊢M y , refl-<:)
+preserve {A = A} (TA-App ⊢L x z ⊢M y) (E-App2 M—→M′) with preserve ⊢M M—→M′
+... | a , b , c = (A , TA-App ⊢L x z b (trans-<: c y) , refl-<:)
+preserve (TA-App (TA-Abs x) z T₁⇒T₂↑A⇒B t₂∶T₂ T₂<A) (E-AppAbs) = {!!}
+-- subst-preserves-typing ⊢V ⊢N
+preserve (TA-True) ()
+preserve (TA-False) ()
+preserve (TA-If {A = A₁} ⊢L x ⊢M ⊢N y z) E-IfTrue = (A₁ , ⊢M , y)
+preserve (TA-If {B = B} ⊢L x ⊢M ⊢N y z) E-IfFalse = (B , ⊢N , z)
+preserve {A = A} (TA-If ⊢L x ⊢M ⊢N y z) (E-If t—→t') with preserve ⊢L t—→t'
+... | a , b , c = (A , TA-If b (trans-<: c x) ⊢M ⊢N y z , refl-<:)
+preserve (TA-TAbs ⊢L) ()
+preserve {A = A} (TA-TApp ⊢L x z ⊢X<:) (E-TApp L—→L') with preserve ⊢L L—→L'
+... | a , b , c = (A , TA-TApp b (trans-<: c x) z ⊢X<: , refl-<:)
+preserve (TA-TApp (TA-TAbs ⊢N) x z ⊢X<:) E-TAppAbs = {!!}
+-- type-subst-preserves-typing ⊢X<: ⊢N
+preserve (TA-Eq t₁:T t₂:T) (E-EqL t—→t') with preserve t₁:T t—→t'
+... | a , b , c = (TBool , TA-Eq b t₂:T , refl-<:)
+preserve (TA-Eq t₁:T t₂:T) (E-EqR t—→t') with preserve t₂:T t—→t'
+... | a , b , c = (TBool , TA-Eq t₁:T b , refl-<:)
+preserve (TA-Eq t₁:T t₂:T) (E-EqTrue v₁ v₂ _) = (TTrue , TA-True , SA-UnionL refl-<:)
+preserve (TA-Eq t₁:T t₂:T) (E-EqFalse v₁ v₂) = (TFalse , TA-False , SA-UnionR refl-<:)
+preserve (TA-IfTrueR x:X t₂:T t₃:T) (E-If (E-EqL ()))
+preserve (TA-IfTrueR x:X t₂:T t₃:T) (E-If (E-EqR ()))
+preserve (TA-IfTrueR x:X t₂:T t₃:T) (E-If (E-EqTrue () _ _))
+preserve (TA-IfTrueR x:X t₂:T t₃:T) (E-If (E-EqFalse () _))
 
 -- -------------------------------------
