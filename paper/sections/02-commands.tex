@@ -3,6 +3,7 @@
 
 % terms
 \newcommand{\abs}[4]{\lambda (#1 : #2) . (#3 : #4)}
+\newcommand{\babs}[2]{\lambda #1 . #2}
 \newcommand{\app}[2]{#1\,#2}
 \newcommand{\tabs}[3]{\Lambda #1 <: #2 . #3}
 \newcommand{\tapp}[2]{#1\,[#2]}
@@ -14,6 +15,7 @@
 % types
 \newcommand{\fun}[2]{#1 \rightarrow #2}
 \newcommand{\tfun}[3]{\forall #1 <: #2 . #3}
+\newcommand{\ttop}[0]{Top}
 \newcommand{\tbool}[0]{Bool}
 \newcommand{\ttrue}[0]{True}
 \newcommand{\tfalse}[0]{False}
@@ -28,6 +30,11 @@
 \newcommand{\isatleast}[3]{#1 \vdash #2 \subset #3}
 \newcommand{\notatleast}[3]{#1\ \cancel{\vdash}\ #2 \subset #3}
 
+% bidirectional typing
+\newcommand{\checks}[3]{#1\ \vdash #2\ \textcolor{blue}{\Leftarrow}\ #3}
+\newcommand{\infers}[3]{#1\ \vdash #2\ \textcolor{red}{\Rightarrow}\ #3}
+\newcommand{\ann}[3]{(#1 : #2)}
+
 % context
 \newcommand{\typeincontext}[3]{#1 : #2 \in #3}
 \newcommand{\subtypeincontext}[3]{#1 <: #2 \in #3}
@@ -37,11 +44,16 @@
 \newcommand{\extendwsubtype}[3]{#1 , #2 <: #3}
 \newcommand{\extendwsupertype}[3]{#1 , #2 :> #3}
 \newcommand{\extendwatleast}[3]{#1 , #2 \subset #3}
-\newcommand{\subst}[3]{#1{}[#2 \mapsto #3]}
-\newcommand{\tsubst}[3]{#1{}[#2 \mapsto #3]}
 
 % type evaluation
 \newcommand{\teval}[3]{#1 \vdash #2 \xrightarrow[\{a\}]{TE} #3}
 \newcommand{\tevalr}[3]{#1 \vdash #2 \xrightarrow[r]{TE} #3}
 \newcommand{\tevalw}[3]{#1 \vdash #2 \xrightarrow[w]{TE} #3}
 \newcommand{\teq}[3]{#1 \vdash #2 =_{TE} #3}
+
+% term evaluation
+\newcommand{\eval}[2]{#1 \rightarrow #2}
+
+% substitution
+\newcommand{\subst}[3]{#1{}[#2 \mapsto #3]}
+\newcommand{\tsubst}[3]{#1{}[#2 \mapsto #3]}

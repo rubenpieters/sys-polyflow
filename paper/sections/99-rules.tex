@@ -48,7 +48,7 @@
 % for example in Sound and Complete Flow Typing with Unions, Intersections and Negations           
 
 \inferrule*[right=T-IfTrue]
-           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwsubtype{\tsubst{\Gamma}{x}{True}}{\ttrue}{X}}{t_2}{A} \\ \hastype{\extendwsubtype{\tsubst{\Gamma}{x}{False}}{\tfalse}{X}}{t_3}{B} }
+           { \hastype{\Gamma}{x}{X} \\ \hastype{\extendwsubtype{\tsubst{\Gamma}{x}{\true}}{\ttrue}{X}}{t_2}{A} \\ \hastype{\extendwsubtype{\tsubst{\Gamma}{x}{\tfalse}}{\tfalse}{X}}{t_3}{B} }
            { \hastype{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{\union{A}{B}} }
 
 \end{mathpar}
@@ -67,7 +67,7 @@
 
            \inferrule*[right=S-Top]
            {  }
-           { \hassubtype{\Gamma}{S}{Top} }
+           { \hassubtype{\Gamma}{S}{\ttop} }
 
 \inferrule*[right=S-TVarSub]
            { \subtypeincontext{X}{T}{\Gamma} }
@@ -143,7 +143,7 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 
            \inferrule*[right=S-Top]
            {  }
-           { \hassubtype{\Gamma}{S}{Top} }
+           { \hassubtype{\Gamma}{S}{\ttop} }
 
 \inferrule*[right=S-TVarSub]
            { \subtypeincontext{X}{T}{\Gamma} }
@@ -210,5 +210,208 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 \inferrule*[right=TE-MapWrite]
            { \hassubtype{\Gamma}{A}{B} }
            { \tevalw{\Gamma}{\tmap{T_t}{T_f}{B}}{\tmap{T_t}{T_f}{A}} }
+
+\end{mathpar}
+
+\subsection{Sub-Typing Relation 3: Type Evaluation Approach (Algorithmic)}
+
+\begin{mathpar}
+
+\inferrule*[right=SA-Top]
+           {  }
+           { \hassubtype{\Gamma}{S}{\ttop} }
+
+\inferrule*[right=SA-ReflTrue]
+           {  }
+           { \hassubtype{\Gamma}{\ttrue}{\ttrue} }
+
+\inferrule*[right=SA-ReflFalse]
+           {  }
+           { \hassubtype{\Gamma}{\tfalse}{\tfalse} }
+
+\inferrule*[right=SA-ReflTVar]
+           { \subtypeincontext{X}{T}{\Gamma} }
+           { \hassubtype{\Gamma}{X}{X} }
+
+\inferrule*[right=SA-TrueSubX]
+           { \subtypeincontext{True}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} }
+           { \hassubtype{\Gamma}{True}{X} }
+
+\inferrule*[right=SA-FalseSubX]
+           { \subtypeincontext{False}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} }
+           { \hassubtype{\Gamma}{False}{X} }
+
+\inferrule*[right=SA-ReflMap]
+           {  }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{T}}{\tmap{T_t}{T_f}{T}} }
+
+\inferrule*[right=SA-TransTVar]
+           { \subtypeincontext{X}{S}{\Gamma} \\ \hassubtype{\Gamma}{S}{T} }
+           { \hassubtype{\Gamma}{X}{T} }
+
+\inferrule*[right=SA-Arrow]
+           { \hassubtype{\Gamma}{T_1}{S_1} \\ \hassubtype{\Gamma}{S_2}{T_2} }
+           { \hassubtype{\Gamma}{(\fun{S_1}{S_2})}{(\fun{T_1}{T_2})} }
+
+\inferrule*[right=SA-All]
+           { \hassubtype{\Gamma}{U_1}{U_2} \\ \hassubtype{\extendwsubtype{\Gamma}{X}{U_2}}{S}{T}}
+           { \hassubtype{\Gamma}{(\tfun{X}{U_1}{S})}{(\tfun{X}{U_2}{T})} }
+
+\inferrule*[right=SA-UnionL]
+           { \hassubtype{\Gamma}{T}{L} }
+           { \hassubtype{\Gamma}{T}{\union{L}{R}} }
+
+\inferrule*[right=SA-UnionR]
+           { \hassubtype{\Gamma}{T}{R} }
+           { \hassubtype{\Gamma}{T}{\union{L}{R}} }
+
+\inferrule*[right=SA-UnionM]
+           { \hassubtype{\Gamma}{L}{T} \\ \hassubtype{\Gamma}{R}{T} }
+           { \hassubtype{\Gamma}{\union{L}{R}}{T} }
+
+\inferrule*[right=SA-TEvalRead]
+           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{T}}{X} \\ \hassubtype{\Gamma}{X}{B} }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{T}}{B} }
+
+\inferrule*[right=SA-TEvalWrite]
+           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{T}}{X} \\ \hassubtype{\Gamma}{A}{X} }
+           { \hassubtype{\Gamma}{A}{\tmap{T_t}{T_f}{T}} }
+
+\end{mathpar}
+
+\subsection{Type Evaluation}
+
+\begin{mathpar}
+          
+\inferrule*[right=TE-MapTrue]
+           {  }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{\ttrue}}{T_t} }
+
+\inferrule*[right=TE-MapFalse]
+           {  }
+           { \teval{\Gamma}{\tmap{T_t}{T_f}{\tfalse}}{T_f} }
+
+\inferrule*[right=TE-MapBoolRead]
+           {  }
+           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
+
+\inferrule*[right=TE-MapRead]
+           { \hassubtype{\Gamma}{A}{B} \\ \tevalr{\Gamma}{\tmap{T_t}{T_f}{B}}{X} }
+           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{A}}{X} }
+
+\inferrule*[right=TE-MapWrite]
+           { \hassubtype{\Gamma}{B}{A} \\ \tevalw{\Gamma}{\tmap{T_t}{T_f}{B}}{X} }
+           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{A}}{X} }
+
+\end{mathpar}
+
+\subsection{Bidirectional Typing}
+
+\begin{mathpar}
+
+\inferrule*[right=BT-Ann]
+           { \checks{\Gamma}{t}{T} }
+           { \infers{\Gamma}{\ann{t}{T}}{T} }
+
+\inferrule*[right=BT-True]
+           {  }
+           { \infers{\Gamma}{\true}{\ttrue} }
+
+\inferrule*[right=BT-False]
+           {  }
+           { \infers{\Gamma}{\false}{\tfalse} }
+
+\inferrule*[right=BT-Var]
+           { \typeincontext{x}{T}{\Gamma} }
+           { \infers{\Gamma}{x}{T} }
+
+\inferrule*[right=BT-Abs]
+           { \checks{\extendwtype{\Gamma}{x}{A}}{t}{B} }
+           { \checks{\Gamma}{\babs{x}{t}}{\fun{A}{B}} }
+
+\inferrule*[right=BT-App]
+           { \infers{\Gamma}{t_1}{\fun{A}{B}} \\ \checks{\Gamma}{t_2}{A} }
+           { \infers{\Gamma}{\app{t_1}{t_2}}{B} }
+
+\inferrule*[right=BT-TAbs]
+           { \infers{\extendwsubtype{\Gamma}{X}{U}}{t}{T} }
+           { \infers{\Gamma}{(\tabs{X}{U}{t})}{(\tfun{X}{U}{T})} }
+
+\inferrule*[right=BT-TApp]
+           { \infers{\Gamma}{t}{\tfun{X}{U}{T}} \\ \hassubtype{\Gamma}{S}{U} }
+           { \infers{\Gamma}{\tapp{t}{S}}{\subst{T}{X}{S}} }
+
+\inferrule*[right=BT-Sub]
+           { \infers{\Gamma}{t}{S} \\ \hassubtype{\Gamma}{S}{T} }
+           { \checks{\Gamma}{t}{T} }
+
+\inferrule*[right=BT-Eq]
+           {  }
+           { \infers{\Gamma}{\eq{t_1}{t_2}}{\tbool} }
+
+\inferrule*[right=T-If]
+           { \checks{\Gamma}{t_1}{\tbool} \\ \infers{\Gamma}{t_2}{A} \\ \infers{\Gamma}{t_3}{B} }
+           { \infers{\Gamma}{\ite{t_1}{t_2}{t_3}}{\union{A}{B}} }
+
+\inferrule*[right=T-IfTrue]
+           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \infers{\extendwsubtype{\tsubst{\Gamma}{x}{\true}}{\ttrue}{X}}{t_2}{A} \\ \infers{\extendwsubtype{\tsubst{\Gamma}{x}{\false}}{\tfalse}{X}}{t_3}{B} }
+           { \infers{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{\union{A}{B}} }
+
+
+\end{mathpar}
+
+\subsection{Term Evaluation}
+
+\begin{mathpar}
+
+\inferrule*[right=E-AppAbs]
+           {  }
+           { \eval{\app{(\babs{x}{t})}{v_2}}{\subst{t}{x}{v_2}} }
+
+\inferrule*[right=E-App1]
+           { \eval{t_1}{t_1'} }
+           { \eval{\app{t_1}{t_2}}{\app{t_1'}{t_2}} }
+
+\inferrule*[right=E-App2]
+           { \eval{t_2}{t_2'} }
+           { \eval{\app{v_1}{t_2}}{\app{v_1}{t_2'}} }
+
+\inferrule*[right=E-TappTabs]
+           {  }
+           { \eval{\tapp{(\tabs{X}{U}{t})}{T}}{\tsubst{t}{X}{T}} }
+
+\inferrule*[right=E-Tapp]
+           { \eval{t}{t'} }
+           { \eval{\tapp{t}{T}}{\tapp{t'}{T}} }
+
+\inferrule*[right=E-IfTrue]
+           {  }
+           { \eval{\ite{\true}{t_1}{t_2}}{t_1} }
+
+\inferrule*[right=E-IfFalse]
+           {  }
+           { \eval{\ite{\false}{t_1}{t_2}}{t_2} }
+
+\inferrule*[right=E-If]
+           { \eval{t}{t'} }
+           { \eval{\ite{t}{t_1}{t_2}}{\ite{t'}{t_1}{t_2}} }
+
+\inferrule*[right=E-EqL]
+           { \eval{t_1}{t_1'} }
+           { \eval{\eq{t_1}{t_2}}{\eq{t_1'}{t_2}} }
+
+\inferrule*[right=E-EqR]
+           { \eval{t_2}{t_2'} }
+           { \eval{\eq{v_1}{t_2}}{\eq{v_1}{t_2'}} }
+
+\inferrule*[right=E-EqTrue]
+           { v_1 = v_2 }
+           { \eval{\eq{v_1}{v_2}}{\true} }
+
+\inferrule*[right=E-EqFalse]
+           { v_1 \neq v_2 }
+           { \eval{\eq{v_1}{v_2}}{\false} }
+
+
 
 \end{mathpar}

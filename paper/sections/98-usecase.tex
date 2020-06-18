@@ -1,0 +1,25 @@
+\section{Scenarios}
+
+\subsection{Main Scenario}
+
+In typescript:
+
+\begin{lstlisting}
+
+interface F {
+  "true": "true",
+  "false": "false",
+}
+
+function f<T extends "true" | "false">(x: T): F[T] {
+  if (x === "true") {
+    return "true";
+  } else {
+    return "false";
+  }
+}
+\end{lstlisting}
+
+In our calculus:
+
+$\tabs{T}{\tbool}{ \ann{ (\babs{x}{ \ite{ (\eq{x}{\true}) }{\true}{\false}) } }{ \fun{T}{ \tmap{\ttrue}{\tfalse}{T} }} }$
