@@ -21,7 +21,7 @@
 \newcommand{\tfalse}[0]{False}
 \newcommand{\union}[2]{#1 \lor #2}
 \newcommand{\intersect}[2]{#1 \land #2}
-\newcommand{\tmap}[3]{\{ \texttt{true}: #1, \texttt{false}: #2 \}[#3]}
+\newcommand{\tmap}[3]{\{~\texttt{true}:~#1,~\texttt{false}:~#2~\}[#3]}
 
 % typing relation
 \newcommand{\hastype}[3]{#1 \vdash #2 : #3}
@@ -46,14 +46,18 @@
 \newcommand{\extendwatleast}[3]{#1 , #2 \subset #3}
 
 % type evaluation
-\newcommand{\teval}[3]{#1 \vdash #2 \xrightarrow[\{a\}]{TE} #3}
+\newcommand{\teval}[3]{#1 \vdash #2 \xrightarrow[\texttt{m}]{TE} #3}
 \newcommand{\tevalr}[3]{#1 \vdash #2 \xrightarrow[r]{TE} #3}
 \newcommand{\tevalw}[3]{#1 \vdash #2 \xrightarrow[w]{TE} #3}
 \newcommand{\teq}[3]{#1 \vdash #2 =_{TE} #3}
 
 % term evaluation
 \newcommand{\eval}[2]{#1 \rightarrow #2}
+\newcommand{\concrete}[1]{\mathit{concrete}\,#1}
 
 % substitution
 \newcommand{\subst}[3]{#1{}[#2 \mapsto #3]}
 \newcommand{\tsubst}[3]{#1{}[#2 \mapsto #3]}
+
+% grammar
+\newcommand{\alt}{\ |\ }

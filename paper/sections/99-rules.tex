@@ -213,6 +213,18 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 
 \end{mathpar}
 
+\subsection{Grammar}
+
+- Types
+\\$A,B,L,R,T_t,T_f,T,U ::= \ttop\alt\fun{A}{B}\alt\union{L}{R}\alt\tfun{X}{U}{T}\alt\ttrue\alt\tfalse\alt\tmap{T_t}{T_f}{T}\alt{}X$
+\\- Terms
+\\$t ::= \true\alt\false\alt\babs{x}{t}\alt\tapp{t}{T}\alt\ite{t}{t_1}{t_2}\alt\eq{t_1}{t_2}$
+\\- Context
+\\$\Gamma ::= \cdot\alt\Gamma{}, x : A\alt\Gamma{}, X <: T\alt\Gamma{}, True <: X\alt\Gamma{}, False <: X$
+\\Invariants context: each variabele has max 1 type, each type-variable has max 1 upper bound and max 1 lower bound (what in situation with more literals and false-branches ? formulate invariant more generic ?), if type variable has a lower bound it has an upper bound, no cycles allowed
+\\- Type Evaluation Modes
+\\$\texttt{m} ::= r\alt{}w$
+
 \subsection{Sub-Typing Relation 3: Type Evaluation Approach (Algorithmic)}
 
 \begin{mathpar}
@@ -234,11 +246,11 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \hassubtype{\Gamma}{X}{X} }
 
 \inferrule*[right=SA-TrueSubX]
-           { \subtypeincontext{True}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} }
+           { \subtypeincontext{True}{X}{\Gamma} }
            { \hassubtype{\Gamma}{True}{X} }
 
 \inferrule*[right=SA-FalseSubX]
-           { \subtypeincontext{False}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} }
+           { \subtypeincontext{False}{X}{\Gamma} }
            { \hassubtype{\Gamma}{False}{X} }
 
 \inferrule*[right=SA-ReflMap]
@@ -254,8 +266,8 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \hassubtype{\Gamma}{(\fun{S_1}{S_2})}{(\fun{T_1}{T_2})} }
 
 \inferrule*[right=SA-All]
-           { \hassubtype{\Gamma}{U_1}{U_2} \\ \hassubtype{\extendwsubtype{\Gamma}{X}{U_2}}{S}{T}}
-           { \hassubtype{\Gamma}{(\tfun{X}{U_1}{S})}{(\tfun{X}{U_2}{T})} }
+           { \hassubtype{\extendwsubtype{\Gamma}{X}{U}}{S}{T}}
+           { \hassubtype{\Gamma}{(\tfun{X}{U}{S})}{(\tfun{X}{U}{T})} }
 
 \inferrule*[right=SA-UnionL]
            { \hassubtype{\Gamma}{T}{L} }
@@ -270,11 +282,11 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \hassubtype{\Gamma}{\union{L}{R}}{T} }
 
 \inferrule*[right=SA-TEvalRead]
-           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{T}}{X} \\ \hassubtype{\Gamma}{X}{B} }
-           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{T}}{B} }
+           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{T}}{A} }
+           { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{T}}{A} }
 
 \inferrule*[right=SA-TEvalWrite]
-           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{T}}{X} \\ \hassubtype{\Gamma}{A}{X} }
+           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{T}}{A} }
            { \hassubtype{\Gamma}{A}{\tmap{T_t}{T_f}{T}} }
 
 \end{mathpar}
@@ -295,13 +307,41 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            {  }
            { \tevalr{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
 
-\inferrule*[right=TE-MapRead]
-           { \hassubtype{\Gamma}{A}{B} \\ \tevalr{\Gamma}{\tmap{T_t}{T_f}{B}}{X} }
-           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{A}}{X} }
+\inferrule*[right=TE-TVarRead]
+           { \subtypeincontext{X}{U}{\Gamma} }
+           { \tevalr{\Gamma}{ X }{ U } }
 
-\inferrule*[right=TE-MapWrite]
-           { \hassubtype{\Gamma}{B}{A} \\ \tevalw{\Gamma}{\tmap{T_t}{T_f}{B}}{X} }
-           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{A}}{X} }
+\inferrule*[right=TE-TVarWrite]
+           { \subtypeincontext{U}{X}{\Gamma} }
+           { \tevalw{\Gamma}{ X }{ U } }
+
+\inferrule*[right=TE-Map]
+           { \teval{\Gamma}{ T }{ T' } }
+           { \teval{\Gamma}{ \tmap{T_t}{T_f}{T} }{ \tmap{T_t}{T_f}{T'} } }
+
+\inferrule*[right=TE-UnionL]
+           { \teval{\Gamma}{ L }{ L' } }
+           { \teval{\Gamma}{ \union{L}{R} }{ \union{L'}{R} } }
+
+\inferrule*[right=TE-UnionR]
+           { \concrete{L} \\ \teval{\Gamma}{ R }{ R' } }
+           { \teval{\Gamma}{ \union{L}{R} }{ \union{L}{R'} } }
+
+\end{mathpar}
+
+\begin{mathpar}
+
+\inferrule*[right=C-True]
+           {  }
+           { \concrete{ \ttrue } }
+
+\inferrule*[right=C-False]
+           {  }
+           { \concrete{ \tfalse } }
+
+\inferrule*[right=C-UnionL]
+           { \concrete{L} \\ \concrete{R} }
+           { \concrete{ \union{L}{R} } }
 
 \end{mathpar}
 
@@ -311,7 +351,7 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 
 \inferrule*[right=BT-Ann]
            { \checks{\Gamma}{t}{T} }
-           { \infers{\Gamma}{\ann{t}{T}}{T} }
+           { \infers{\Gamma}{ \ann{t}{T} \  }{ T } }
 
 \inferrule*[right=BT-True]
            {  }
@@ -354,7 +394,7 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \infers{\Gamma}{\ite{t_1}{t_2}{t_3}}{\union{A}{B}} }
 
 \inferrule*[right=T-IfTrue]
-           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \infers{\extendwsubtype{\tsubst{\Gamma}{x}{\true}}{\ttrue}{X}}{t_2}{A} \\ \infers{\extendwsubtype{\tsubst{\Gamma}{x}{\false}}{\tfalse}{X}}{t_3}{B} }
+           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \hassubtype{\Gamma}{T}{Bool} \\ \infers{\extendwsubtype{\tsubst{\Gamma}{x}{\true}}{\ttrue}{X}}{t_2}{A} \\ \infers{\extendwsubtype{\tsubst{\Gamma}{x}{\false}}{\tfalse}{X}}{t_3}{B} }
            { \infers{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{\union{A}{B}} }
 
 
