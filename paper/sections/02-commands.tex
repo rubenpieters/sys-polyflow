@@ -11,6 +11,8 @@
 \newcommand{\true}[0]{\texttt{true}}
 \newcommand{\false}[0]{\texttt{false}}
 \newcommand{\eq}[2]{#1\,\texttt{==}\,#2}
+\newcommand{\tand}[2]{#1\,\texttt{\&\&}\,#2}
+\newcommand{\tor}[2]{#1\,\texttt{||}\,#2}
 
 % types
 \newcommand{\fun}[2]{#1 \rightarrow #2}
@@ -33,7 +35,7 @@
 % bidirectional typing
 \newcommand{\checks}[3]{#1\ \vdash #2\ \textcolor{blue}{\Leftarrow}\ #3}
 \newcommand{\infers}[3]{#1\ \vdash #2\ \textcolor{red}{\Rightarrow}\ #3}
-\newcommand{\ann}[3]{(#1 : #2)}
+\newcommand{\ann}[2]{(#1~:~#2)}
 
 % context
 \newcommand{\typeincontext}[3]{#1 : #2 \in #3}
@@ -43,12 +45,19 @@
 \newcommand{\extendwtype}[3]{#1 , #2 : #3}
 \newcommand{\extendwsubtype}[3]{#1 , #2 <: #3}
 \newcommand{\extendwsupertype}[3]{#1 , #2 :> #3}
-\newcommand{\extendwatleast}[3]{#1 , #2 \subset #3}
+\newcommand{\extendwatleast}[3]{#1 , #2\,\texttt{<must-atleast-be>}\,#3}
+\newcommand{\atleast}[3]{#1 \vdash #2\,\texttt{<must-atleast-be>}\,#3}
+\newcommand{\extendwcannot}[3]{#1 , #2\,\texttt{<cannot-be-exactly>}\,#3}
+\newcommand{\cannot}[3]{#1 \vdash #2\texttt{<cannot-be-exactly>}\,#3}
+\newcommand{\cstop}[2]{#1 \vdash \texttt{stop}\,#2}
 
 % type evaluation
 \newcommand{\teval}[3]{#1 \vdash #2 \xrightarrow[\texttt{m}]{TE} #3}
+\newcommand{\tevalx}[3]{#1 \vdash #2 \xrightarrow[\texttt{m}]{TE}^* #3}
 \newcommand{\tevalr}[3]{#1 \vdash #2 \xrightarrow[r]{TE} #3}
+\newcommand{\tevalrx}[3]{#1 \vdash #2 \xrightarrow[r]{TE}^* #3}
 \newcommand{\tevalw}[3]{#1 \vdash #2 \xrightarrow[w]{TE} #3}
+\newcommand{\tevalwx}[3]{#1 \vdash #2 \xrightarrow[w]{TE}^* #3}
 \newcommand{\teq}[3]{#1 \vdash #2 =_{TE} #3}
 
 % term evaluation
@@ -61,3 +70,14 @@
 
 % grammar
 \newcommand{\alt}{\ |\ }
+
+% condition info
+\newcommand{\ci}[3]{#1 \vdash #2 \rightsquigarrow #3}
+
+% context operation
+\newcommand{\coia}[3]{#1 \sqcap #2 \rightarrow #3}
+\newcommand{\coi}[2]{#1 \sqcap #2}
+\newcommand{\coua}[3]{#1 \sqcup #2 \rightarrow #3}
+\newcommand{\cou}[2]{#1 \sqcup #2}
+\newcommand{\cona}[2]{\lnot #1 \rightarrow #2}
+\newcommand{\con}[1]{\lnot #1}

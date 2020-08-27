@@ -218,11 +218,13 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 - Types
 \\$A,B,L,R,T_t,T_f,T,U ::= \ttop\alt\fun{A}{B}\alt\union{L}{R}\alt\tfun{X}{U}{T}\alt\ttrue\alt\tfalse\alt\tmap{T_t}{T_f}{T}\alt{}X$
 \\- Terms
-\\$t ::= \true\alt\false\alt\babs{x}{t}\alt\app{t_1}{t_2}\alt\tabs{X}{U}{t}\alt\tapp{t}{T}\alt\ite{t}{t_1}{t_2}\alt\eq{t_1}{t_2}$
+\\$t ::= \true\alt\false\alt\babs{x}{t}\alt\app{t_1}{t_2}\alt\tabs{X}{U}{t}\alt\tapp{t}{T}\alt\ite{t}{t_1}{t_2}\alt\eq{t_1}{t_2}\alt\tand{t_1}{t_2}\alt\ann{t}{T}$
 \\- Values
 \\$v ::= \true\alt\false\alt\babs{x}{t}\alt\tabs{X}{U}{t}$
 \\- Context
-\\$\Gamma ::= \cdot\alt\Gamma{}, x : A\alt\Gamma{}, X <: T\alt\Gamma{}, True <: X\alt\Gamma{}, False <: X$
+\\$\Gamma ::= \cdot\alt\Gamma{}, x : A\alt\Gamma{}, S < X <: T$
+\\- Condition Context
+\\$\Delta ::= \emptyset\alt\Delta{}, S < X$
 \\Invariants context: each variabele has max 1 type, each type-variable has max 1 upper bound and max 1 lower bound (what in situation with more literals and false-branches ? formulate invariant more generic ?), if type variable has a lower bound it has an upper bound, no cycles allowed
 \\- Type Evaluation Modes
 \\$\texttt{m} ::= r\alt{}w$
@@ -247,13 +249,13 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \subtypeincontext{X}{T}{\Gamma} }
            { \hassubtype{\Gamma}{X}{X} }
 
-\inferrule*[right=SA-TrueSubX]
-           { \subtypeincontext{True}{X}{\Gamma} }
-           { \hassubtype{\Gamma}{True}{X} }
+%\inferrule*[right=SA-TrueSubX]
+%           { \subtypeincontext{True}{X}{\Gamma} }
+%           { \hassubtype{\Gamma}{True}{X} }
 
-\inferrule*[right=SA-FalseSubX]
-           { \subtypeincontext{False}{X}{\Gamma} }
-           { \hassubtype{\Gamma}{False}{X} }
+%\inferrule*[right=SA-FalseSubX]
+%           { \subtypeincontext{False}{X}{\Gamma} }
+%           { \hassubtype{\Gamma}{False}{X} }
 
 \inferrule*[right=SA-ReflMap]
            {  }
@@ -284,11 +286,11 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \hassubtype{\Gamma}{\union{L}{R}}{T} }
 
 \inferrule*[right=SA-TEvalRead]
-           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{T}}{A} }
+           { \tevalrx{\Gamma}{\tmap{T_t}{T_f}{T}}{X} \\ \hassubtype{\Gamma}{X}{A} }
            { \hassubtype{\Gamma}{\tmap{T_t}{T_f}{T}}{A} }
 
 \inferrule*[right=SA-TEvalWrite]
-           { \tevalw{\Gamma}{\tmap{T_t}{T_f}{T}}{A} }
+           { \tevalwx{\Gamma}{\tmap{T_t}{T_f}{T}}{X} \\ \hassubtype{\Gamma}{A}{X} }
            { \hassubtype{\Gamma}{A}{\tmap{T_t}{T_f}{T}} }
 
 \end{mathpar}
@@ -305,16 +307,17 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            {  }
            { \teval{\Gamma}{\tmap{T_t}{T_f}{\tfalse}}{T_f} }
 
-\inferrule*[right=TE-MapBoolRead]
+\inferrule*[right=TE-MapUnion]
            {  }
-           { \tevalr{\Gamma}{\tmap{T_t}{T_f}{\tbool}}{\union{T_t}{T_f}} }
+           { \tevalr{\Gamma}{ \tmap{T_t}{T_f}{\union{L}{R}} }{ \union{ \tmap{T_t}{T_f}{L} }{ \tmap{T_t}{T_f}{R} } } }
 
 \inferrule*[right=TE-TVarRead]
-           { \subtypeincontext{X}{U}{\Gamma} }
-           { \tevalr{\Gamma}{ X }{ U } }
+           { S < \subtypeincontext{X}{T}{\Gamma} }
+           { \tevalr{\Gamma}{ X }{ T } }
 
 \inferrule*[right=TE-TVarWrite]
-           { \subtypeincontext{U}{X}{\Gamma} }
+           %{ \subtypeincontext{U}{X}{\Gamma} }
+           { \{ U \} < X <: T \in \Gamma }
            { \tevalw{\Gamma}{ X }{ U } }
 
 \inferrule*[right=TE-Map]
@@ -326,26 +329,12 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \teval{\Gamma}{ \union{L}{R} }{ \union{L'}{R} } }
 
 \inferrule*[right=TE-UnionR]
-           { \concrete{L} \\ \teval{\Gamma}{ R }{ R' } }
+           { \teval{\Gamma}{ R }{ R' } }
            { \teval{\Gamma}{ \union{L}{R} }{ \union{L}{R'} } }
 
 \end{mathpar}
 
-\begin{mathpar}
-
-\inferrule*[right=C-True]
-           {  }
-           { \concrete{ \ttrue } }
-
-\inferrule*[right=C-False]
-           {  }
-           { \concrete{ \tfalse } }
-
-\inferrule*[right=C-UnionL]
-           { \concrete{L} \\ \concrete{R} }
-           { \concrete{ \union{L}{R} } }
-
-\end{mathpar}
+The relation $\tevalx{\Gamma}{T_1}{T_2}$ is the transitive closure of $\teval{\Gamma}{T_1}{T_2}$.
 
 \subsection{Bidirectional Typing}
 
@@ -383,17 +372,15 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { \infers{\Gamma}{t_1}{T_1} \\ \infers{\Gamma}{t_2}{T_2} }
            { \infers{\Gamma}{\eq{t_1}{t_2}}{\tbool} }
 
-\inferrule*[right=T-If]
-           { \checks{\Gamma}{t_1}{\tbool} \\ \infers{\Gamma}{t_2}{A} \\ \infers{\Gamma}{t_3}{B} }
+\inferrule*[right=BT-And]
+           { \infers{\Gamma}{t_1}{T_1} \\ \infers{\Gamma}{t_2}{T_2} \\ \hassubtype{\Gamma}{T_1}{Bool} \\ \hassubtype{\Gamma}{T_2}{Bool} }
+           { \infers{\Gamma}{\tand{t_1}{t_2}}{\tbool} }
+
+\inferrule*[right=BT-If]
+           { \checks{\Gamma}{t_1}{\tbool}  \\ \ci{\Gamma}{t_1}{\Delta} \\ \infers{\coi{\Gamma}{\Delta}}{t_2}{A} \\ \infers{\coi{\Gamma}{ (\Gamma \vdash\con{\Delta}}) }{t_3}{B} }
            { \infers{\Gamma}{\ite{t_1}{t_2}{t_3}}{\union{A}{B}} }
 
-\inferrule*[right=T-IfTrue]
-           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \hassubtype{\Gamma}{T}{Bool} \\ \infers{\extendwsubtype{\Gamma}{\ttrue}{X}}{t_2}{A} \\ \infers{\extendwsubtype{\Gamma}{\tfalse}{X}}{t_3}{B} }
-           { \infers{\Gamma}{\ite{\eq{x}{\true}}{t_2}{t_3}}{\union{A}{B}} }
-
-
 \end{mathpar}
-
 
 \begin{mathpar}
 
@@ -407,6 +394,130 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
 
 \end{mathpar}
 
+\subsection{Condition Information}
+
+\begin{mathpar}
+
+\inferrule*[right=CI-True]
+           {  }
+           { \ci{\Gamma}{ \true }{ \emptyset } }
+
+\inferrule*[right=CI-False]
+           {  }
+           { \ci{\Gamma}{ \false }{ \emptyset } }
+
+\inferrule*[right=CI-EqTrueR]
+           { \typeincontext{x}{X}{\Delta} \\ \subtypeincontext{X}{T}{\Gamma} \\ \hassubtype{\Gamma}{T}{Bool} }
+           { \ci{\Gamma}{ \eq{x}{\true} }{ \emptyset , \{ \ttrue \} < X } }
+
+\inferrule*[right=CI-EqTrueL]
+           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \hassubtype{\Gamma}{T}{Bool} }
+           { \ci{\Gamma}{ \eq{\true}{x} }{ \emptyset , \{ \ttrue \} < X } }
+
+\inferrule*[right=CI-EqFalseR]
+           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \hassubtype{\Gamma}{T}{Bool} }
+           { \ci{\Gamma}{ \eq{x}{\false} }{ \emptyset , \{ \tfalse \} < X } }
+
+\inferrule*[right=CI-EqFalseL]
+           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \hassubtype{\Gamma}{T}{Bool} }
+           { \ci{\Gamma}{ \eq{\false}{x} }{ \emptyset , \{ \tfalse \} < X } }
+
+\inferrule*[right=CI-EqAnd]
+           { \ci{\Gamma}{t_1}{\Delta_1} \\ \ci{\Gamma}{t_2}{\Delta_2} }
+           { \ci{\Gamma}{ \tand{t_1}{t_2} }{ \coi{\Delta_1}{\Delta_2} } }
+
+%\inferrule*[right=CI-EqOr]
+%           { \ci{\Gamma}{t_1}{\Gamma_1} \\ \ci{\Gamma}{t_2}{\Gamma_2} }
+%           { \ci{\Gamma}{ \tor{t_1}{t_2} }{ \cou{\Gamma_1}{ (\cou{\Gamma_2}{\emptyset}) } } }
+
+\inferrule*[right=CI-EqOtherwise]
+           { \mathit{otherwise} }
+           { \ci{\Delta}{ t }{ \emptyset } }
+
+\end{mathpar}
+
+%\begin{mathpar}
+%
+%\inferrule*[right=CI-EqTrueR]
+%           { \typeincontext{x}{X}{\Gamma} \\ \subtypeincontext{X}{T}{\Gamma} \\ \hassubtype{\Gamma}{T}{Bool} }
+%           { \ci{\Gamma}{ \eq{x}{\true} }{ \Gamma \rightarrow \Gamma[x] = \Gamma[x] \cap \{ \true \} } }
+%
+%\end{mathpar}
+
+\subsection{Context Operations}
+
+\begin{mathpar}
+
+\inferrule*[right=CO-IntersectEmpty]
+           {  }
+           { \coia{\Gamma}{\emptyset}{\Gamma} }
+
+\inferrule*[right=CO-Intersect]
+           { S_1 < X <: T \in \Gamma }
+           { \coia{\Gamma}{ (\Delta , S_2 < X) }{ \Gamma[X \mapsto (S_1 \cap S_2) < X <: T] \sqcap \Delta } }
+
+\inferrule*[right=CO-SmallEmpty]
+           {  }
+           { \coia{\Delta}{\emptyset}{\Delta} }
+
+\inferrule*[right=CO-SmallIntersect]
+           { S_1 < X \in \Delta_1 }
+           { \coia{\Delta_1}{ (\Delta_2 , S_2 < X) }{ \Delta_1[X \mapsto (S_1 \cap S_2) < X] \sqcap \Delta_2 } }
+
+\inferrule*[right=CO-SmallAdd]
+           { S_1 < X \notin \Delta_1 }
+           { \coia{\Delta_1}{ (\Delta_2 , S_2 < X) }{ \Delta_1[X \mapsto S_2 < X] \sqcap \Delta_2 } }
+
+
+%\inferrule*[right=CO-Intersect1]
+%           {  }
+%           { \coia{\emptyset}{\Gamma}{\Gamma} }
+%
+%\inferrule*[right=CO-Intersect2]
+%           { (S_2 < X) \in \Gamma \\ \Delta = \Gamma \setminus (S_2 < X) }
+%           { \coia{(\emptyset , S_1 < X)}{\Gamma}{\Delta , (S_1 \cap S_2) < X} }
+%
+%\inferrule*[right=CO-Intersect3]
+%           { \Gamma\,\cancel{\vdash}\,x \in S_2 }
+%           { \coia{(\emptyset , X \in S_1)}{\Gamma}{\Gamma , X \in S_1} }
+%
+%\inferrule*[right=CO-Intersect4]
+%           { \Delta \neq \emptyset }
+%           { \coia{\Delta , X \in S}{\Gamma}{ \coi{\Delta}{(\coi{(\emptyset , X \in S)}{\Gamma)}} } }
+        
+\end{mathpar}
+
+%\begin{mathpar}
+%
+%\inferrule*[right=CO-Union1]
+%           {  }
+%           { \coua{\emptyset}{\Gamma}{\Gamma} }
+%
+%\inferrule*[right=CO-Union2]
+%           { (X \in S_2) \in \Gamma \\ \Delta = \Gamma \setminus (X \in S_2) }
+%           { \coua{(\emptyset , X \in S_1)}{\Gamma}{\Delta , X \in S_1 \cup S_2} }
+%
+%\inferrule*[right=CO-Union3]
+%           { \Gamma\,\cancel{\vdash}\,x \in S_2 }
+%           { \coua{(\emptyset , X \in S_1)}{\Gamma}{\Gamma} }
+%
+%\inferrule*[right=CO-Union4]
+%           { \Delta \neq \emptyset }
+%           { \coua{\Delta , X \in S}{\Gamma}{ \cou{\Delta}{(\cou{(\emptyset , X \in S)}{\Gamma)}} } }
+%        
+%\end{mathpar}
+
+\begin{mathpar}
+
+\inferrule*[right=CO-InverseEmpty]
+           {  }
+           { \Gamma \vdash \cona{\emptyset}{\emptyset} }
+
+\inferrule*[right=CO-InverseCons]
+           { U < X <: T \in \Gamma \\ U \setminus S_1 = S_2 }
+           { \Gamma \vdash \cona{(\Delta , S < X)}{ \con{\Delta}, S_2 < X } }
+        
+\end{mathpar}
 
 \subsection{Term Evaluation}
 
@@ -460,6 +571,37 @@ Type $\tbool$ is defined as $\union{\ttrue}{\tfalse}$.
            { v_1 \neq v_2 }
            { \eval{\eq{v_1}{v_2}}{\false} }
 
+\inferrule*[right=E-AndL]
+           { \eval{t_1}{t_1'} }
+           { \eval{\tand{t_1}{t_2}}{\tand{t_1'}{t_2}} }
 
+\inferrule*[right=E-AndR]
+           { \eval{t_2}{t_2'} }
+           { \eval{\tand{t_1}{t_2}}{\tand{t_1}{t_2'}} }
+
+\inferrule*[right=E-AndFalseL]
+           {  }
+           { \eval{\tand{\false}{v_2}}{\false} }
+
+\inferrule*[right=E-AndFalseR]
+           {  }
+           { \eval{\tand{v_1}{\false}}{\false} }
+
+\inferrule*[right=E-AndTrue]
+           {  }
+           { \eval{\tand{\true}{\true}}{\true} }
+
+
+%\inferrule*[right=E-OrL]
+%           { \eval{t_1}{t_1'} }
+%           { \eval{\tor{t_1}{t_2}}{\tor{t_1'}{t_2}} }
+%
+%\inferrule*[right=E-OrR]
+%           { \eval{t_2}{t_2'} }
+%           { \eval{\tor{t_1}{t_2}}{\tor{t_1}{t_2'}} }
+%
+%\inferrule*[right=E-Or]
+%           { t_1\,\lor\,t_2 = r }
+%           { \eval{\tor{t_1}{t_2}}{r} }
 
 \end{mathpar}

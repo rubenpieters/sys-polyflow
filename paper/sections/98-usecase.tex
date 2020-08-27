@@ -20,6 +20,6 @@ function f<T extends "true" | "false">(x: T): F[T] {
 }
 \end{lstlisting}
 
-In our calculus:
+% In our calculus:
 
-$\tabs{T}{\tbool}{ \ann{ (\babs{x}{ \ite{ (\eq{x}{\true}) }{\true}{\false}) } }{ \fun{T}{ \tmap{\ttrue}{\tfalse}{T} }} }$
+% $\tabs{T}{\tbool}{ \ann{ (\babs{x}{ \ite{ (\eq{x}{\true}) }{\true}{\false}) } }{ \tfun{T}{Bool}{\fun{T}{ \tmap{\ttrue}{\tfalse}{T} }}} }$
