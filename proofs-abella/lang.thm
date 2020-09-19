@@ -1,0 +1,463 @@
+Specification "lang".
+
+Import "context".
+
+Close tm, ty, temode.
+
+%% Context
+
+
+Define ctx : olist -> prop by
+  ctx nil ;
+  ctx (c_of X T :: L) := name X /\ ctx L;
+  ctx (c_sub X U :: L) := name X /\ ctx L;
+  ctx (subt X :: L) := name X /\ ctx L;
+  ctx (subf X :: L) := name X /\ ctx L.
+
+Theorem tail_ctx : forall L H,
+  ctx (H :: L) ->
+  ctx L.
+intros. case H1.
+  search.
+  search.
+  search.
+  search.
+
+Theorem tail_ctx_of : forall L x A,
+  ctx (c_of x A :: L) ->
+  ctx L /\ name x.
+intros. case H1. search.
+
+Theorem ctx_member : forall E L,
+  ctx L -> member E L ->
+  (exists X U, E = c_sub X U /\ name X) \/
+    (exists X T, E = c_of X T /\ name X) \/
+    (exists X, E = subt X /\ name X) \/
+    (exists X, E = subf X /\ name X).
+induction on 2. intros. case H2.
+  case H1.
+    search.
+    search.
+    search.
+    search.
+  case H1.
+     apply IH to H5 H3. search.
+     apply IH to H5 H3. search.
+     apply IH to H5 H3. search.
+     apply IH to H5 H3. search.
+
+Theorem member_of : forall L E1 T1 E2 T2,
+  ctx L ->
+  member (c_of E1 T1) (c_of E2 T2 :: L) ->
+  (E1 = E2 /\ T1 = T2) \/ {L |- c_of E1 T1}.
+induction on 2. intros. case H2.
+  search.
+  search.
+
+Theorem c_sub_no_ctx : forall X T,
+  {c_sub X T} -> false.
+intros. case H1.
+
+Theorem c_sub_name : forall L X T,
+   ctx L -> {L |- c_sub X T} -> name X.
+intros. case H2. apply ctx_member to _ _. case H5.
+   case H3. search.
+   case H3.
+   case H3.
+   case H3.
+
+Theorem c_sub_name_of : forall L X T E1 T1,
+   ctx L -> {L, of E1 T1 |- c_sub X T} -> name X.
+intros. case H2. case H4.
+  case H3.
+  apply ctx_member to _ H5. case H6.
+    case H3. search.
+    case H3.
+    case H3.
+    case H3.
+
+Theorem c_sub_name_c_of : forall L X T E1 T1,
+  ctx L -> {L, c_of E1 T1 |- c_sub X T} -> name X.
+intros. case H2. case H4.
+  case H3.
+  apply ctx_member to _ H5. case H6.
+  case H3. search.
+  case H3.
+  case H3.
+  case H3.
+
+Theorem c_of_name : forall L X T,
+  ctx L -> {L |- c_of X T} -> name X.
+intros. case H2. apply ctx_member to _ _. case H5.
+  case H3.
+  case H3. search.
+  case H3.
+  case H3.
+
+Theorem c_sub_wft : forall L T TX,
+  ctx L -> member (c_sub T TX) L -> {L |- wft T}.
+induction on 2. intros. case H2.
+  search.
+  apply tail_ctx to _. apply IH to _ H3. search.
+
+Theorem irr_c_sub_of : forall L E1 T1 S T,
+  ctx L ->
+  {L, of E1 T1 |- c_sub S T} ->
+  {L |- c_sub S T}.
+intros. case H2. case H4.
+  case H3.
+  apply ctx_member to _ H5. case H6.
+    case H3. search.
+    case H3.
+    case H3.
+    case H3.
+
+Theorem irr_c_sub_c_of : forall L E1 T1 S T,
+  ctx L ->
+  {L, c_of E1 T1 |- c_sub S T} ->
+  {L |- c_sub S T}.
+intros. case H2. case H4.
+  case H3.
+  apply ctx_member to _ H5. case H6.
+  case H3. search.
+  case H3.
+  case H3.
+  case H3.
+
+Theorem irr_c_sub_subt : forall L X S T,
+  ctx L ->
+  {L, subt X |- c_sub S T} ->
+  {L |- c_sub S T}.
+intros. case H2. case H4.
+  case H3.
+  apply ctx_member to _ H5. case H6.
+  case H3. search.
+  case H3.
+  case H3.
+  case H3.
+
+Theorem ctx_c_of : forall L X TX E TE,
+  ctx L ->
+  {L, c_of X TX |- c_of E TE } ->
+  (X = E /\ TX = TE) \/ {L |- c_of E TE}.
+induction on 2. intros. case H2.
+  case H4. case H3. search.
+  apply ctx_member to _ _. case H6.
+    case H3.
+    case H3. search.
+    case H3.
+    case H3.
+
+%% Reflexivity
+
+Theorem refl_sub : forall L T,
+  ctx L -> {L |- wft T} -> {L |- sub T T}.
+induction on 2. intros. case H2.
+  search.
+  search.
+  search.
+  search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. apply IH to _ H5. search.
+  apply ctx_member to H1 H4. case H5. case H3. case H3. case H3. case H3.
+
+%% Transitivity
+
+Theorem trans_sub : forall L S Q T, ctx L -> {L |- wft S} -> {L |- wft Q} -> {L |- wft T} ->
+    {L |- sub S Q} -> {L |- sub Q T} -> {L |- sub S T}.
+skip.
+
+%% Relax
+
+Theorem irr_subt_sub : forall L S T TX,
+  ctx L ->
+  {wft S} ->
+  {wft T} ->
+  {L, subt TX |- sub S T} ->
+  {L |- sub S T}.
+induction on 4. intros. case H4.
+  search.
+  search.
+  search.
+  apply refl_sub to _ _ with T = T. search.
+  skip.
+  case H3.
+    apply c_sub_no_ctx to H11.
+    case H2.
+      apply c_sub_no_ctx to H13.
+      apply IH to _ _ _ H5. apply IH to _ _ _ H6. search.
+  case H3.
+    apply c_sub_no_ctx to H7.
+    case H2.
+      apply c_sub_no_ctx to H9.
+      skip.
+  skip.
+  skip.
+  skip.
+  search.
+  skip.
+  skip.
+  skip.
+
+Theorem relax_wft : forall L E1 T1 T,
+  ctx L ->
+  {L, c_of E1 T1 |- wft T} ->
+  {L |- wft T}.
+induction on 2. intros. case H2.
+  search.
+  search.
+  search.
+  apply irr_c_sub_c_of to _ H3. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. apply IH to _ H5. search.
+  case H4. case H3. apply ctx_member to _ H5. case H6. case H3. case H3. case H3. case H3.
+
+Theorem relax_wft_subt : forall L X T,
+  ctx L ->
+  {L, subt X |- wft T} ->
+  {L |- wft T}.
+induction on 2. intros. case H2.
+  search.
+  search.
+  search.
+  apply irr_c_sub_subt to _ H3. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. apply IH to _ H5. search.
+  case H4. case H3. apply ctx_member to _ H5. case H6. case H3. case H3. case H3. case H3.
+
+Theorem relax_wft_c_sub : forall L T1 T, nabla n1,
+  ctx L ->
+  {L, c_sub n1 T1 |- wft T} ->
+  {L |- wft T}.
+induction on 2. intros. case H2.
+  search.
+  search.
+  search.
+  case H3. apply ctx_member to _ H5. case H6.
+    case H4. case H5. apply c_sub_wft to _ H8. search.
+    case H4.
+    case H4.
+    case H4.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. apply IH to _ H5. search.
+  case H4. case H3. apply ctx_member to _ H5. case H6. case H3. case H3. case H3. case H3.
+
+Theorem relax_sub_teval :
+  (forall S T L E1 T1, ctx L -> {L, c_of E1 T1 |- sub S T} -> {L |- sub S T}) /\
+  (forall R a X L E1 T1, ctx L -> {L, c_of E1 T1 |- teval R a X} -> {L |- teval R a X}).
+induction on 2 2. intros. split.
+  % relax_sub
+  intros. case H2.
+    search.
+    search.
+    search.
+    apply irr_c_sub_c_of to _ H3. search.
+    apply irr_c_sub_c_of to _ H3. apply IH to _ H4. apply relax_wft to _ H5. search.
+    apply IH to _ H3. apply IH to _ H4. apply relax_wft to _ H5. apply relax_wft to _ H6. apply relax_wft to _ H7. apply relax_wft to _ H8. search.
+    apply IH to _ H3. apply IH to _ H4. search.
+    apply IH to _ H3. search.
+    apply IH to _ H3. search.
+    apply IH to _ H3. apply IH to _ H4. search.
+    search.
+    apply IH to _ H3. apply relax_wft to _ H5. apply IH1 to _ H4. search.
+    apply IH to _ H3. apply relax_wft to _ H5. apply IH1 to _ H4. search.
+    case H4. case H3. apply ctx_member to _ H5. case H6. case H3. case H3. case H3. case H3.
+  % relax_teval
+  intros. case H2.
+    search.
+    search.
+    search.
+    apply IH to _ H3. apply IH1 to _ H4. apply relax_wft to _ H5. search.
+    search.
+    case H4. case H3. apply ctx_member to _ H5. case H6. case H3. case H3. case H3. case H3.
+
+Theorem relax_sub : forall L E1 T1 S T,
+  ctx L ->
+  {L, c_of E1 T1 |- sub S T} ->
+  {L |- sub S T}.
+apply relax_sub_teval. intros. apply H1 to H3 H4. search.
+
+Theorem relax_teval : forall L E1 T1 R a X,
+  ctx L ->
+  {L, c_of E1 T1 |- teval R a X} ->
+  {L |- teval R a X}.
+apply relax_sub_teval. intros. apply H2 to H3 H4. search.
+
+Theorem relax_of : forall L E1 E2 S T T2,
+  ctx L ->
+  {value E1} ->
+  {wft S} ->
+  {wft T} ->
+  {wft T2} ->
+  {L |- sub S T} ->
+  {L, c_of E1 T |- of E2 T2} ->
+  exists S2, {L, c_of E1 S |- of E2 S2} /\ {L |- sub S2 T2} /\ {wft S2}.
+induction on 7. intros. case H7.
+  % TA-Abs
+  apply relax_wft to _ H10. apply IH to _ _ _ _ _ H6 H8. apply relax_sub to _ H15. apply relax_sub to _ H8. apply relax_wft to _ H10. apply relax_wft to _ H15. apply relax_wft to _ H11. apply trans_sub to _ _ _ _ H16 H17. apply refl_sub to _ _ with T = arrow A B. exists (arrow A B). search.
+  % TA-App
+  apply relax_wft to _ H11. apply relax_wft to _ H12. apply relax_wft to _ H13. apply relax_wft to _ H14. apply IH to _ _ _ _ H5 H7. apply relax_sub to _ H8. apply IH to _ _ _ _ H5 H9. apply relax_sub to _ H10. apply trans_sub to _ _ _ _ H20 H22. apply trans_sub to _ _ _ _ H24 H26. apply refl_sub to _ _ with T = T2. exists T2. search.
+  % TA-Tabs
+  apply IH to _ _ _ _ H5 H7. skip. assert {L, c_of E1 S |- of (tabs TX E) (all TX S2)}. apply refl_sub to _ _ with T = TX. skip. assert {L |- sub (all TX S2) (all TX T1)}. assert {L, c_of E1 S |- of (tabs TX E) (all TX S2)}. exists (all TX S2). assert {L |- wft (all TX S2)}. skip. search.
+%   apply relax_wft_c_sub to _ H10. skip. assert {L, of E1 S |- of (tabs TX E) (S2 n1)}. skip. assert {L |- wft (S2 n1)}. skip. exists (S2 n1). % skip .   %apply IH to _ H2 H3 H5. search.
+  % TA-Tapp
+  apply IH to _ _ _ _ H5 H7. skip. apply relax_sub to _ H8. apply trans_sub to _ _ _ _ H11 H13. skip. skip. apply relax_sub to _ H9. exists (T1 SX). apply refl_sub to _ _ with T = (T1 SX). search.
+  % TA-True
+  search.
+  % TA-False
+  search.
+  % TA-IfTrueR
+  apply irr_c_sub_c_of to _ H10. apply c_sub_name to _ H13. apply ctx_c_of to _ H9. case H15.
+    assert {wft TX}. skip. case H14. case H16. case H17. % add wft TX
+    apply relax_wft to _ H11. apply relax_wft to _ H12.  apply IH to _ _ _ _ H5 H7. apply IH to _ _ _ _ H5 H8. assert {L |- sub S2 TT}. skip. assert {L |- wft S2}. skip. search. % add subt irr
+   %apply c_sub_name_c_of to _ H10. apply IH to _ _ _ _ H5 H7. apply IH to _ _ _ _ H5 H8. apply IH to _ _ _ _ H5 H9. skip. apply irr_c_sub_of to _ H10. apply relax_wft_subt to _ H18. assert {L |- sub S2 TT}. skip. assert {L |- sub (or S2 S1) (or TT TF)}. apply sub_c_sub to _ H23 H25. assert {L |- c_sub S3 U}. skip. assert {L, of E1 S |- of (ite (eq X tmtrue) ET EF) (or S2 S1)}. skip. exists (or S2 S1). search. %apply c_sub_name_of to _ H8. apply IH to _ H2 H3 H5. apply IH to _ H2 H3 H6. apply IH to _ H2 H3 H7. apply irr_c_sub_of to _ H8. apply relax_wft to _ H9. apply relax_wft to _ H10. search.
+  % sub A X , c_sub X U -> A = X ?
+  % {L, subt TX |- sub S2 TT} -> {L |- sub S2 TT} (subt TX should only impact of, not sub)
+  % TA-If
+  apply relax_wft to _ H11. apply relax_wft to _ H12. apply relax_wft to _ H13. apply IH to _ _ _ _ H5 H7. apply IH to _ _ _ _ H5 H8. apply IH to _ _ _ _ H5 H9. apply relax_sub to _ H10. apply trans_sub to _ _ _ _ H24 H26. exists (or S2 S1). search.
+  % TA-Eq
+  apply relax_wft to _ H11. apply relax_wft to _ H12. apply relax_wft to _ H13. apply IH to _ _ _ _ H5 H7. apply IH to _ _ _ _ H5 H9. apply relax_sub to _ H8. apply relax_sub to _ H10. apply trans_sub to _ _ _ _ H18 H23. apply trans_sub to _ _ _ _ H21 H24. search.
+  % TA-Var
+  apply ctx_c_of to _ H7. case H8.
+    exists S. search.
+    exists T2. apply refl_sub to _ _ with T = T2. search.
+  % ctx
+  case H8.
+    case H7.
+    apply ctx_member to _ H9. case H10.
+      case H7.
+      case H7.
+      case H7.
+      case H7.
+
+%%
+
+Theorem irr_wft_c_of : forall L X TX T,
+  ctx L ->
+  {L, c_of X TX |- wft T} ->
+  {L |- wft T}.
+induction on 2. intros. case H2.
+  search.
+  search.
+  search.
+  apply irr_c_sub_c_of to _ H3. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. apply IH to _ H4. apply IH to _ H5. search.
+  case H4.
+    case H3.
+    apply ctx_member to _ _. case H6.
+      case H3.
+      case H3.
+      case H3.
+      case H3.
+
+% TODO: make dual theorem with irr_c_of_teval
+Theorem irr_c_of_sub : forall L X TX S T,
+  ctx L ->
+  {L, c_of X TX |- sub S T} ->
+  {L |- sub S T}.
+induction on 2. intros. case H2.
+  search.
+  search.
+  search.
+  apply irr_c_sub_c_of to _ H3. search.
+  apply irr_c_sub_c_of to _ H3. apply IH to _ H4. apply irr_wft_c_of to _ H5. search.
+  apply IH to _ H3. apply IH to _ H4. apply irr_wft_c_of to _ H5. apply irr_wft_c_of to _ H6. apply irr_wft_c_of to _ H7. apply irr_wft_c_of to _ H8. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  apply IH to _ H3. search.
+  apply IH to _ H3. search.
+  apply IH to _ H3. apply IH to _ H4. search.
+  search.
+  skip.
+  skip.
+  case H4.
+    case H3.
+    apply ctx_member to _ _. case H6.
+      case H3.
+      case H3.
+      case H3.
+      case H3.
+
+Theorem cut_c_of : forall L X TX E TE,
+  ctx L ->
+  {L |- value X} ->
+  {wft TX} ->
+  {L |- of X TX} ->
+  {L, c_of X TX |- of E TE} ->
+  {L |- of E TE}.
+induction on 5. intros. case H5.
+  apply IH to _ _ _ H4 H6. apply irr_c_of_sub to _ H7. apply irr_wft_c_of to _ H8. apply irr_wft_c_of to _ H9. apply irr_wft_c_of to _ H10. search.
+  apply IH to _ _ _ H4 H6. apply irr_c_of_sub to _ H7. apply IH to _ _ _ H4 H8. apply irr_c_of_sub to _ H9. apply irr_wft_c_of to _ H10. apply irr_wft_c_of to _ H11. apply irr_wft_c_of to _ H12. apply irr_wft_c_of to _ H13. search.
+  apply IH to _ _ _ H4 H6. search.
+  apply IH to _ _ _ H4 H6. apply irr_c_of_sub to _ H7. apply irr_c_of_sub to _ H8. search.
+  search.
+  search.
+  apply irr_c_sub_c_of to _ H9. apply c_sub_name to _ H12. apply IH to _ _ _ H4 H6. apply IH to _ _ _ H4 H7. apply irr_wft_c_of to _ H10. apply irr_wft_c_of to _ H11. apply ctx_c_of to _ H8. case H18.
+    % the type variable is substituted already
+    case H13. case H3. case H19.
+    search.
+  apply IH to _ _ _ H4 H6. apply IH to _ _ _ H4 H7. apply IH to _ _ _ H4 H8. apply irr_c_of_sub to _ H9. apply irr_wft_c_of to _ H10 .apply irr_wft_c_of to _ H11. apply irr_wft_c_of to _ H12. search.
+  apply IH to _ _ _ H4 H6. apply irr_c_of_sub to _ H7. apply IH to _ _ _ H4 H8. apply irr_c_of_sub to _ H9. apply irr_wft_c_of to _ H10. apply irr_wft_c_of to _ H11. apply irr_wft_c_of to _ H12. search.
+  apply ctx_c_of to _ H6. case H7.
+    search.
+    search.
+  case H7.
+    case H6.
+    apply ctx_member to _ _. case H9.
+      case H6.
+      case H6.
+      case H6.
+      case H6.
+
+%% Inversion of Typing
+
+Theorem invert_of_abs : forall E A B SA,
+  {of (abs SA E B) (arrow A B)} ->
+    exists SB, nabla x,
+      {c_of x SA |- of (E x) SB} /\ {sub A SA} /\ {sub SB B} /\ {wft SB}.
+induction on 1. intros. case H1 (keep).
+  exists T. apply refl_sub to _ H5 with L = nil, T = A. search.
+  apply c_of_name to _ H2. case H3.
+
+Theorem invert_of_abs_2 : forall S1 E T T1 T2 B,
+  {of (abs S1 E B) T} -> {sub T (arrow T1 T2)} ->
+    exists S2, nabla x,
+      {c_of x S1 |- of (E x) S2} /\ {sub T1 S1} /\ {sub S2 T2} /\ {wft S2}.
+induction on 1. intros. case H1 (keep).
+  apply invert_of_abs to H1. case H2 (keep).
+    search.
+    apply c_sub_no_ctx to H12.
+    apply trans_sub to _ _ _ _ H10 H13. search.
+  apply c_of_name to _ H3. case H4.
+
+%% Progress
+
+
+
+
+%% Preservation
+
+
+Theorem preservation : forall E E' T,
+  {of E T} -> {step E E'} -> exists S, {sub S T} /\ {of E' S}.
+induction on 1. intros. case H1 (keep).
+  % TA-Abs
+  case H2.
+  % TA-App
+  case H2 (keep).
+    % E-AppAbs
+    apply invert_of_abs_2 to H3 H4. apply trans_sub to _ _ _ _ H6 H15. inst H14 with n1 = E2. apply relax_of to _ _ _ _ H18 H19 with L = nil. apply cut_c_of to _ _ _ H5 H20. apply trans_sub to _ _ _ _ H21 H16. exists S1. search.
+    % E-App1
+    apply IH to H3 H11. % apply trans_sub to 
+
+

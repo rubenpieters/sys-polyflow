@@ -1,0 +1,56 @@
+Specification "lang".
+
+Import "context".
+
+Close tm, ty, temode.
+
+Define append : olist -> o -> olist -> prop by
+  append nil E (E :: nil);
+  append (H :: T) E (H :: T2) := append T E T2.
+
+Define intersect : condinfo -> condinfo -> condinfo -> prop by
+  intersect s_true s_true s_true;
+  intersect s_false s_false s_false;
+  intersect s_false s_false s_false;
+
+Define co_result : olist -> olist -> olist -> prop by
+  co_result nil G nil.
+%  co_result (ci TX S1 :: nil) G (concat D (ci TX (intersect S1 S2))) := .
+
+
+Define ci_result : olist -> tm -> olist -> prop by
+  % CI-True
+  ci_result L tmtrue nil;
+  % CI-False
+  ci_result L tmfalse nil;
+  % CI-EqTrueR
+  ci_result L (eq X tmtrue) (ci TX s_true :: nil) := exists TX T, nabla X, member (c_of X TX) L /\ member (c_sub TX T) L /\ {L |- sub T (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqFalseR
+  ci_result L (eq X tmfalse) (ci TX s_false :: nil) := exists TX T, nabla X, member (c_of X TX) L /\ member (c_sub TX T) L /\ {L |- sub T (or tytrue tyfalse)} /\ ctx L.
+
+
+
+Define pinfers : olist -> tm -> ty -> prop,
+       pchecks : olist -> tm -> ty -> prop by
+  % BT-App
+  pinfers L (app E1 E2) B := exists A, pinfers L E1 (arrow A B) /\ pchecks L E2 A /\ {wft A} /\ {wft B};
+  % BT-TAbs
+  pinfers L (tabs TX E) (all TX T) := nabla X, pinfers (c_sub X TX :: L) (E X) (T X) /\ ctx (c_sub X TX :: L);
+  % BT-TApp
+  pinfers L (tapp E SX) (T SX) := exists TX, pinfers L E (all TX T) /\ {sub SX TX};
+  % BT-True
+  pinfers L tmtrue tytrue;
+  % BT-False
+  pinfers L tmfalse tyfalse;
+  % BT-If
+  pinfers L (ite E1 E2 E3) (or A B) := pchecks L E1 (or tytrue tyfalse);
+  % BT-Eq
+  pinfers L (eq E1 E2) (or tytrue tyfalse);
+  % BT-Var
+  pinfers L X TX := {c_of X TX} /\ {wft TX};
+  % BT-Ann
+  pinfers L (ann E T) T := pchecks L E T /\ {wft T};
+  % BT-Abs
+  pchecks L (abs A E) (arrow A B) := exists T, nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft T} /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
+  % BT-Sub
+  pchecks L E T := exists S, pinfers L E S /\ {sub S T} /\ {wft S} /\ {wft T}.

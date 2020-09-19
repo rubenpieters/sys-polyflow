@@ -1,0 +1,22 @@
+In this case:
+
+interface F {
+  "true": number,
+  "false": boolean,
+}
+
+function test<X extends "true">(x: X): F[X] {
+  if (x === "true") {
+    return 1;
+  } else {
+    return true;
+  }
+}
+
+the compiler already accepts the '1' return value (tested with 3.7.2) and rejects the 'true' return value as it is not assignable to number
+
+also if we change the 'else' to 'else if (x === "false)' then we get that 'This condition will always return 'false' since the types 'X' and '"false"' have no overlap.'
+
+but not with 'else if (x === null)', though due to strictNullChecks we cannot reach the branch ('test(null)' is rejected)
+
+-> it seems reasonable to consider the else branch as unreachable

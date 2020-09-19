@@ -497,6 +497,16 @@ canonical-form-bool<: V-Bool TA-False z = inj₂ refl
 canonical-form-bool<: V-TAbs (TA-TAbs y) (SA-UnionL z) = ⊥-elim (imp-A<:True z)
 canonical-form-bool<: V-TAbs (TA-TAbs y) (SA-UnionR z) = ⊥-elim (imp-A<:False z)
 
+canonical-test : ∀ {Γ v A B T}
+  → Value v
+  → Γ ⊢> v ∶ T
+  → Γ ⊢> T <: A ⇒ B
+  → ∃ λ x → ∃ λ t → ∃ λ S₁ → ∃ λ S₂ → v ≡ ƛ x ∶ S₁ ⋯> t ∶ S₂ × ∅ ⊢> A <: S₁
+canonical-test V-Abs b c = {!!}
+canonical-test V-Bool TA-True ()
+canonical-test V-Bool TA-False c = {!!}
+canonical-test V-TAbs (TA-TAbs b) c = {!!}
+
 canonical-form-abs : ∀ {Γ v A B T}
   → Value v
   → Γ ⊢> v ∶ T

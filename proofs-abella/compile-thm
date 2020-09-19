@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# example usage: compile-abella file
+
+FILE=$1
+
+abella $FILE.thm -c $FILE.thc

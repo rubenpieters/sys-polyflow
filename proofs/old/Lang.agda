@@ -10,7 +10,6 @@ open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Product using (∃; _,_; _×_)
 open import Data.Unit using (⊤; tt)
 
-
 Id : Set
 Id = String
 
@@ -284,6 +283,11 @@ test2 (S-UnionM x y) = {!!}
 test2 S-MapTrueR = (S-Trans (S-UnionL {!!}) S-MapTrueR , S-Trans (S-UnionR {!!}) S-MapTrueR)
 test2 S-MapFalseR = (S-Trans (S-UnionL {!!}) S-MapFalseR , S-Trans (S-UnionR {!!}) S-MapFalseR)
 
+test2-2 : ∀ {L R T}
+  → ∅ ⊢ T <: L ∨ R
+  → ∅ ⊢ L <: T ⊎ ∅ ⊢ R <: T
+test2-2 x = {!!}
+
 test3 : ∀ {L R}
   → ∅ ⊢ TTrue <: L ∨ R
   → ∅ ⊢ L <: TTrue
@@ -320,7 +324,10 @@ test1 (Sim L∨R<:True True<:L∨R) with test2 L∨R<:True
 ∅-inversion-true2 S-Top U≅True = {!!} -- Top \≅ True
 ∅-inversion-true2 (S-Arrow S<:U S<:U₁) U≅True = {!!} -- A ⇒ B \≅ True
 ∅-inversion-true2 (S-All S<:U) U≅True = {!!} -- A X <: U : S \≅ True
-∅-inversion-true2 (S-UnionL x) (Sim L∨R<:True True<:L∨R) = {!!}
+∅-inversion-true2 (S-UnionL x) (Sim L∨R<:True True<:L∨R) = let
+  a = test2 L∨R<:True
+  b = test2-2 True<:L∨R
+  in {!!}
 -- with test2 L∨R<:True
 -- ... | (L≅True , R≅True) = ∅-inversion-true2 L≅True (Sim S-Refl S-Refl)
 ∅-inversion-true2 (S-UnionR x) U≅True = {!!}
