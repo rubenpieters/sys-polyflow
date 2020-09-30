@@ -10,13 +10,13 @@ Define name : A -> prop by
 Define ctx : olist -> prop by
   ctx nil ;
   ctx (c_of X T :: L) := name X /\ ctx L;
-  ctx (c_sub X U :: L) := name X /\ ctx L;
+  ctx (c_sub LX X UX :: L) := name X /\ ctx L;
   ctx (subt X :: L) := name X /\ ctx L;
   ctx (subf X :: L) := name X /\ ctx L.
 
 Theorem ctx_member : forall E L,
   ctx L -> member E L ->
-    (exists X U, E = c_sub X U /\ name X) \/
+    (exists LX X UX, E = c_sub LX X UX /\ name X) \/
     (exists X T, E = c_of X T /\ name X) \/
     (exists X, E = subt X /\ name X) \/
     (exists X, E = subf X /\ name X).
@@ -32,8 +32,8 @@ induction on 2. intros. case H2.
       apply IH to H5 H3. search.
       apply IH to H5 H3. search.
 
-Theorem c_sub_name : forall L X U,
-  ctx L -> {L |- c_sub X U} -> name X.
+Theorem c_sub_name : forall L LX X UX,
+  ctx L -> {L |- c_sub LX X UX} -> name X.
 intros. case H2.
   apply ctx_member to _ _. case H5.
     case H3. search.

@@ -13,7 +13,7 @@ wft tyfalse.
 
 % WF-Var
 wft X :-
-  c_sub X TX.
+  c_sub LX X UX.
 
 % WF-Arrow
 wft (arrow A B) :-
@@ -22,8 +22,8 @@ wft (arrow A B) :-
 
 % WF-All
 wft (all TX T) :-
-  wft TX,
-  pi X\ c_sub X TX => wft (T X).
+  wft UX,
+  pi X\ c_sub LX X UX => wft (T X).
 
 % WF-Or
 wft (or L R) :-
@@ -49,13 +49,13 @@ sub tyfalse tyfalse.
 
 % SA-ReflTVar
 sub X X :-
-  c_sub X TX.
+  c_sub LX X UX.
 
 % SA-TransTVar
 sub X T :-
-  c_sub X TX,
-  sub TX T,
-  wft TX.
+  c_sub LX X UX,
+  sub UX T,
+  wft UX.
 
 % SA-Arrow
 sub (arrow SA SB) (arrow TA TB) :-
@@ -67,8 +67,8 @@ sub (arrow SA SB) (arrow TA TB) :-
   wft TB.
 
 % SA-All
-sub (all U (X\ S X)) (all U (X\ T X)) :-
-  pi X\ c_sub X U => sub (S X) (T X),
+sub (all UX (X\ S X)) (all UX (X\ T X)) :-
+  pi X\ c_sub LX X UX => sub (S X) (T X),
   wft U.
 
 % SA-UnionL
@@ -137,8 +137,8 @@ teval (rcd TT TF (or L R)) read (or (rcd TT TF L) (rcd TT TF R)) :-
   wft TF.
 
 % TE-TVarRead
-teval X read U :-
-  c_sub X U.
+teval X read UX :-
+  c_sub LX X UX.
 
 % TE-TVarWrite
 %teval X write U :-
@@ -181,8 +181,8 @@ infers (app E1 E2) B :-
   wft B.
 
 % BT-TAbs
-infers (tabs TX E) (all TX T) :-
-  pi X\ c_sub X TX => infers (E X) (T X).
+infers (tabs UX E) (all UX T) :-
+  pi X\ c_sub LX X UX => infers (E X) (T X).
 
 % BT-Tapp
 infers (tapp E SX) (T SX) :-
@@ -200,11 +200,11 @@ infers (ite (eq X tmtrue) ET EF) (or TT TF) :-
   subt TX => infers ET TT,
   subf TX => infers EF TF,
   c_of X SX,
-  c_sub SX TX,
-  sub TX (or tytrue tyfalse),
+  c_sub LX SX UX,
+  sub UX (or tytrue tyfalse),
   wft TT,
   wft TF,
-  wft TX.
+  wft UX.
 
 % BT-If
 infers (ite C ET EF) (or TT TF) :-

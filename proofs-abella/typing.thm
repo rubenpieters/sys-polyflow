@@ -9,14 +9,65 @@ Define append : olist -> o -> olist -> prop by
   append (H :: T) E (H :: T2) := append T E T2.
 
 Define intersect : condinfo -> condinfo -> condinfo -> prop by
-  intersect s_true s_true s_true;
-  intersect s_false s_false s_false;
-  intersect s_false s_false s_false;
+  intersect s_empty X s_empty;
+  intersect X s_empty s_empty;
+  intersect X X X;
+  intersect s_true_false X X;
+  intersect X s_true_false X;
+  intersect s_false s_true s_empty;
+  intersect s_true s_false s_empty.
 
-Define co_result : olist -> olist -> olist -> prop by
-  co_result nil G nil.
-%  co_result (ci TX S1 :: nil) G (concat D (ci TX (intersect S1 S2))) := .
+Theorem intersect_deterministic : forall X Y R1 R2, intersect X Y R1 -> intersect X Y R2 -> R1 = R2.
+intros. case H1.
+  case H2. search. search. search. search.
+  case H2. search. search. search. search.
+  case H2. search. search. search. search. search.
+  case H2. search. search. search. search.
+  case H2. search. search. search. search.
+  case H2. search.
+  case H2. search.
 
+Define replace_ctx : olist -> condinfo -> ty -> ty -> olist -> prop by
+  replace_ctx nil LX X UX nil;
+  replace_ctx (c_sub LX1 X UX :: L) LX2 X UX (c_sub LX2 X UX :: L);
+  replace_ctx (c_sub LX1 X1 UX1 :: L) LX2 X2 UX2 (c_sub LX1 X1 UX1 :: L2) := ((X1 = X2 -> false) \/ (UX1 = UX2 -> false)) /\ replace_ctx L LX2 X2 UX2 L2;
+  replace_ctx (c_of X T :: L) LX TX UX (c_of X T :: L).
+
+Theorem replace_ctx_deterministic : forall L LX X UX R1 R2, replace_ctx L LX X UX R1 -> replace_ctx L LX X UX R2 -> R1 = R2.
+induction on 1. intros. case H1.
+  case H2. search.
+  case H2.
+    search.
+    case H3. assert (X = X). apply H5 to H6. assert (UX = UX). apply H5 to H6.
+  case H2.
+    case H3. assert (X = X). apply H5 to H6. assert (UX = UX). apply H5 to H6.
+    apply IH to H4 H6. search.
+  case H2. search.
+
+
+Define intersect_ctx : olist -> olist -> olist -> prop by
+  % CO-IntersectEmpty
+  intersect_ctx G nil nil;
+  % CO-Intersect
+  intersect_ctx G (c_sub LX1 X UX :: D) G3 := exists G2 LX2, member (c_sub LX2 X UX) G /\ replace_ctx G LX1 X UX G2 /\ intersect_ctx G2 D G3.
+
+Define invert : condinfo -> ty -> condinfo -> prop by
+  invert s_true_false (or tytrue tyfalse) s_empty;
+  invert s_true (or tytrue tyfalse) s_false;
+  invert s_false (or tytrue tyfalse) s_true;
+  invert s_empty (or tytrue tyfalse) s_true_false;
+  invert s_true (tytrue) s_empty;
+  invert s_empty (tytrue) s_true;
+  invert s_false (tyfalse) s_empty;
+  invert s_empty (tyfalse) s_false.
+
+Define invert_ctx : olist -> olist -> prop by
+  % CO-InverseEmpty
+  invert_ctx nil nil;
+  % CO-InverseCons
+  invert_ctx (c_sub LX X UX :: D) (c_sub LX2 X UX :: D2) := invert LX UX LX2 /\ invert_ctx D D2;
+  % CO-InverseCons2
+  invert_ctx (c_of X T :: D) (c_of X T :: D2) := invert_ctx D D2.
 
 Define ci_result : olist -> tm -> olist -> prop by
   % CI-True
@@ -24,9 +75,18 @@ Define ci_result : olist -> tm -> olist -> prop by
   % CI-False
   ci_result L tmfalse nil;
   % CI-EqTrueR
-  ci_result L (eq X tmtrue) (ci TX s_true :: nil) := exists TX T, nabla X, member (c_of X TX) L /\ member (c_sub TX T) L /\ {L |- sub T (or tytrue tyfalse)} /\ ctx L;
+  ci_result L (eq X tmtrue) (c_sub s_true TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
   % CI-EqFalseR
-  ci_result L (eq X tmfalse) (ci TX s_false :: nil) := exists TX T, nabla X, member (c_of X TX) L /\ member (c_sub TX T) L /\ {L |- sub T (or tytrue tyfalse)} /\ ctx L.
+  ci_result L (eq X tmfalse) (c_sub s_false TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqTrueL
+  ci_result L (eq tmtrue X) (c_sub s_true TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqFalseL
+  ci_result L (eq tmfalse X) (c_sub s_false TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqAnd
+  ci_result L (and X Y) CR := exists CX CY CR, ci_result L X CX /\ ci_result L Y CY /\ intersect_ctx CX CY CR.
+
+
+
 
 
 
@@ -35,15 +95,15 @@ Define pinfers : olist -> tm -> ty -> prop,
   % BT-App
   pinfers L (app E1 E2) B := exists A, pinfers L E1 (arrow A B) /\ pchecks L E2 A /\ {wft A} /\ {wft B};
   % BT-TAbs
-  pinfers L (tabs TX E) (all TX T) := nabla X, pinfers (c_sub X TX :: L) (E X) (T X) /\ ctx (c_sub X TX :: L);
+  pinfers L (tabs UX E) (all UX T) := exists LX, nabla X, pinfers (c_sub LX X UX :: L) (E X) (T X) /\ ctx (c_sub LX X UX :: L);
   % BT-TApp
-  pinfers L (tapp E SX) (T SX) := exists TX, pinfers L E (all TX T) /\ {sub SX TX};
+  pinfers L (tapp E SX) (T SX) := exists UX, pinfers L E (all UX T) /\ {sub SX UX};
   % BT-True
   pinfers L tmtrue tytrue;
   % BT-False
   pinfers L tmfalse tyfalse;
   % BT-If
-  pinfers L (ite E1 E2 E3) (or A B) := pchecks L E1 (or tytrue tyfalse);
+  pinfers L (ite E1 E2 E3) (or A B) := exists LE LT D DI, pchecks L E1 (or tytrue tyfalse) /\ ci_result L E1 D /\ intersect_ctx L D LT /\ invert_ctx D DI /\ intersect_ctx L DI LE /\ pinfers LT E2 A /\ pinfers LE E3 B;
   % BT-Eq
   pinfers L (eq E1 E2) (or tytrue tyfalse);
   % BT-Var

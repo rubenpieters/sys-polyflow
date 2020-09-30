@@ -58,7 +58,8 @@ type     s_true_false    condinfo.
 
 %% Relations
 
-type     sub, c_sub      ty -> ty -> o.
+type     sub             ty -> ty -> o.
+type     c_sub           condinfo -> ty -> ty -> o.
 type     subt, subf      ty -> o.
 type     checks, infers  tm -> ty -> o.
 type     c_of            tm -> ty -> o.
@@ -68,5 +69,4 @@ type     teval           ty -> temode -> ty -> o.
 type     veq             tm -> tm -> o.
 type     sim             ty -> ty -> o.
 type     wft             ty -> o.
-type     ci              ty -> condinfo -> o.
 
