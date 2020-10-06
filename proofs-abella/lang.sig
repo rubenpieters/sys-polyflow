@@ -28,9 +28,9 @@ type     tmtrue          tm.
 % false
 type     tmfalse         tm.
 % x : T
-type     ann             tm -> ty -> tm.
-% λx . t
-type     abs             ty -> (tm -> tm) -> tm.
+% type     ann             tm -> ty -> tm.
+% λx . t : A -> B
+type     abs             (tm -> tm) -> ty -> ty -> tm.
 % t t
 type     app             tm -> tm -> tm.
 % Λ(X <: T) . t

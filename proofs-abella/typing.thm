@@ -92,6 +92,7 @@ Define ci_result : olist -> tm -> olist -> prop by
 
 Define pinfers : olist -> tm -> ty -> prop,
        pchecks : olist -> tm -> ty -> prop by
+  % -- INFER
   % BT-App
   pinfers L (app E1 E2) B := exists A, pinfers L E1 (arrow A B) /\ pchecks L E2 A /\ {wft A} /\ {wft B};
   % BT-TAbs
@@ -105,12 +106,96 @@ Define pinfers : olist -> tm -> ty -> prop,
   % BT-If
   pinfers L (ite E1 E2 E3) (or A B) := exists LE LT D DI, pchecks L E1 (or tytrue tyfalse) /\ ci_result L E1 D /\ intersect_ctx L D LT /\ invert_ctx D DI /\ intersect_ctx L DI LE /\ pinfers LT E2 A /\ pinfers LE E3 B;
   % BT-Eq
-  pinfers L (eq E1 E2) (or tytrue tyfalse);
+  pinfers L (eq E1 E2) (or tytrue tyfalse) := exists T1 T2, pinfers L E1 T1 /\ pinfers L E2 T2;
   % BT-Var
-  pinfers L X TX := {c_of X TX} /\ {wft TX};
+  pinfers L X TX := {L |- c_of X TX} /\ {wft TX};
   % BT-Ann
-  pinfers L (ann E T) T := pchecks L E T /\ {wft T};
+  % pinfers L (ann E T) T := pchecks L E T /\ {wft T};
   % BT-Abs
-  pchecks L (abs A E) (arrow A B) := exists T, nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft T} /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
+  pinfers L (abs E A B) (arrow A B) := nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
+  % -- CHECK
+  % BT-Abs
+  %pchecks L (abs E) (arrow A B) := nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
   % BT-Sub
   pchecks L E T := exists S, pinfers L E S /\ {sub S T} /\ {wft S} /\ {wft T}.
+
+%Theorem invert_of_abs : forall E A B,
+%  pinfers nil (abs E) (arrow A B) -> false.
+%intros. case H1. apply c_of_name to _ H2 with L = nil. case H4.
+
+Theorem canonical_form_arrow : forall E A B,
+  {value E} -> pinfers nil E (arrow A B) -> exists E1, E = abs E1 A B.
+intros. case H1.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2.
+    apply c_of_name to _ H3. case H5.
+    search.
+  case H2. apply c_of_name to _ H3. case H5.
+
+Theorem canonical_form_all : forall E UX T,
+  {value E} -> pinfers nil E (all UX T) -> exists E1, E = tabs UX E1.
+intros. case H1.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2.
+    search.
+    apply c_of_name to _ H3. case H5.
+
+Theorem progress :
+  (forall E T, pchecks nil E T -> exists E', {value E} \/ {step E E'}) /\
+  (forall E T, pinfers nil E T -> exists E', {value E} \/ {step E E'}).
+induction on 1 1. split.
+   intros. case H1 (keep).
+     % sub
+     apply IH1 to H2. search.
+   intros. case H1 (keep).
+     % app
+     apply IH1 to H2. case H6.
+       apply IH to H3. case H8.
+         apply canonical_form_arrow to H7 H2. search.
+         search.
+       search.
+     % tabs is a value
+     search.
+     % tapp
+     apply IH1 to H2. case H4.
+       apply canonical_form_all to H5 H2. search.
+       search.
+     % tmtrue
+     search.
+     % tmfalse
+     search.
+     % ite
+     skip.
+     % eq
+     apply IH1 to H2. case H4.
+       apply IH1 to H3. search.
+       search.
+     % var
+     skip. % c_of in empty context is impossible
+     % abs
+     search.
+
+
+
+
+   Theorem progress_i : forall E T,
+  pinfers nil E T -> exists E', {value E} \/ {step E E'}.
+induction on 1. intros. case H1 (keep).
+  apply IH to H2. case H6.
+    apply IH to H3.
+    search.
+
+
+
+Theorem preserve : forall E E' T, pinfers nil E T -> {step E E'} -> pinfers nil E' T.
+induction on 1. intros. case H1 (keep).
+  case H2 (keep).
+    skip.
+    apply IH to H3 H7. search.
+    
+
+
+

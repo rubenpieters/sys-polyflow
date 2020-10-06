@@ -158,11 +158,11 @@ teval (or L1 R1) A (or L2 R2) :-
 %- Checking
 
 % BT-Abs
-checks (abs A E) (arrow A B) :-
-  pi x\ c_of x A => checks (E x) B,
-  wft T,
-  wft A,
-  wft B.
+% checks (abs E) (arrow A B) :-
+%   pi x\ c_of x A => checks (E x) B,
+%   wft T,
+%   wft A,
+%   wft B.
 
 % BT-Sub
 checks E T :-
@@ -224,9 +224,9 @@ infers X TX :-
   wft TX.
 
 % BT-Ann
-infers (ann E T) T :-
-  checks E T,
-  wft T.
+% infers (ann E T) T :-
+%   checks E T,
+%   wft T.
 
 %% Condition Information
 
@@ -241,7 +241,7 @@ value tmtrue.
 value tmfalse.
 
 % V-Abs
-value (abs T E).
+value (abs E A B).
 
 % V-Tabs
 value (tabs T E).
@@ -260,7 +260,11 @@ sim A B :-
 %% Evaluation
 
 % E-AppAbs
-step (app (abs T E1) V2) (E1 V2) :-
+%step (app (ann (abs E1) (arrow A B)) V2) (ann (E1 (ann V2 A)) B) :-
+%  wft T,
+%  value V2.
+
+step (app (abs E1 A B) V2) (E1 V2) :-
   wft T,
   value V2.
 
@@ -319,4 +323,9 @@ step (and E1 E2) (and E1' E2):-
 % E-AndR
 step (and V1 E2) (and V1 E2') :-
   step E2 E2'.
+
+% E-Ann
+% step (ann E T) (ann E' T) :-
+%   step E E'.
+
 

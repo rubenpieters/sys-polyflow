@@ -40,3 +40,14 @@ intros. case H2.
     case H3.
     case H3.
     case H3.
+
+Theorem c_of_name : forall L X T,
+  ctx L -> {L |- c_of X T} -> name X.
+intros. case H2.
+  apply ctx_member to _ _. case H5.
+    case H3.
+    case H3. search.
+    case H3.
+    case H3.
+
+
