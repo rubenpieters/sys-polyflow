@@ -8,7 +8,7 @@ Import "context".
 
 Theorem refl_sub : forall L T,
   ctx L -> {L |- wft T} -> {L |- sub T T}.
-induction on 2. intros. case H2.
+induction on 2. intros. case H2 (keep).
   search.
   search.
   search.
@@ -33,30 +33,30 @@ skip. %induction on 2. intros. case H2.
 
 %- Transitivity
 
-Theorem trans_weak_sub : forall T, {wft T} ->
-  (forall L S U, ctx L -> {L |- sub S T} -> {L |- sub T U} -> {L |- sub S U}) /\
-  (forall L X S A B, ctx (c_sub X T :: L) -> {L |- sub S T} -> {L, sub X T |- sub A B} -> {L, sub X S |- sub A B}).
-induction on 1. intros. split*.
-  % trans
-  induction on 2. intros. case H3 (keep).
-    skip. % sub top C -> C = top
-    search.
-    search.
-    search.
-    apply IH1 to _ H6 H4. search.
-    skip.
-    skip.
-    % SA-Arrow (S<T)
-    case H4 (keep).
-      search.
-      apply c_sub_name to _ H11. case H12.
-      apply c_sub_name to _ H11. case H14.
-      % SA-Arrow (T<U)
-      case H1.
-        apply c_sub_name to _ H17. case H18.
-        apply IH to H17. apply IH to H18. apply H19 to _ H11 H5. apply H21 to _ H6 H12. search.
-      assert {L |- sub (arrow SA SB) (arrow TA TB)}. apply IH to H12.
-   % weak
+%Theorem trans_weak_sub : forall T, {wft T} ->
+%  (forall L S U, ctx L -> {L |- sub S T} -> {L |- sub T U} -> {L |- sub S U}) /\
+%  (forall L X S A B, ctx (c_sub X T :: L) -> {L |- sub S T} -> {L, sub X T |- sub A B} -> {L, sub X S |- sub A B}).
+%induction on 1. intros. split*.
+%  % trans
+%  induction on 2. intros. case H3 (keep).
+%    skip. % sub top C -> C = top
+%    search.
+%    search.
+%    search.
+%    apply IH1 to _ H6 H4. search.
+%    skip.
+%    skip.
+%    % SA-Arrow (S<T)
+%    case H4 (keep).
+%      search.
+%      apply c_sub_name to _ H11. case H12.
+%      apply c_sub_name to _ H11. case H14.
+%      % SA-Arrow (T<U)
+%      case H1.
+%        apply c_sub_name to _ H17. case H18.
+%        apply IH to H17. apply IH to H18. apply H19 to _ H11 H5. apply H21 to _ H6 H12. search.
+%      assert {L |- sub (arrow SA SB) (arrow TA TB)}. apply IH to H12.
+%   % weak
 
 
 

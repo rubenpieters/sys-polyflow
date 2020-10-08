@@ -21,9 +21,9 @@ wft (arrow A B) :-
   wft B.
 
 % WF-All
-wft (all TX T) :-
+wft (all UX T) :-
   wft UX,
-  pi X\ c_sub LX X UX => wft (T X).
+  pi X\ c_sub s_empty X UX => wft (T X).
 
 % WF-Or
 wft (or L R) :-
@@ -68,8 +68,8 @@ sub (arrow SA SB) (arrow TA TB) :-
 
 % SA-All
 sub (all UX (X\ S X)) (all UX (X\ T X)) :-
-  pi X\ c_sub LX X UX => sub (S X) (T X),
-  wft U.
+  pi X\ c_sub s_empty X UX => sub (S X) (T X),
+  wft UX.
 
 % SA-UnionL
 sub T (or L R) :-

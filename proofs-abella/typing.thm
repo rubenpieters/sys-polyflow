@@ -1,6 +1,7 @@
 Specification "lang".
 
 Import "context".
+Import "subtyping".
 
 Close tm, ty, temode.
 
@@ -112,12 +113,12 @@ Define pinfers : olist -> tm -> ty -> prop,
   % BT-Ann
   % pinfers L (ann E T) T := pchecks L E T /\ {wft T};
   % BT-Abs
-  pinfers L (abs E A B) (arrow A B) := nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
+  pinfers L (abs E A B) (arrow A B) := exists X, pchecks (c_of X A :: L) (E X) B /\ {L |- wft A} /\ {L |- wft B} /\ ctx (c_of X A :: L);
   % -- CHECK
   % BT-Abs
   %pchecks L (abs E) (arrow A B) := nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
   % BT-Sub
-  pchecks L E T := exists S, pinfers L E S /\ {sub S T} /\ {wft S} /\ {wft T}.
+  pchecks L E T := exists S, pinfers L E S /\ {L |- sub S T} /\ {L |- wft S} /\ {L |- wft T}.
 
 %Theorem invert_of_abs : forall E A B,
 %  pinfers nil (abs E) (arrow A B) -> false.
@@ -178,24 +179,34 @@ induction on 1 1. split.
      % abs
      search.
 
+Theorem invert_abs : forall E A1 B1 A B,
+  pinfers nil (abs E A1 B1) (arrow A B) -> exists X, (pchecks (c_of X A :: nil) (E X) B) /\ {wft A} /\ {wft B} /\ A1 = A /\ B1 = B.
+intros. case H1.
+  apply c_of_name to _ H2. case H4.
+  search.
+
+%Theorem test2
+
+Theorem test : forall L X A E T,
+  pchecks (c_of X A :: L) (E X) T -> pchecks L X A -> pchecks L (E X) T.
+skip. % induction on 1. intros. case H1.
 
 
 
-   Theorem progress_i : forall E T,
-  pinfers nil E T -> exists E', {value E} \/ {step E E'}.
-induction on 1. intros. case H1 (keep).
-  apply IH to H2. case H6.
-    apply IH to H3.
-    search.
+
+Theorem preserve :
+  (forall E E' T, pchecks nil E T -> {step E E'} -> pchecks nil E' T) /\
+  (forall E E' T, pinfers nil E T -> {step E E'} -> pinfers nil E' T).
+induction on 1 1. split.
+  intros. case H1 (keep).
+    % sub
+    apply IH1 to H3 H2. search.
+  intros. case H1 (keep).
+    % app
+    case H2 (keep).
+      apply invert_abs to H3. apply test to H9 H4 with L = nil. skip.
+      apply IH1 to H3 H7. search.
 
 
 
-Theorem preserve : forall E E' T, pinfers nil E T -> {step E E'} -> pinfers nil E' T.
-induction on 1. intros. case H1 (keep).
-  case H2 (keep).
-    skip.
-    apply IH to H3 H7. search.
-    
-
-
-
+% Theorem x : forall X, nabla 
