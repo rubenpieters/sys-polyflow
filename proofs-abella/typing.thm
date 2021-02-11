@@ -113,7 +113,7 @@ Define pinfers : olist -> tm -> ty -> prop,
   % BT-Ann
   % pinfers L (ann E T) T := pchecks L E T /\ {wft T};
   % BT-Abs
-  pinfers L (abs E A B) (arrow A B) := exists X, pchecks (c_of X A :: L) (E X) B /\ {L |- wft A} /\ {L |- wft B} /\ ctx (c_of X A :: L);
+  pinfers L (abs E A B) (arrow A B) := forall X, pchecks (c_of X A :: L) (E X) B /\ {L |- wft A} /\ {L |- wft B} /\ ctx (c_of X A :: L);
   % -- CHECK
   % BT-Abs
   %pchecks L (abs E) (arrow A B) := nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
@@ -180,7 +180,7 @@ induction on 1 1. split.
      search.
 
 Theorem invert_abs : forall E A1 B1 A B,
-  pinfers nil (abs E A1 B1) (arrow A B) -> exists X, (pchecks (c_of X A :: nil) (E X) B) /\ {wft A} /\ {wft B} /\ A1 = A /\ B1 = B.
+  pinfers nil (abs E A1 B1) (arrow A B) -> forall X, (pchecks (c_of X A :: nil) (E X) B) /\ {wft A} /\ {wft B} /\ A1 = A /\ B1 = B.
 intros. case H1.
   apply c_of_name to _ H2. case H4.
   search.
