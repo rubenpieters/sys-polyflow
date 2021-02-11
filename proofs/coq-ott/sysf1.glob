@@ -1,0 +1,2003 @@
+DIGEST dfb858d7dadfbc5442a886e1dd031356
+Fsysf1
+R77:80 Coq.Bool.Bool <> <> lib
+R98:115 Metalib.Metatheory <> <> lib
+R133:136 Coq.Lists.List <> <> lib
+R154:170 Ott.ott_list_core <> <> lib
+def 198:204 <> typevar
+R215:217 Metalib.Metatheory <> var syndef
+def 253:259 <> termvar
+R270:272 Metalib.Metatheory <> var syndef
+ind 308:310 <> typ
+constr 338:347 <> typ_tvar_b
+constr 360:369 <> typ_tvar_f
+constr 386:392 <> typ_top
+constr 419:427 <> typ_arrow
+constr 472:481 <> typ_forall
+constr 504:511 <> typ_true
+constr 522:530 <> typ_false
+constr 541:549 <> typ_union
+R352:354 Coq.Init.Datatypes <> nat ind
+R374:380 sysf1 <> typevar def
+binder 372:372 <> X:3
+R396:398 sysf1 <> typ:1 ind
+R433:435 sysf1 <> typ:1 ind
+binder 430:431 <> T1:4
+R442:444 sysf1 <> typ:1 ind
+binder 439:440 <> T2:5
+R487:489 sysf1 <> typ:1 ind
+binder 484:485 <> T1:6
+R496:498 sysf1 <> typ:1 ind
+binder 493:494 <> T2:7
+R515:517 sysf1 <> typ:1 ind
+R534:536 sysf1 <> typ:1 ind
+R555:557 sysf1 <> typ:1 ind
+binder 552:553 <> T1:8
+R564:566 sysf1 <> typ:1 ind
+binder 561:562 <> T2:9
+ind 581:587 <> binding
+constr 618:625 <> bind_typ
+constr 638:645 <> bind_sub
+R630:632 sysf1 <> typ ind
+binder 628:628 <> T:12
+R650:652 sysf1 <> typ ind
+binder 648:648 <> T:13
+ind 667:669 <> exp
+constr 703:707 <> var_b
+constr 737:741 <> var_f
+constr 775:777 <> abs
+constr 818:821 <> tabs
+constr 866:869 <> tapp
+constr 915:917 <> app
+constr 960:963 <> true
+constr 974:978 <> false
+constr 989:991 <> ite
+constr 1023:1024 <> eq
+constr 1047:1049 <> and
+R712:714 Coq.Init.Datatypes <> nat ind
+R746:752 sysf1 <> termvar def
+binder 744:744 <> x:16
+R782:784 sysf1 <> typ ind
+binder 780:780 <> T:17
+R790:792 sysf1 <> exp:14 ind
+binder 788:788 <> e:18
+R826:828 sysf1 <> typ ind
+binder 824:824 <> T:19
+R834:836 sysf1 <> exp:14 ind
+binder 832:832 <> e:20
+R874:876 sysf1 <> exp:14 ind
+binder 872:872 <> e:21
+R882:884 sysf1 <> typ ind
+binder 880:880 <> T:22
+R923:925 sysf1 <> exp:14 ind
+binder 920:921 <> e1:23
+R932:934 sysf1 <> exp:14 ind
+binder 929:930 <> e2:24
+R967:969 sysf1 <> exp:14 ind
+R982:984 sysf1 <> exp:14 ind
+R997:999 sysf1 <> exp:14 ind
+binder 994:995 <> e1:25
+R1006:1008 sysf1 <> exp:14 ind
+binder 1003:1004 <> e2:26
+R1015:1017 sysf1 <> exp:14 ind
+binder 1012:1013 <> e3:27
+R1030:1032 sysf1 <> exp:14 ind
+binder 1027:1028 <> e1:28
+R1039:1041 sysf1 <> exp:14 ind
+binder 1036:1037 <> e2:29
+R1055:1057 sysf1 <> exp:14 ind
+binder 1052:1053 <> e1:30
+R1064:1066 sysf1 <> exp:14 ind
+binder 1061:1062 <> e2:31
+def 1082:1084 <> ctx
+R1095:1098 Coq.Init.Datatypes <> list ind
+R1106:1108 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
+R1102:1105 Metalib.MetatheoryAtom <> atom syndef
+R1109:1115 sysf1 <> binding ind
+def 1285:1304 <> open_typ_wrt_typ_rec
+R1309:1311 Coq.Init.Datatypes <> nat ind
+binder 1307:1307 <> k:32
+R1319:1321 sysf1 <> typ ind
+binder 1315:1317 <> T_5:33
+R1330:1332 sysf1 <> typ ind
+binder 1325:1328 <> T__6:34
+R1350:1352 sysf1 <> typ ind
+R1365:1368 sysf1 <> T__6:34 var
+R1380:1389 sysf1 <> typ_tvar_b constr
+R1404:1408 Metalib.Metatheory <> ::coqeqdec_scope:x_'==='_x not
+R1403:1403 sysf1 <> k:32 var
+R1429:1438 sysf1 <> typ_tvar_b constr
+R1419:1421 sysf1 <> T_5:33 var
+R1450:1459 sysf1 <> typ_tvar_f constr
+R1467:1476 sysf1 <> typ_tvar_f constr
+R1484:1490 sysf1 <> typ_top constr
+R1495:1501 sysf1 <> typ_top constr
+R1509:1517 sysf1 <> typ_arrow constr
+R1529:1537 sysf1 <> typ_arrow constr
+R1572:1591 sysf1 <> open_typ_wrt_typ_rec:35 def
+R1595:1597 sysf1 <> T_5:33 var
+R1593:1593 sysf1 <> k:32 var
+R1540:1559 sysf1 <> open_typ_wrt_typ_rec:35 def
+R1563:1565 sysf1 <> T_5:33 var
+R1561:1561 sysf1 <> k:32 var
+R1608:1617 sysf1 <> typ_forall constr
+R1629:1638 sysf1 <> typ_forall constr
+R1673:1692 sysf1 <> open_typ_wrt_typ_rec:35 def
+R1700:1702 sysf1 <> T_5:33 var
+R1695:1695 Coq.Init.Datatypes <> S constr
+R1697:1697 sysf1 <> k:32 var
+R1641:1660 sysf1 <> open_typ_wrt_typ_rec:35 def
+R1664:1666 sysf1 <> T_5:33 var
+R1662:1662 sysf1 <> k:32 var
+R1712:1719 sysf1 <> typ_true constr
+R1724:1731 sysf1 <> typ_true constr
+R1738:1746 sysf1 <> typ_false constr
+R1751:1759 sysf1 <> typ_false constr
+R1767:1775 sysf1 <> typ_union constr
+R1787:1795 sysf1 <> typ_union constr
+R1830:1849 sysf1 <> open_typ_wrt_typ_rec:35 def
+R1853:1855 sysf1 <> T_5:33 var
+R1851:1851 sysf1 <> k:32 var
+R1798:1817 sysf1 <> open_typ_wrt_typ_rec:35 def
+R1821:1823 sysf1 <> T_5:33 var
+R1819:1819 sysf1 <> k:32 var
+def 1876:1895 <> open_exp_wrt_typ_rec
+R1900:1902 Coq.Init.Datatypes <> nat ind
+binder 1898:1898 <> k:37
+R1909:1911 sysf1 <> typ ind
+binder 1906:1907 <> T5:38
+R1919:1921 sysf1 <> exp ind
+binder 1915:1917 <> e_5:39
+R1938:1940 sysf1 <> exp ind
+R1953:1955 sysf1 <> e_5:39 var
+R1967:1971 sysf1 <> var_b constr
+R1981:1985 sysf1 <> var_b constr
+R1996:2000 sysf1 <> var_f constr
+R2008:2012 sysf1 <> var_f constr
+R2021:2023 sysf1 <> abs constr
+R2033:2035 sysf1 <> abs constr
+R2068:2087 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2091:2092 sysf1 <> T5:38 var
+R2089:2089 sysf1 <> k:37 var
+R2038:2057 sysf1 <> open_typ_wrt_typ_rec def
+R2061:2062 sysf1 <> T5:38 var
+R2059:2059 sysf1 <> k:37 var
+R2102:2105 sysf1 <> tabs constr
+R2115:2118 sysf1 <> tabs constr
+R2151:2170 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2178:2179 sysf1 <> T5:38 var
+R2173:2173 Coq.Init.Datatypes <> S constr
+R2175:2175 sysf1 <> k:37 var
+R2121:2140 sysf1 <> open_typ_wrt_typ_rec def
+R2144:2145 sysf1 <> T5:38 var
+R2142:2142 sysf1 <> k:37 var
+R2189:2192 sysf1 <> tapp constr
+R2202:2205 sysf1 <> tapp constr
+R2238:2257 sysf1 <> open_typ_wrt_typ_rec def
+R2261:2262 sysf1 <> T5:38 var
+R2259:2259 sysf1 <> k:37 var
+R2208:2227 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2231:2232 sysf1 <> T5:38 var
+R2229:2229 sysf1 <> k:37 var
+R2272:2274 sysf1 <> app constr
+R2286:2288 sysf1 <> app constr
+R2322:2341 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2345:2346 sysf1 <> T5:38 var
+R2343:2343 sysf1 <> k:37 var
+R2291:2310 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2314:2315 sysf1 <> T5:38 var
+R2312:2312 sysf1 <> k:37 var
+R2356:2359 sysf1 <> true constr
+R2364:2367 sysf1 <> true constr
+R2374:2378 sysf1 <> false constr
+R2383:2387 sysf1 <> false constr
+R2395:2397 sysf1 <> ite constr
+R2412:2414 sysf1 <> ite constr
+R2479:2498 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2502:2503 sysf1 <> T5:38 var
+R2500:2500 sysf1 <> k:37 var
+R2448:2467 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2471:2472 sysf1 <> T5:38 var
+R2469:2469 sysf1 <> k:37 var
+R2417:2436 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2440:2441 sysf1 <> T5:38 var
+R2438:2438 sysf1 <> k:37 var
+R2514:2515 sysf1 <> eq constr
+R2527:2528 sysf1 <> eq constr
+R2562:2581 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2585:2586 sysf1 <> T5:38 var
+R2583:2583 sysf1 <> k:37 var
+R2531:2550 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2554:2555 sysf1 <> T5:38 var
+R2552:2552 sysf1 <> k:37 var
+R2597:2599 sysf1 <> and constr
+R2611:2613 sysf1 <> and constr
+R2647:2666 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2670:2671 sysf1 <> T5:38 var
+R2668:2668 sysf1 <> k:37 var
+R2616:2635 sysf1 <> open_exp_wrt_typ_rec:40 def
+R2639:2640 sysf1 <> T5:38 var
+R2637:2637 sysf1 <> k:37 var
+def 2692:2711 <> open_exp_wrt_exp_rec
+R2716:2718 Coq.Init.Datatypes <> nat ind
+binder 2714:2714 <> k:42
+R2726:2728 sysf1 <> exp ind
+binder 2722:2724 <> e_5:43
+R2737:2739 sysf1 <> exp ind
+binder 2732:2735 <> e__6:44
+R2757:2759 sysf1 <> exp ind
+R2772:2775 sysf1 <> e__6:44 var
+R2787:2791 sysf1 <> var_b constr
+R2806:2810 Metalib.Metatheory <> ::coqeqdec_scope:x_'==='_x not
+R2805:2805 sysf1 <> k:42 var
+R2831:2835 sysf1 <> var_b constr
+R2821:2823 sysf1 <> e_5:43 var
+R2847:2851 sysf1 <> var_f constr
+R2859:2863 sysf1 <> var_f constr
+R2872:2874 sysf1 <> abs constr
+R2884:2886 sysf1 <> abs constr
+R2891:2910 sysf1 <> open_exp_wrt_exp_rec:45 def
+R2918:2920 sysf1 <> e_5:43 var
+R2913:2913 Coq.Init.Datatypes <> S constr
+R2915:2915 sysf1 <> k:42 var
+R2930:2933 sysf1 <> tabs constr
+R2943:2946 sysf1 <> tabs constr
+R2951:2970 sysf1 <> open_exp_wrt_exp_rec:45 def
+R2974:2976 sysf1 <> e_5:43 var
+R2972:2972 sysf1 <> k:42 var
+R2986:2989 sysf1 <> tapp constr
+R2999:3002 sysf1 <> tapp constr
+R3005:3024 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3028:3030 sysf1 <> e_5:43 var
+R3026:3026 sysf1 <> k:42 var
+R3042:3044 sysf1 <> app constr
+R3056:3058 sysf1 <> app constr
+R3093:3112 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3116:3118 sysf1 <> e_5:43 var
+R3114:3114 sysf1 <> k:42 var
+R3061:3080 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3084:3086 sysf1 <> e_5:43 var
+R3082:3082 sysf1 <> k:42 var
+R3128:3131 sysf1 <> true constr
+R3136:3139 sysf1 <> true constr
+R3146:3150 sysf1 <> false constr
+R3155:3159 sysf1 <> false constr
+R3167:3169 sysf1 <> ite constr
+R3184:3186 sysf1 <> ite constr
+R3253:3272 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3276:3278 sysf1 <> e_5:43 var
+R3274:3274 sysf1 <> k:42 var
+R3221:3240 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3244:3246 sysf1 <> e_5:43 var
+R3242:3242 sysf1 <> k:42 var
+R3189:3208 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3212:3214 sysf1 <> e_5:43 var
+R3210:3210 sysf1 <> k:42 var
+R3289:3290 sysf1 <> eq constr
+R3302:3303 sysf1 <> eq constr
+R3338:3357 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3361:3363 sysf1 <> e_5:43 var
+R3359:3359 sysf1 <> k:42 var
+R3306:3325 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3329:3331 sysf1 <> e_5:43 var
+R3327:3327 sysf1 <> k:42 var
+R3374:3376 sysf1 <> and constr
+R3388:3390 sysf1 <> and constr
+R3425:3444 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3448:3450 sysf1 <> e_5:43 var
+R3446:3446 sysf1 <> k:42 var
+R3393:3412 sysf1 <> open_exp_wrt_exp_rec:45 def
+R3416:3418 sysf1 <> e_5:43 var
+R3414:3414 sysf1 <> k:42 var
+def 3473:3496 <> open_binding_wrt_typ_rec
+R3501:3503 Coq.Init.Datatypes <> nat ind
+binder 3499:3499 <> k:47
+R3510:3512 sysf1 <> typ ind
+binder 3507:3508 <> T5:48
+R3519:3525 sysf1 <> binding ind
+binder 3516:3517 <> b5:49
+R3530:3536 sysf1 <> binding ind
+R3549:3550 sysf1 <> b5:49 var
+R3562:3569 sysf1 <> bind_typ constr
+R3577:3584 sysf1 <> bind_typ constr
+R3587:3606 sysf1 <> open_typ_wrt_typ_rec def
+R3610:3611 sysf1 <> T5:48 var
+R3608:3608 sysf1 <> k:47 var
+R3621:3628 sysf1 <> bind_sub constr
+R3636:3643 sysf1 <> bind_sub constr
+R3646:3665 sysf1 <> open_typ_wrt_typ_rec def
+R3669:3670 sysf1 <> T5:48 var
+R3667:3667 sysf1 <> k:47 var
+def 3692:3707 <> open_exp_wrt_typ
+binder 3709:3710 <> T5:51
+binder 3712:3714 <> e_5:52
+R3719:3738 sysf1 <> open_exp_wrt_typ_rec def
+R3746:3747 sysf1 <> T5:51 var
+R3742:3744 sysf1 <> e_5:52 var
+def 3762:3777 <> open_typ_wrt_typ
+binder 3779:3781 <> T_5:53
+binder 3783:3786 <> T__6:54
+R3791:3810 sysf1 <> open_typ_wrt_typ_rec def
+R3819:3821 sysf1 <> T_5:53 var
+R3814:3817 sysf1 <> T__6:54 var
+def 3836:3851 <> open_exp_wrt_exp
+binder 3853:3855 <> e_5:55
+binder 3857:3860 <> e__6:56
+R3865:3884 sysf1 <> open_exp_wrt_exp_rec def
+R3893:3895 sysf1 <> e_5:55 var
+R3888:3891 sysf1 <> e__6:56 var
+def 3910:3929 <> open_binding_wrt_typ
+binder 3931:3932 <> T5:57
+binder 3934:3935 <> b5:58
+R3940:3963 sysf1 <> open_binding_wrt_typ_rec def
+R3970:3971 sysf1 <> T5:57 var
+R3967:3968 sysf1 <> b5:58 var
+ind 4066:4071 <> lc_typ
+constr 4114:4126 <> lc_typ_tvar_f
+constr 4182:4191 <> lc_typ_top
+constr 4221:4232 <> lc_typ_arrow
+constr 4331:4343 <> lc_typ_forall
+constr 4521:4531 <> lc_typ_true
+constr 4562:4573 <> lc_typ_false
+constr 4605:4616 <> lc_typ_union
+R4078:4081 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4075:4077 sysf1 <> typ ind
+R4140:4146 sysf1 <> typevar def
+binder 4138:4138 <> X:61
+R4156:4161 sysf1 <> lc_typ:59 ind
+R4164:4173 sysf1 <> typ_tvar_f constr
+R4175:4175 sysf1 <> X:61 var
+R4202:4207 sysf1 <> lc_typ:59 ind
+R4209:4215 sysf1 <> typ_top constr
+R4250:4252 sysf1 <> typ ind
+binder 4244:4245 <> T1:62
+binder 4247:4248 <> T2:63
+R4261:4261 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4271:4280 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4281:4281 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4291:4301 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4326:4326 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4302:4307 sysf1 <> lc_typ:59 ind
+R4310:4318 sysf1 <> typ_arrow constr
+R4323:4324 sysf1 <> T2:63 var
+R4320:4321 sysf1 <> T1:62 var
+R4282:4287 sysf1 <> lc_typ:59 ind
+R4289:4290 sysf1 <> T2:63 var
+R4262:4267 sysf1 <> lc_typ:59 ind
+R4269:4270 sysf1 <> T1:62 var
+R4357:4360 Metalib.Metatheory <> vars syndef
+binder 4355:4355 <> L:64
+R4370:4372 sysf1 <> typ ind
+binder 4364:4365 <> T1:65
+binder 4367:4368 <> T2:66
+R4381:4381 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4391:4401 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4402:4403 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4477:4490 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4516:4516 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4491:4496 sysf1 <> lc_typ:59 ind
+R4499:4508 sysf1 <> typ_forall constr
+R4513:4514 sysf1 <> T2:66 var
+R4510:4511 sysf1 <> T1:65 var
+binder 4411:4411 <> X:67
+R4426:4430 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4431:4436 sysf1 <> lc_typ:59 ind
+R4441:4456 sysf1 <> open_typ_wrt_typ def
+R4462:4471 sysf1 <> typ_tvar_f constr
+R4473:4473 sysf1 <> X:67 var
+R4458:4459 sysf1 <> T2:66 var
+R4416:4424 Metalib.Metatheory <> ::set_sl_scope:x_'\notin'_x not
+R4415:4415 sysf1 <> X:67 var
+R4425:4425 sysf1 <> L:64 var
+R4382:4387 sysf1 <> lc_typ:59 ind
+R4389:4390 sysf1 <> T1:65 var
+R4542:4547 sysf1 <> lc_typ:59 ind
+R4549:4556 sysf1 <> typ_true constr
+R4584:4589 sysf1 <> lc_typ:59 ind
+R4591:4599 sysf1 <> typ_false constr
+R4634:4636 sysf1 <> typ ind
+binder 4628:4629 <> T1:68
+binder 4631:4632 <> T2:69
+R4645:4645 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4655:4664 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4665:4665 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4675:4685 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4710:4710 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4686:4691 sysf1 <> lc_typ:59 ind
+R4694:4702 sysf1 <> typ_union constr
+R4707:4708 sysf1 <> T2:69 var
+R4704:4705 sysf1 <> T1:68 var
+R4666:4671 sysf1 <> lc_typ:59 ind
+R4673:4674 sysf1 <> T2:69 var
+R4646:4651 sysf1 <> lc_typ:59 ind
+R4653:4654 sysf1 <> T1:68 var
+ind 4747:4756 <> lc_binding
+constr 4807:4817 <> lc_bind_typ
+constr 4890:4900 <> lc_bind_sub
+R4767:4770 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4760:4766 sysf1 <> binding ind
+R4831:4833 sysf1 <> typ ind
+binder 4829:4829 <> T:72
+R4842:4842 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4851:4861 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4885:4885 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4862:4871 sysf1 <> lc_binding:70 ind
+R4874:4881 sysf1 <> bind_typ constr
+R4883:4883 sysf1 <> T:72 var
+R4843:4848 sysf1 <> lc_typ ind
+R4850:4850 sysf1 <> T:72 var
+R4914:4916 sysf1 <> typ ind
+binder 4912:4912 <> T:73
+R4925:4925 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4934:4944 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4968:4968 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4945:4954 sysf1 <> lc_binding:70 ind
+R4957:4964 sysf1 <> bind_sub constr
+R4966:4966 sysf1 <> T:73 var
+R4926:4931 sysf1 <> lc_typ ind
+R4933:4933 sysf1 <> T:73 var
+ind 5001:5006 <> lc_exp
+constr 5049:5056 <> lc_var_f
+constr 5107:5112 <> lc_abs
+constr 5278:5284 <> lc_tabs
+constr 5456:5462 <> lc_tapp
+constr 5556:5561 <> lc_app
+constr 5654:5660 <> lc_true
+constr 5687:5694 <> lc_false
+constr 5722:5727 <> lc_ite
+constr 5846:5850 <> lc_eq
+constr 5942:5947 <> lc_and
+R5013:5016 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5010:5012 sysf1 <> exp ind
+R5070:5076 sysf1 <> termvar def
+binder 5068:5068 <> x:76
+R5086:5091 sysf1 <> lc_exp:74 ind
+R5094:5098 sysf1 <> var_f constr
+R5100:5100 sysf1 <> x:76 var
+R5126:5129 Metalib.Metatheory <> vars syndef
+binder 5124:5124 <> L:77
+R5135:5137 sysf1 <> typ ind
+binder 5133:5133 <> T:78
+R5143:5145 sysf1 <> exp ind
+binder 5141:5141 <> e:79
+R5154:5154 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5163:5173 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5174:5175 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5243:5256 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5273:5273 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5257:5262 sysf1 <> lc_exp:74 ind
+R5265:5267 sysf1 <> abs constr
+R5271:5271 sysf1 <> e:79 var
+R5269:5269 sysf1 <> T:78 var
+binder 5183:5183 <> x:80
+R5198:5202 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5203:5208 sysf1 <> lc_exp:74 ind
+R5213:5228 sysf1 <> open_exp_wrt_exp def
+R5233:5237 sysf1 <> var_f constr
+R5239:5239 sysf1 <> x:80 var
+R5230:5230 sysf1 <> e:79 var
+R5188:5196 Metalib.Metatheory <> ::set_sl_scope:x_'\notin'_x not
+R5187:5187 sysf1 <> x:80 var
+R5197:5197 sysf1 <> L:77 var
+R5155:5160 sysf1 <> lc_typ ind
+R5162:5162 sysf1 <> T:78 var
+R5298:5301 Metalib.Metatheory <> vars syndef
+binder 5296:5296 <> L:81
+R5307:5309 sysf1 <> typ ind
+binder 5305:5305 <> T:82
+R5315:5317 sysf1 <> exp ind
+binder 5313:5313 <> e:83
+R5326:5326 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5335:5345 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5346:5347 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5420:5433 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5451:5451 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5434:5439 sysf1 <> lc_exp:74 ind
+R5442:5445 sysf1 <> tabs constr
+R5449:5449 sysf1 <> e:83 var
+R5447:5447 sysf1 <> T:82 var
+binder 5355:5355 <> X:84
+R5370:5374 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5375:5380 sysf1 <> lc_exp:74 ind
+R5385:5400 sysf1 <> open_exp_wrt_typ def
+R5405:5414 sysf1 <> typ_tvar_f constr
+R5416:5416 sysf1 <> X:84 var
+R5402:5402 sysf1 <> e:83 var
+R5360:5368 Metalib.Metatheory <> ::set_sl_scope:x_'\notin'_x not
+R5359:5359 sysf1 <> X:84 var
+R5369:5369 sysf1 <> L:81 var
+R5327:5332 sysf1 <> lc_typ ind
+R5334:5334 sysf1 <> T:82 var
+R5476:5478 sysf1 <> exp ind
+binder 5474:5474 <> e:85
+R5484:5486 sysf1 <> typ ind
+binder 5482:5482 <> T:86
+R5495:5495 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5504:5513 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5514:5514 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5523:5533 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5551:5551 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5534:5539 sysf1 <> lc_exp:74 ind
+R5542:5545 sysf1 <> tapp constr
+R5549:5549 sysf1 <> T:86 var
+R5547:5547 sysf1 <> e:85 var
+R5515:5520 sysf1 <> lc_typ ind
+R5522:5522 sysf1 <> T:86 var
+R5496:5501 sysf1 <> lc_exp:74 ind
+R5503:5503 sysf1 <> e:85 var
+R5579:5581 sysf1 <> exp ind
+binder 5573:5574 <> e1:87
+binder 5576:5577 <> e2:88
+R5590:5590 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5600:5609 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5610:5610 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5620:5630 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5649:5649 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5631:5636 sysf1 <> lc_exp:74 ind
+R5639:5641 sysf1 <> app constr
+R5646:5647 sysf1 <> e2:88 var
+R5643:5644 sysf1 <> e1:87 var
+R5611:5616 sysf1 <> lc_exp:74 ind
+R5618:5619 sysf1 <> e2:88 var
+R5591:5596 sysf1 <> lc_exp:74 ind
+R5598:5599 sysf1 <> e1:87 var
+R5671:5676 sysf1 <> lc_exp:74 ind
+R5678:5681 sysf1 <> true constr
+R5705:5710 sysf1 <> lc_exp:74 ind
+R5712:5716 sysf1 <> false constr
+R5748:5750 sysf1 <> exp ind
+binder 5739:5740 <> e1:89
+binder 5742:5743 <> e2:90
+binder 5745:5746 <> e3:91
+R5759:5759 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5769:5778 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5779:5779 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5789:5798 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5799:5799 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5809:5819 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5841:5841 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5820:5825 sysf1 <> lc_exp:74 ind
+R5828:5830 sysf1 <> ite constr
+R5838:5839 sysf1 <> e3:91 var
+R5835:5836 sysf1 <> e2:90 var
+R5832:5833 sysf1 <> e1:89 var
+R5800:5805 sysf1 <> lc_exp:74 ind
+R5807:5808 sysf1 <> e3:91 var
+R5780:5785 sysf1 <> lc_exp:74 ind
+R5787:5788 sysf1 <> e2:90 var
+R5760:5765 sysf1 <> lc_exp:74 ind
+R5767:5768 sysf1 <> e1:89 var
+R5868:5870 sysf1 <> exp ind
+binder 5862:5863 <> e1:92
+binder 5865:5866 <> e2:93
+R5879:5879 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5889:5898 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5899:5899 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5909:5919 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5937:5937 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5920:5925 sysf1 <> lc_exp:74 ind
+R5928:5929 sysf1 <> eq constr
+R5934:5935 sysf1 <> e2:93 var
+R5931:5932 sysf1 <> e1:92 var
+R5900:5905 sysf1 <> lc_exp:74 ind
+R5907:5908 sysf1 <> e2:93 var
+R5880:5885 sysf1 <> lc_exp:74 ind
+R5887:5888 sysf1 <> e1:92 var
+R5965:5967 sysf1 <> exp ind
+binder 5959:5960 <> e1:94
+binder 5962:5963 <> e2:95
+R5976:5976 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5986:5995 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5996:5996 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6006:6016 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6035:6035 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6017:6022 sysf1 <> lc_exp:74 ind
+R6025:6027 sysf1 <> and constr
+R6032:6033 sysf1 <> e2:95 var
+R6029:6030 sysf1 <> e1:94 var
+R5997:6002 sysf1 <> lc_exp:74 ind
+R6004:6005 sysf1 <> e2:95 var
+R5977:5982 sysf1 <> lc_exp:74 ind
+R5984:5985 sysf1 <> e1:94 var
+def 6069:6077 <> fv_tt_typ
+R6084:6086 sysf1 <> typ ind
+binder 6080:6082 <> T_5:96
+R6091:6094 Metalib.Metatheory <> vars syndef
+R6107:6109 sysf1 <> T_5:96 var
+R6121:6130 sysf1 <> typ_tvar_b constr
+R6140:6141 Metalib.Metatheory <> ::set_scope:'{}' not
+R6148:6157 sysf1 <> typ_tvar_f constr
+R6165:6166 Metalib.Metatheory <> ::set_scope:'{{'_x_'}}' not
+R6168:6169 Metalib.Metatheory <> ::set_scope:'{{'_x_'}}' not
+R6175:6181 sysf1 <> typ_top constr
+R6186:6187 Metalib.Metatheory <> ::set_scope:'{}' not
+R6194:6202 sysf1 <> typ_arrow constr
+R6214:6214 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6227:6232 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6245:6245 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6215:6223 sysf1 <> fv_tt_typ:97 def
+R6233:6241 sysf1 <> fv_tt_typ:97 def
+R6252:6261 sysf1 <> typ_forall constr
+R6273:6273 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6286:6291 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6304:6304 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6274:6282 sysf1 <> fv_tt_typ:97 def
+R6292:6300 sysf1 <> fv_tt_typ:97 def
+R6310:6317 sysf1 <> typ_true constr
+R6322:6323 Metalib.Metatheory <> ::set_scope:'{}' not
+R6329:6337 sysf1 <> typ_false constr
+R6342:6343 Metalib.Metatheory <> ::set_scope:'{}' not
+R6350:6358 sysf1 <> typ_union constr
+R6370:6370 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6383:6388 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6401:6401 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6371:6379 sysf1 <> fv_tt_typ:97 def
+R6389:6397 sysf1 <> fv_tt_typ:97 def
+def 6418:6426 <> fv_tt_exp
+R6433:6435 sysf1 <> exp ind
+binder 6429:6431 <> e_5:99
+R6440:6443 Metalib.Metatheory <> vars syndef
+R6456:6458 sysf1 <> e_5:99 var
+R6470:6474 sysf1 <> var_b constr
+R6484:6485 Metalib.Metatheory <> ::set_scope:'{}' not
+R6492:6496 sysf1 <> var_f constr
+R6504:6505 Metalib.Metatheory <> ::set_scope:'{}' not
+R6512:6514 sysf1 <> abs constr
+R6524:6524 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6536:6541 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6553:6553 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6525:6533 sysf1 <> fv_tt_typ def
+R6542:6550 sysf1 <> fv_tt_exp:100 def
+R6560:6563 sysf1 <> tabs constr
+R6573:6573 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6585:6590 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6602:6602 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6574:6582 sysf1 <> fv_tt_typ def
+R6591:6599 sysf1 <> fv_tt_exp:100 def
+R6609:6612 sysf1 <> tapp constr
+R6622:6622 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6634:6639 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6651:6651 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6623:6631 sysf1 <> fv_tt_exp:100 def
+R6640:6648 sysf1 <> fv_tt_typ def
+R6658:6660 sysf1 <> app constr
+R6672:6672 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6685:6690 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6703:6703 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6673:6681 sysf1 <> fv_tt_exp:100 def
+R6691:6699 sysf1 <> fv_tt_exp:100 def
+R6709:6712 sysf1 <> true constr
+R6717:6718 Metalib.Metatheory <> ::set_scope:'{}' not
+R6724:6728 sysf1 <> false constr
+R6733:6734 Metalib.Metatheory <> ::set_scope:'{}' not
+R6741:6743 sysf1 <> ite constr
+R6758:6758 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6771:6775 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6759:6767 sysf1 <> fv_tt_exp:100 def
+R6776:6776 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6789:6794 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6807:6807 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6777:6785 sysf1 <> fv_tt_exp:100 def
+R6795:6803 sysf1 <> fv_tt_exp:100 def
+R6814:6815 sysf1 <> eq constr
+R6827:6827 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6840:6845 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6858:6858 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6828:6836 sysf1 <> fv_tt_exp:100 def
+R6846:6854 sysf1 <> fv_tt_exp:100 def
+R6865:6867 sysf1 <> and constr
+R6879:6879 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6892:6897 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6910:6910 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R6880:6888 sysf1 <> fv_tt_exp:100 def
+R6898:6906 sysf1 <> fv_tt_exp:100 def
+def 6927:6935 <> fv_ee_exp
+R6942:6944 sysf1 <> exp ind
+binder 6938:6940 <> e_5:102
+R6949:6952 Metalib.Metatheory <> vars syndef
+R6965:6967 sysf1 <> e_5:102 var
+R6979:6983 sysf1 <> var_b constr
+R6993:6994 Metalib.Metatheory <> ::set_scope:'{}' not
+R7001:7005 sysf1 <> var_f constr
+R7013:7014 Metalib.Metatheory <> ::set_scope:'{{'_x_'}}' not
+R7016:7017 Metalib.Metatheory <> ::set_scope:'{{'_x_'}}' not
+R7024:7026 sysf1 <> abs constr
+R7037:7045 sysf1 <> fv_ee_exp:103 def
+R7055:7058 sysf1 <> tabs constr
+R7069:7077 sysf1 <> fv_ee_exp:103 def
+R7087:7090 sysf1 <> tapp constr
+R7101:7109 sysf1 <> fv_ee_exp:103 def
+R7119:7121 sysf1 <> app constr
+R7133:7133 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7146:7151 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7164:7164 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7134:7142 sysf1 <> fv_ee_exp:103 def
+R7152:7160 sysf1 <> fv_ee_exp:103 def
+R7170:7173 sysf1 <> true constr
+R7178:7179 Metalib.Metatheory <> ::set_scope:'{}' not
+R7185:7189 sysf1 <> false constr
+R7194:7195 Metalib.Metatheory <> ::set_scope:'{}' not
+R7202:7204 sysf1 <> ite constr
+R7219:7219 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7232:7236 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7220:7228 sysf1 <> fv_ee_exp:103 def
+R7237:7237 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7250:7255 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7268:7268 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7238:7246 sysf1 <> fv_ee_exp:103 def
+R7256:7264 sysf1 <> fv_ee_exp:103 def
+R7275:7276 sysf1 <> eq constr
+R7288:7288 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7301:7306 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7319:7319 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7289:7297 sysf1 <> fv_ee_exp:103 def
+R7307:7315 sysf1 <> fv_ee_exp:103 def
+R7326:7328 sysf1 <> and constr
+R7340:7340 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7353:7358 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7371:7371 Metalib.Metatheory <> ::set_sl_scope:x_'\u'_x not
+R7341:7349 sysf1 <> fv_ee_exp:103 def
+R7359:7367 sysf1 <> fv_ee_exp:103 def
+def 7390:7402 <> fv_tt_binding
+R7408:7414 sysf1 <> binding ind
+binder 7405:7406 <> b5:105
+R7419:7422 Metalib.Metatheory <> vars syndef
+R7435:7436 sysf1 <> b5:105 var
+R7448:7455 sysf1 <> bind_typ constr
+R7464:7472 sysf1 <> fv_tt_typ def
+R7482:7489 sysf1 <> bind_sub constr
+R7498:7506 sysf1 <> fv_tt_typ def
+def 7547:7556 <> Tsubst_typ
+R7563:7565 sysf1 <> typ ind
+binder 7559:7561 <> T_5:107
+R7572:7578 sysf1 <> typevar def
+binder 7569:7570 <> X5:108
+R7587:7589 sysf1 <> typ ind
+binder 7582:7585 <> T__6:109
+R7608:7610 sysf1 <> typ ind
+R7623:7626 sysf1 <> T__6:109 var
+R7638:7647 sysf1 <> typ_tvar_b constr
+R7657:7666 sysf1 <> typ_tvar_b constr
+R7677:7686 sysf1 <> typ_tvar_f constr
+R7698:7703 Metalib.Metatheory <> eq_var syndef
+R7707:7708 sysf1 <> X5:108 var
+R7725:7734 sysf1 <> typ_tvar_f constr
+R7715:7717 sysf1 <> T_5:107 var
+R7744:7750 sysf1 <> typ_top constr
+R7755:7761 sysf1 <> typ_top constr
+R7769:7777 sysf1 <> typ_arrow constr
+R7789:7797 sysf1 <> typ_arrow constr
+R7823:7832 sysf1 <> Tsubst_typ:110 def
+R7838:7839 sysf1 <> X5:108 var
+R7834:7836 sysf1 <> T_5:107 var
+R7800:7809 sysf1 <> Tsubst_typ:110 def
+R7815:7816 sysf1 <> X5:108 var
+R7811:7813 sysf1 <> T_5:107 var
+R7850:7859 sysf1 <> typ_forall constr
+R7871:7880 sysf1 <> typ_forall constr
+R7906:7915 sysf1 <> Tsubst_typ:110 def
+R7921:7922 sysf1 <> X5:108 var
+R7917:7919 sysf1 <> T_5:107 var
+R7883:7892 sysf1 <> Tsubst_typ:110 def
+R7898:7899 sysf1 <> X5:108 var
+R7894:7896 sysf1 <> T_5:107 var
+R7932:7939 sysf1 <> typ_true constr
+R7944:7951 sysf1 <> typ_true constr
+R7958:7966 sysf1 <> typ_false constr
+R7971:7979 sysf1 <> typ_false constr
+R7987:7995 sysf1 <> typ_union constr
+R8007:8015 sysf1 <> typ_union constr
+R8041:8050 sysf1 <> Tsubst_typ:110 def
+R8056:8057 sysf1 <> X5:108 var
+R8052:8054 sysf1 <> T_5:107 var
+R8018:8027 sysf1 <> Tsubst_typ:110 def
+R8033:8034 sysf1 <> X5:108 var
+R8029:8031 sysf1 <> T_5:107 var
+def 8078:8087 <> Tsubst_exp
+R8093:8095 sysf1 <> typ ind
+binder 8090:8091 <> T5:112
+R8102:8108 sysf1 <> typevar def
+binder 8099:8100 <> X5:113
+R8116:8118 sysf1 <> exp ind
+binder 8112:8114 <> e_5:114
+R8136:8138 sysf1 <> exp ind
+R8151:8153 sysf1 <> e_5:114 var
+R8165:8169 sysf1 <> var_b constr
+R8179:8183 sysf1 <> var_b constr
+R8194:8198 sysf1 <> var_f constr
+R8206:8210 sysf1 <> var_f constr
+R8219:8221 sysf1 <> abs constr
+R8231:8233 sysf1 <> abs constr
+R8257:8266 sysf1 <> Tsubst_exp:115 def
+R8271:8272 sysf1 <> X5:113 var
+R8268:8269 sysf1 <> T5:112 var
+R8236:8245 sysf1 <> Tsubst_typ def
+R8250:8251 sysf1 <> X5:113 var
+R8247:8248 sysf1 <> T5:112 var
+R8282:8285 sysf1 <> tabs constr
+R8295:8298 sysf1 <> tabs constr
+R8322:8331 sysf1 <> Tsubst_exp:115 def
+R8336:8337 sysf1 <> X5:113 var
+R8333:8334 sysf1 <> T5:112 var
+R8301:8310 sysf1 <> Tsubst_typ def
+R8315:8316 sysf1 <> X5:113 var
+R8312:8313 sysf1 <> T5:112 var
+R8347:8350 sysf1 <> tapp constr
+R8360:8363 sysf1 <> tapp constr
+R8387:8396 sysf1 <> Tsubst_typ def
+R8401:8402 sysf1 <> X5:113 var
+R8398:8399 sysf1 <> T5:112 var
+R8366:8375 sysf1 <> Tsubst_exp:115 def
+R8380:8381 sysf1 <> X5:113 var
+R8377:8378 sysf1 <> T5:112 var
+R8412:8414 sysf1 <> app constr
+R8426:8428 sysf1 <> app constr
+R8453:8462 sysf1 <> Tsubst_exp:115 def
+R8467:8468 sysf1 <> X5:113 var
+R8464:8465 sysf1 <> T5:112 var
+R8431:8440 sysf1 <> Tsubst_exp:115 def
+R8445:8446 sysf1 <> X5:113 var
+R8442:8443 sysf1 <> T5:112 var
+R8478:8481 sysf1 <> true constr
+R8486:8489 sysf1 <> true constr
+R8496:8500 sysf1 <> false constr
+R8505:8509 sysf1 <> false constr
+R8517:8519 sysf1 <> ite constr
+R8534:8536 sysf1 <> ite constr
+R8583:8592 sysf1 <> Tsubst_exp:115 def
+R8597:8598 sysf1 <> X5:113 var
+R8594:8595 sysf1 <> T5:112 var
+R8561:8570 sysf1 <> Tsubst_exp:115 def
+R8575:8576 sysf1 <> X5:113 var
+R8572:8573 sysf1 <> T5:112 var
+R8539:8548 sysf1 <> Tsubst_exp:115 def
+R8553:8554 sysf1 <> X5:113 var
+R8550:8551 sysf1 <> T5:112 var
+R8609:8610 sysf1 <> eq constr
+R8622:8623 sysf1 <> eq constr
+R8648:8657 sysf1 <> Tsubst_exp:115 def
+R8662:8663 sysf1 <> X5:113 var
+R8659:8660 sysf1 <> T5:112 var
+R8626:8635 sysf1 <> Tsubst_exp:115 def
+R8640:8641 sysf1 <> X5:113 var
+R8637:8638 sysf1 <> T5:112 var
+R8674:8676 sysf1 <> and constr
+R8688:8690 sysf1 <> and constr
+R8715:8724 sysf1 <> Tsubst_exp:115 def
+R8729:8730 sysf1 <> X5:113 var
+R8726:8727 sysf1 <> T5:112 var
+R8693:8702 sysf1 <> Tsubst_exp:115 def
+R8707:8708 sysf1 <> X5:113 var
+R8704:8705 sysf1 <> T5:112 var
+def 8751:8760 <> tsubst_exp
+R8767:8769 sysf1 <> exp ind
+binder 8763:8765 <> e_5:117
+R8776:8782 sysf1 <> termvar def
+binder 8773:8774 <> x5:118
+R8791:8793 sysf1 <> exp ind
+binder 8786:8789 <> e__6:119
+R8812:8814 sysf1 <> exp ind
+R8827:8830 sysf1 <> e__6:119 var
+R8842:8846 sysf1 <> var_b constr
+R8856:8860 sysf1 <> var_b constr
+R8871:8875 sysf1 <> var_f constr
+R8887:8892 Metalib.Metatheory <> eq_var syndef
+R8896:8897 sysf1 <> x5:118 var
+R8914:8918 sysf1 <> var_f constr
+R8904:8906 sysf1 <> e_5:117 var
+R8929:8931 sysf1 <> abs constr
+R8941:8943 sysf1 <> abs constr
+R8948:8957 sysf1 <> tsubst_exp:120 def
+R8963:8964 sysf1 <> x5:118 var
+R8959:8961 sysf1 <> e_5:117 var
+R8974:8977 sysf1 <> tabs constr
+R8987:8990 sysf1 <> tabs constr
+R8995:9004 sysf1 <> tsubst_exp:120 def
+R9010:9011 sysf1 <> x5:118 var
+R9006:9008 sysf1 <> e_5:117 var
+R9021:9024 sysf1 <> tapp constr
+R9034:9037 sysf1 <> tapp constr
+R9040:9049 sysf1 <> tsubst_exp:120 def
+R9055:9056 sysf1 <> x5:118 var
+R9051:9053 sysf1 <> e_5:117 var
+R9068:9070 sysf1 <> app constr
+R9082:9084 sysf1 <> app constr
+R9110:9119 sysf1 <> tsubst_exp:120 def
+R9125:9126 sysf1 <> x5:118 var
+R9121:9123 sysf1 <> e_5:117 var
+R9087:9096 sysf1 <> tsubst_exp:120 def
+R9102:9103 sysf1 <> x5:118 var
+R9098:9100 sysf1 <> e_5:117 var
+R9136:9139 sysf1 <> true constr
+R9144:9147 sysf1 <> true constr
+R9154:9158 sysf1 <> false constr
+R9163:9167 sysf1 <> false constr
+R9175:9177 sysf1 <> ite constr
+R9192:9194 sysf1 <> ite constr
+R9243:9252 sysf1 <> tsubst_exp:120 def
+R9258:9259 sysf1 <> x5:118 var
+R9254:9256 sysf1 <> e_5:117 var
+R9220:9229 sysf1 <> tsubst_exp:120 def
+R9235:9236 sysf1 <> x5:118 var
+R9231:9233 sysf1 <> e_5:117 var
+R9197:9206 sysf1 <> tsubst_exp:120 def
+R9212:9213 sysf1 <> x5:118 var
+R9208:9210 sysf1 <> e_5:117 var
+R9270:9271 sysf1 <> eq constr
+R9283:9284 sysf1 <> eq constr
+R9310:9319 sysf1 <> tsubst_exp:120 def
+R9325:9326 sysf1 <> x5:118 var
+R9321:9323 sysf1 <> e_5:117 var
+R9287:9296 sysf1 <> tsubst_exp:120 def
+R9302:9303 sysf1 <> x5:118 var
+R9298:9300 sysf1 <> e_5:117 var
+R9337:9339 sysf1 <> and constr
+R9351:9353 sysf1 <> and constr
+R9379:9388 sysf1 <> tsubst_exp:120 def
+R9394:9395 sysf1 <> x5:118 var
+R9390:9392 sysf1 <> e_5:117 var
+R9356:9365 sysf1 <> tsubst_exp:120 def
+R9371:9372 sysf1 <> x5:118 var
+R9367:9369 sysf1 <> e_5:117 var
+def 9418:9431 <> Tsubst_binding
+R9437:9439 sysf1 <> typ ind
+binder 9434:9435 <> T5:122
+R9446:9452 sysf1 <> typevar def
+binder 9443:9444 <> X5:123
+R9459:9465 sysf1 <> binding ind
+binder 9456:9457 <> b5:124
+R9470:9476 sysf1 <> binding ind
+R9489:9490 sysf1 <> b5:124 var
+R9502:9509 sysf1 <> bind_typ constr
+R9517:9524 sysf1 <> bind_typ constr
+R9527:9536 sysf1 <> Tsubst_typ def
+R9541:9542 sysf1 <> X5:123 var
+R9538:9539 sysf1 <> T5:122 var
+R9552:9559 sysf1 <> bind_sub constr
+R9567:9574 sysf1 <> bind_sub constr
+R9577:9586 sysf1 <> Tsubst_typ def
+R9591:9592 sysf1 <> X5:123 var
+R9588:9589 sysf1 <> T5:122 var
+ind 9614:9618 <> value
+constr 9641:9649 <> value_abs
+constr 9720:9729 <> value_tabs
+constr 9802:9811 <> value_true
+constr 9838:9848 <> value_false
+R9625:9628 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9622:9624 sysf1 <> exp ind
+binder 9660:9660 <> T:128
+binder 9662:9663 <> e1:129
+R9689:9698 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9699:9703 sysf1 <> value:126 ind
+R9706:9708 sysf1 <> abs constr
+R9712:9713 sysf1 <> e1:129 var
+R9710:9710 sysf1 <> T:128 var
+R9672:9677 sysf1 <> lc_exp ind
+R9680:9682 sysf1 <> abs constr
+R9686:9687 sysf1 <> e1:129 var
+R9684:9684 sysf1 <> T:128 var
+binder 9740:9740 <> T:130
+binder 9742:9743 <> e1:131
+R9770:9779 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9780:9784 sysf1 <> value:126 ind
+R9787:9790 sysf1 <> tabs constr
+R9794:9795 sysf1 <> e1:131 var
+R9792:9792 sysf1 <> T:130 var
+R9752:9757 sysf1 <> lc_exp ind
+R9760:9763 sysf1 <> tabs constr
+R9767:9768 sysf1 <> e1:131 var
+R9765:9765 sysf1 <> T:130 var
+R9821:9825 sysf1 <> value:126 ind
+R9828:9831 sysf1 <> true constr
+R9858:9862 sysf1 <> value:126 ind
+R9865:9869 sysf1 <> false constr
+syndef 9884:9888 <> empty
+R9895:9897 Coq.Init.Datatypes <> nil constr
+R9904:9906 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
+R9900:9903 Metalib.MetatheoryAtom <> atom syndef
+R9907:9913 sysf1 <> binding ind
+def 9930:9936 <> open_tt
+binder 9938:9938 <> T:132
+binder 9940:9940 <> U:133
+R9945:9964 sysf1 <> open_typ_wrt_typ_rec def
+R9970:9970 sysf1 <> T:132 var
+R9968:9968 sysf1 <> U:133 var
+def 9984:9990 <> open_te
+binder 9992:9992 <> e:134
+binder 9994:9994 <> U:135
+R9999:10018 sysf1 <> open_exp_wrt_typ_rec def
+R10024:10024 sysf1 <> e:134 var
+R10022:10022 sysf1 <> U:135 var
+def 10038:10044 <> open_ee
+binder 10046:10047 <> e1:136
+binder 10049:10050 <> e2:137
+R10055:10074 sysf1 <> open_exp_wrt_exp_rec def
+R10081:10082 sysf1 <> e1:136 var
+R10078:10079 sysf1 <> e2:137 var
+ind 10135:10140 <> wf_typ
+constr 10190:10199 <> wf_typ_top
+constr 10244:10254 <> wf_typ_true
+constr 10300:10311 <> wf_typ_false
+constr 10358:10369 <> wf_typ_arrow
+constr 10476:10488 <> wf_typ_forall
+constr 10702:10713 <> wf_typ_union
+constr 10820:10829 <> wf_typ_var
+R10147:10150 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10154:10157 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10151:10153 sysf1 <> typ ind
+R10144:10146 sysf1 <> ctx def
+R10213:10215 sysf1 <> ctx def
+binder 10211:10211 <> G:140
+R10224:10229 sysf1 <> wf_typ:138 ind
+R10233:10239 sysf1 <> typ_top constr
+R10231:10231 sysf1 <> G:140 var
+R10268:10270 sysf1 <> ctx def
+binder 10266:10266 <> G:141
+R10279:10284 sysf1 <> wf_typ:138 ind
+R10288:10295 sysf1 <> typ_true constr
+R10286:10286 sysf1 <> G:141 var
+R10325:10327 sysf1 <> ctx def
+binder 10323:10323 <> G:142
+R10336:10341 sysf1 <> wf_typ:138 ind
+R10345:10353 sysf1 <> typ_false constr
+R10343:10343 sysf1 <> G:142 var
+R10383:10385 sysf1 <> ctx def
+binder 10381:10381 <> G:143
+R10395:10397 sysf1 <> typ ind
+binder 10389:10390 <> T1:144
+binder 10392:10393 <> T2:145
+R10417:10425 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10437:10445 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10446:10451 sysf1 <> wf_typ:138 ind
+R10456:10464 sysf1 <> typ_arrow constr
+R10469:10470 sysf1 <> T2:145 var
+R10466:10467 sysf1 <> T1:144 var
+R10453:10453 sysf1 <> G:143 var
+R10426:10431 sysf1 <> wf_typ:138 ind
+R10435:10436 sysf1 <> T2:145 var
+R10433:10433 sysf1 <> G:143 var
+R10406:10411 sysf1 <> wf_typ:138 ind
+R10415:10416 sysf1 <> T1:144 var
+R10413:10413 sysf1 <> G:143 var
+R10502:10505 Metalib.Metatheory <> vars syndef
+binder 10500:10500 <> L:146
+R10511:10513 sysf1 <> ctx def
+binder 10509:10509 <> G:147
+R10523:10525 sysf1 <> typ ind
+binder 10517:10518 <> T1:148
+binder 10520:10521 <> T2:149
+R10545:10554 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10555:10556 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10658:10670 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10671:10676 sysf1 <> wf_typ:138 ind
+R10681:10690 sysf1 <> typ_forall constr
+R10695:10696 sysf1 <> T2:149 var
+R10692:10693 sysf1 <> T1:148 var
+R10678:10678 sysf1 <> G:147 var
+binder 10564:10564 <> X:150
+R10579:10583 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10584:10589 sysf1 <> wf_typ:138 ind
+R10622:10637 sysf1 <> open_typ_wrt_typ def
+R10643:10652 sysf1 <> typ_tvar_f constr
+R10654:10654 sysf1 <> X:150 var
+R10639:10640 sysf1 <> T2:149 var
+R10593:10594 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R10609:10613 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R10596:10597 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R10595:10595 sysf1 <> X:150 var
+R10598:10605 sysf1 <> bind_sub constr
+R10607:10608 sysf1 <> T1:148 var
+R10614:10614 sysf1 <> G:147 var
+R10569:10577 Metalib.Metatheory <> ::set_sl_scope:x_'\notin'_x not
+R10568:10568 sysf1 <> X:150 var
+R10578:10578 sysf1 <> L:146 var
+R10534:10539 sysf1 <> wf_typ:138 ind
+R10543:10544 sysf1 <> T1:148 var
+R10541:10541 sysf1 <> G:147 var
+R10727:10729 sysf1 <> ctx def
+binder 10725:10725 <> G:151
+R10739:10741 sysf1 <> typ ind
+binder 10733:10734 <> T1:152
+binder 10736:10737 <> T2:153
+R10761:10769 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10781:10789 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10790:10795 sysf1 <> wf_typ:138 ind
+R10800:10808 sysf1 <> typ_union constr
+R10813:10814 sysf1 <> T2:153 var
+R10810:10811 sysf1 <> T1:152 var
+R10797:10797 sysf1 <> G:151 var
+R10770:10775 sysf1 <> wf_typ:138 ind
+R10779:10780 sysf1 <> T2:153 var
+R10777:10777 sysf1 <> G:151 var
+R10750:10755 sysf1 <> wf_typ:138 ind
+R10759:10760 sysf1 <> T1:152 var
+R10757:10757 sysf1 <> G:151 var
+R10843:10845 sysf1 <> ctx def
+binder 10841:10841 <> G:154
+R10851:10857 sysf1 <> typevar def
+binder 10849:10849 <> X:155
+R10863:10865 sysf1 <> typ ind
+binder 10861:10861 <> T:156
+R10899:10908 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10909:10914 sysf1 <> wf_typ:138 ind
+R10919:10928 sysf1 <> typ_tvar_f constr
+R10930:10930 sysf1 <> X:155 var
+R10916:10916 sysf1 <> G:154 var
+R10875:10879 Metalib.Metatheory EnvImpl binds def
+R10898:10898 sysf1 <> G:154 var
+R10885:10892 sysf1 <> bind_sub constr
+R10894:10894 sysf1 <> T:156 var
+R10882:10882 sysf1 <> X:155 var
+ind 10963:10968 <> wf_env
+constr 11011:11022 <> wf_env_empty
+constr 11048:11057 <> wf_env_sub
+constr 11216:11225 <> wf_env_typ
+R10975:10978 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10972:10974 sysf1 <> ctx def
+R11032:11037 sysf1 <> wf_env:157 ind
+R11040:11042 Coq.Init.Datatypes <> nil constr
+R11071:11073 sysf1 <> ctx def
+binder 11069:11069 <> G:159
+R11079:11085 sysf1 <> typevar def
+binder 11077:11077 <> X:160
+R11091:11093 sysf1 <> typ ind
+binder 11089:11089 <> T:161
+R11110:11118 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11129:11138 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11169:11178 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11179:11184 sysf1 <> wf_env:157 ind
+R11188:11189 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R11203:11207 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R11191:11192 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R11190:11190 sysf1 <> X:160 var
+R11193:11200 sysf1 <> bind_sub constr
+R11202:11202 sysf1 <> T:161 var
+R11208:11208 sysf1 <> G:159 var
+R11139:11140 Coq.Init.Logic <> ::type_scope:'~'_x not
+R11141:11154 Metalib.MetatheoryAtom AtomSetImpl In defax
+R11161:11163 Metalib.Metatheory EnvImpl dom def
+R11166:11166 sysf1 <> G:159 var
+R11157:11157 sysf1 <> X:160 var
+R11119:11124 sysf1 <> wf_typ ind
+R11128:11128 sysf1 <> T:161 var
+R11126:11126 sysf1 <> G:159 var
+R11102:11107 sysf1 <> wf_env:157 ind
+R11109:11109 sysf1 <> G:159 var
+R11239:11241 sysf1 <> ctx def
+binder 11237:11237 <> G:162
+R11247:11253 sysf1 <> termvar def
+binder 11245:11245 <> x:163
+R11259:11261 sysf1 <> typ ind
+binder 11257:11257 <> T:164
+R11278:11286 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11297:11306 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11337:11346 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11347:11352 sysf1 <> wf_env:157 ind
+R11356:11357 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R11371:11375 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R11359:11360 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R11358:11358 sysf1 <> x:163 var
+R11361:11368 sysf1 <> bind_typ constr
+R11370:11370 sysf1 <> T:164 var
+R11376:11376 sysf1 <> G:162 var
+R11307:11308 Coq.Init.Logic <> ::type_scope:'~'_x not
+R11309:11322 Metalib.MetatheoryAtom AtomSetImpl In defax
+R11329:11331 Metalib.Metatheory EnvImpl dom def
+R11334:11334 sysf1 <> G:162 var
+R11325:11325 sysf1 <> x:163 var
+R11287:11292 sysf1 <> wf_typ ind
+R11296:11296 sysf1 <> T:164 var
+R11294:11294 sysf1 <> G:162 var
+R11270:11275 sysf1 <> wf_env:157 ind
+R11277:11277 sysf1 <> G:162 var
+ind 11416:11418 <> sub
+constr 11472:11478 <> sub_top
+constr 11566:11578 <> sub_refl_true
+constr 11647:11660 <> sub_refl_false
+constr 11731:11743 <> sub_refl_tvar
+constr 11868:11881 <> sub_trans_tvar
+constr 12013:12021 <> sub_arrow
+constr 12149:12158 <> sub_forall
+constr 12432:12442 <> sub_union_l
+constr 12581:12591 <> sub_union_r
+constr 12730:12740 <> sub_union_m
+R11425:11428 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11432:11435 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11439:11442 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11436:11438 sysf1 <> typ ind
+R11429:11431 sysf1 <> typ ind
+R11422:11424 sysf1 <> ctx def
+R11492:11494 sysf1 <> ctx def
+binder 11490:11490 <> G:167
+R11500:11502 sysf1 <> typ ind
+binder 11498:11498 <> T:168
+R11519:11527 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11538:11546 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11547:11549 sysf1 <> sub:165 ind
+R11555:11561 sysf1 <> typ_top constr
+R11553:11553 sysf1 <> T:168 var
+R11551:11551 sysf1 <> G:167 var
+R11528:11533 sysf1 <> wf_typ ind
+R11537:11537 sysf1 <> T:168 var
+R11535:11535 sysf1 <> G:167 var
+R11511:11516 sysf1 <> wf_env ind
+R11518:11518 sysf1 <> G:167 var
+R11592:11594 sysf1 <> ctx def
+binder 11590:11590 <> G:169
+R11611:11619 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11620:11622 sysf1 <> sub:165 ind
+R11635:11642 sysf1 <> typ_true constr
+R11626:11633 sysf1 <> typ_true constr
+R11624:11624 sysf1 <> G:169 var
+R11603:11608 sysf1 <> wf_env ind
+R11610:11610 sysf1 <> G:169 var
+R11674:11676 sysf1 <> ctx def
+binder 11672:11672 <> G:170
+R11693:11701 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11702:11704 sysf1 <> sub:165 ind
+R11718:11726 sysf1 <> typ_false constr
+R11708:11716 sysf1 <> typ_false constr
+R11706:11706 sysf1 <> G:170 var
+R11685:11690 sysf1 <> wf_env ind
+R11692:11692 sysf1 <> G:170 var
+R11757:11759 sysf1 <> ctx def
+binder 11755:11755 <> G:171
+R11765:11771 sysf1 <> typevar def
+binder 11763:11763 <> X:172
+R11788:11796 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11820:11828 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11829:11831 sysf1 <> sub:165 ind
+R11851:11860 sysf1 <> typ_tvar_f constr
+R11862:11862 sysf1 <> X:172 var
+R11836:11845 sysf1 <> typ_tvar_f constr
+R11847:11847 sysf1 <> X:172 var
+R11833:11833 sysf1 <> G:171 var
+R11797:11802 sysf1 <> wf_typ ind
+R11807:11816 sysf1 <> typ_tvar_f constr
+R11818:11818 sysf1 <> X:172 var
+R11804:11804 sysf1 <> G:171 var
+R11780:11785 sysf1 <> wf_env ind
+R11787:11787 sysf1 <> G:171 var
+R11895:11897 sysf1 <> ctx def
+binder 11893:11893 <> G:173
+R11903:11909 sysf1 <> typevar def
+binder 11901:11901 <> X:174
+R11919:11921 sysf1 <> typ ind
+binder 11913:11914 <> T2:175
+binder 11916:11917 <> T1:176
+R11956:11965 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11977:11985 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11986:11988 sysf1 <> sub:165 ind
+R12007:12008 sysf1 <> T2:175 var
+R11993:12002 sysf1 <> typ_tvar_f constr
+R12004:12004 sysf1 <> X:174 var
+R11990:11990 sysf1 <> G:173 var
+R11966:11968 sysf1 <> sub:165 ind
+R11975:11976 sysf1 <> T2:175 var
+R11972:11973 sysf1 <> T1:176 var
+R11970:11970 sysf1 <> G:173 var
+R11931:11935 Metalib.Metatheory EnvImpl binds def
+R11955:11955 sysf1 <> G:173 var
+R11941:11948 sysf1 <> bind_sub constr
+R11950:11951 sysf1 <> T1:176 var
+R11938:11938 sysf1 <> X:174 var
+R12035:12037 sysf1 <> ctx def
+binder 12033:12033 <> G:177
+R12053:12055 sysf1 <> typ ind
+binder 12041:12042 <> S1:178
+binder 12044:12045 <> S2:179
+binder 12047:12048 <> T1:180
+binder 12050:12051 <> T2:181
+R12075:12083 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12095:12103 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12104:12106 sysf1 <> sub:165 ind
+R12129:12137 sysf1 <> typ_arrow constr
+R12142:12143 sysf1 <> T2:181 var
+R12139:12140 sysf1 <> T1:180 var
+R12111:12119 sysf1 <> typ_arrow constr
+R12124:12125 sysf1 <> S2:179 var
+R12121:12122 sysf1 <> S1:178 var
+R12108:12108 sysf1 <> G:177 var
+R12084:12086 sysf1 <> sub:165 ind
+R12093:12094 sysf1 <> S2:179 var
+R12090:12091 sysf1 <> T2:181 var
+R12088:12088 sysf1 <> G:177 var
+R12064:12066 sysf1 <> sub:165 ind
+R12073:12074 sysf1 <> S1:178 var
+R12070:12071 sysf1 <> T1:180 var
+R12068:12068 sysf1 <> G:177 var
+R12172:12175 Metalib.Metatheory <> vars syndef
+binder 12170:12170 <> L:182
+R12181:12183 sysf1 <> ctx def
+binder 12179:12179 <> G:183
+R12199:12201 sysf1 <> typ ind
+binder 12187:12188 <> S1:184
+binder 12190:12191 <> S2:185
+binder 12193:12194 <> T1:186
+binder 12196:12197 <> T2:187
+R12221:12230 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12231:12232 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12372:12384 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12385:12387 sysf1 <> sub:165 ind
+R12411:12420 sysf1 <> typ_forall constr
+R12425:12426 sysf1 <> T2:187 var
+R12422:12423 sysf1 <> T1:186 var
+R12392:12401 sysf1 <> typ_forall constr
+R12406:12407 sysf1 <> S2:185 var
+R12403:12404 sysf1 <> S1:184 var
+R12389:12389 sysf1 <> G:183 var
+binder 12240:12240 <> X:188
+R12255:12259 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12260:12262 sysf1 <> sub:165 ind
+R12336:12351 sysf1 <> open_typ_wrt_typ def
+R12357:12366 sysf1 <> typ_tvar_f constr
+R12368:12368 sysf1 <> X:188 var
+R12353:12354 sysf1 <> T2:187 var
+R12295:12310 sysf1 <> open_typ_wrt_typ def
+R12316:12325 sysf1 <> typ_tvar_f constr
+R12327:12327 sysf1 <> X:188 var
+R12312:12313 sysf1 <> S2:185 var
+R12266:12267 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R12282:12286 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R12269:12270 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R12268:12268 sysf1 <> X:188 var
+R12271:12278 sysf1 <> bind_sub constr
+R12280:12281 sysf1 <> T1:186 var
+R12287:12287 sysf1 <> G:183 var
+R12245:12253 Metalib.Metatheory <> ::set_sl_scope:x_'\notin'_x not
+R12244:12244 sysf1 <> X:188 var
+R12254:12254 sysf1 <> L:182 var
+R12210:12212 sysf1 <> sub:165 ind
+R12219:12220 sysf1 <> S1:184 var
+R12216:12217 sysf1 <> T1:186 var
+R12214:12214 sysf1 <> G:183 var
+R12456:12458 sysf1 <> ctx def
+binder 12454:12454 <> G:189
+R12470:12472 sysf1 <> typ ind
+binder 12462:12462 <> S:190
+binder 12464:12465 <> T2:191
+binder 12467:12468 <> T1:192
+R12489:12497 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12509:12517 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12528:12536 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12537:12539 sysf1 <> sub:165 ind
+R12561:12569 sysf1 <> typ_union constr
+R12574:12575 sysf1 <> T2:191 var
+R12571:12572 sysf1 <> T1:192 var
+R12544:12552 sysf1 <> typ_union constr
+R12556:12557 sysf1 <> T2:191 var
+R12554:12554 sysf1 <> S:190 var
+R12541:12541 sysf1 <> G:189 var
+R12518:12520 sysf1 <> sub:165 ind
+R12526:12527 sysf1 <> T1:192 var
+R12524:12524 sysf1 <> S:190 var
+R12522:12522 sysf1 <> G:189 var
+R12498:12503 sysf1 <> wf_typ ind
+R12507:12508 sysf1 <> T2:191 var
+R12505:12505 sysf1 <> G:189 var
+R12481:12486 sysf1 <> wf_env ind
+R12488:12488 sysf1 <> G:189 var
+R12605:12607 sysf1 <> ctx def
+binder 12603:12603 <> G:193
+R12619:12621 sysf1 <> typ ind
+binder 12611:12612 <> T1:194
+binder 12614:12614 <> S:195
+binder 12616:12617 <> T2:196
+R12638:12646 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12658:12666 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12677:12685 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12686:12688 sysf1 <> sub:165 ind
+R12710:12718 sysf1 <> typ_union constr
+R12723:12724 sysf1 <> T2:196 var
+R12720:12721 sysf1 <> T1:194 var
+R12693:12701 sysf1 <> typ_union constr
+R12706:12706 sysf1 <> S:195 var
+R12703:12704 sysf1 <> T1:194 var
+R12690:12690 sysf1 <> G:193 var
+R12667:12669 sysf1 <> sub:165 ind
+R12675:12676 sysf1 <> T2:196 var
+R12673:12673 sysf1 <> S:195 var
+R12671:12671 sysf1 <> G:193 var
+R12647:12652 sysf1 <> wf_typ ind
+R12656:12657 sysf1 <> T1:194 var
+R12654:12654 sysf1 <> G:193 var
+R12630:12635 sysf1 <> wf_env ind
+R12637:12637 sysf1 <> G:193 var
+R12754:12756 sysf1 <> ctx def
+binder 12752:12752 <> G:197
+R12768:12770 sysf1 <> typ ind
+binder 12760:12761 <> S1:198
+binder 12763:12764 <> S2:199
+binder 12766:12766 <> T:200
+R12789:12797 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12808:12816 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12817:12819 sysf1 <> sub:165 ind
+R12841:12841 sysf1 <> T:200 var
+R12824:12832 sysf1 <> typ_union constr
+R12837:12838 sysf1 <> S2:199 var
+R12834:12835 sysf1 <> S1:198 var
+R12821:12821 sysf1 <> G:197 var
+R12798:12800 sysf1 <> sub:165 ind
+R12807:12807 sysf1 <> T:200 var
+R12804:12805 sysf1 <> S2:199 var
+R12802:12802 sysf1 <> G:197 var
+R12779:12781 sysf1 <> sub:165 ind
+R12788:12788 sysf1 <> T:200 var
+R12785:12786 sysf1 <> S1:198 var
+R12783:12783 sysf1 <> G:197 var
+ind 12875:12880 <> typing
+constr 12937:12946 <> typing_var
+constr 13067:13076 <> typing_abs
+constr 13291:13300 <> typing_app
+constr 13437:13447 <> typing_tabs
+constr 13707:13717 <> typing_tapp
+constr 13872:13881 <> typing_sub
+constr 13979:13989 <> typing_true
+constr 14057:14068 <> typing_false
+constr 14138:14146 <> typing_eq
+constr 14335:14344 <> typing_and
+R12887:12890 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12894:12897 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12901:12904 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12898:12900 sysf1 <> typ ind
+R12891:12893 sysf1 <> exp ind
+R12884:12886 sysf1 <> ctx def
+R12960:12962 sysf1 <> ctx def
+binder 12958:12958 <> G:203
+R12968:12974 sysf1 <> termvar def
+binder 12966:12966 <> x:204
+R12980:12982 sysf1 <> typ ind
+binder 12978:12978 <> T:205
+R12999:13008 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13033:13042 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13043:13048 sysf1 <> typing:201 ind
+R13062:13062 sysf1 <> T:205 var
+R13053:13057 sysf1 <> var_f constr
+R13059:13059 sysf1 <> x:204 var
+R13050:13050 sysf1 <> G:203 var
+R13009:13013 Metalib.Metatheory EnvImpl binds def
+R13032:13032 sysf1 <> G:203 var
+R13019:13026 sysf1 <> bind_typ constr
+R13028:13028 sysf1 <> T:205 var
+R13016:13016 sysf1 <> x:204 var
+R12991:12996 sysf1 <> wf_env ind
+R12998:12998 sysf1 <> G:203 var
+R13090:13093 Metalib.Metatheory <> vars syndef
+binder 13088:13088 <> L:206
+R13099:13101 sysf1 <> ctx def
+binder 13097:13097 <> G:207
+R13108:13110 sysf1 <> typ ind
+binder 13105:13106 <> T1:208
+R13116:13118 sysf1 <> exp ind
+binder 13114:13114 <> e:209
+R13125:13127 sysf1 <> typ ind
+binder 13122:13123 <> T2:210
+R13137:13138 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13238:13249 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13250:13255 sysf1 <> typing:201 ind
+R13271:13279 sysf1 <> typ_arrow constr
+R13284:13285 sysf1 <> T2:210 var
+R13281:13282 sysf1 <> T1:208 var
+R13260:13262 sysf1 <> abs constr
+R13267:13267 sysf1 <> e:209 var
+R13264:13265 sysf1 <> T1:208 var
+R13257:13257 sysf1 <> G:207 var
+binder 13146:13146 <> x:211
+R13161:13165 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13166:13171 sysf1 <> typing:201 ind
+R13236:13237 sysf1 <> T2:210 var
+R13204:13219 sysf1 <> open_exp_wrt_exp def
+R13224:13228 sysf1 <> var_f constr
+R13230:13230 sysf1 <> x:211 var
+R13221:13221 sysf1 <> e:209 var
+R13175:13176 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R13191:13195 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R13178:13179 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R13177:13177 sysf1 <> x:211 var
+R13180:13187 sysf1 <> bind_typ constr
+R13189:13190 sysf1 <> T1:208 var
+R13196:13196 sysf1 <> G:207 var
+R13151:13159 Metalib.Metatheory <> ::set_sl_scope:x_'\notin'_x not
+R13150:13150 sysf1 <> x:211 var
+R13160:13160 sysf1 <> L:206 var
+R13314:13316 sysf1 <> ctx def
+binder 13312:13312 <> G:212
+R13326:13328 sysf1 <> exp ind
+binder 13320:13321 <> e1:213
+binder 13323:13324 <> e2:214
+R13338:13340 sysf1 <> typ ind
+binder 13332:13333 <> T2:215
+binder 13335:13336 <> T1:216
+R13378:13386 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13401:13409 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13410:13415 sysf1 <> typing:201 ind
+R13431:13432 sysf1 <> T2:215 var
+R13420:13422 sysf1 <> app constr
+R13427:13428 sysf1 <> e2:214 var
+R13424:13425 sysf1 <> e1:213 var
+R13417:13417 sysf1 <> G:212 var
+R13387:13392 sysf1 <> typing:201 ind
+R13399:13400 sysf1 <> T1:216 var
+R13396:13397 sysf1 <> e2:214 var
+R13394:13394 sysf1 <> G:212 var
+R13349:13354 sysf1 <> typing:201 ind
+R13362:13370 sysf1 <> typ_arrow constr
+R13375:13376 sysf1 <> T2:215 var
+R13372:13373 sysf1 <> T1:216 var
+R13358:13359 sysf1 <> e1:213 var
+R13356:13356 sysf1 <> G:212 var
+R13461:13464 Metalib.Metatheory <> vars syndef
+binder 13459:13459 <> L:217
+R13470:13472 sysf1 <> ctx def
+binder 13468:13468 <> G:218
+R13479:13481 sysf1 <> typ ind
+binder 13476:13477 <> T1:219
+R13487:13489 sysf1 <> exp ind
+binder 13485:13485 <> e:220
+R13496:13498 sysf1 <> typ ind
+binder 13493:13494 <> T2:221
+R13508:13509 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13651:13663 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13664:13669 sysf1 <> typing:201 ind
+R13686:13695 sysf1 <> typ_forall constr
+R13700:13701 sysf1 <> T2:221 var
+R13697:13698 sysf1 <> T1:219 var
+R13674:13677 sysf1 <> tabs constr
+R13682:13682 sysf1 <> e:220 var
+R13679:13680 sysf1 <> T1:219 var
+R13671:13671 sysf1 <> G:218 var
+binder 13517:13517 <> X:222
+R13532:13536 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13537:13542 sysf1 <> typing:201 ind
+R13615:13630 sysf1 <> open_typ_wrt_typ def
+R13636:13645 sysf1 <> typ_tvar_f constr
+R13647:13647 sysf1 <> X:222 var
+R13632:13633 sysf1 <> T2:221 var
+R13575:13590 sysf1 <> open_exp_wrt_typ def
+R13595:13604 sysf1 <> typ_tvar_f constr
+R13606:13606 sysf1 <> X:222 var
+R13592:13592 sysf1 <> e:220 var
+R13546:13547 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R13562:13566 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R13549:13550 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R13548:13548 sysf1 <> X:222 var
+R13551:13558 sysf1 <> bind_sub constr
+R13560:13561 sysf1 <> T1:219 var
+R13567:13567 sysf1 <> G:218 var
+R13522:13530 Metalib.Metatheory <> ::set_sl_scope:x_'\notin'_x not
+R13521:13521 sysf1 <> X:222 var
+R13531:13531 sysf1 <> L:217 var
+R13731:13733 sysf1 <> ctx def
+binder 13729:13729 <> G:223
+R13739:13741 sysf1 <> exp ind
+binder 13737:13737 <> e:224
+R13753:13755 sysf1 <> typ ind
+binder 13745:13745 <> S:225
+binder 13747:13748 <> T2:226
+binder 13750:13751 <> T1:227
+R13793:13801 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13812:13820 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13821:13826 sysf1 <> typing:201 ind
+R13843:13858 sysf1 <> open_typ_wrt_typ def
+R13864:13864 sysf1 <> S:225 var
+R13861:13862 sysf1 <> T2:226 var
+R13831:13834 sysf1 <> tapp constr
+R13838:13838 sysf1 <> S:225 var
+R13836:13836 sysf1 <> e:224 var
+R13828:13828 sysf1 <> G:223 var
+R13802:13804 sysf1 <> sub ind
+R13810:13811 sysf1 <> T1:227 var
+R13808:13808 sysf1 <> S:225 var
+R13806:13806 sysf1 <> G:223 var
+R13764:13769 sysf1 <> typing:201 ind
+R13776:13785 sysf1 <> typ_forall constr
+R13790:13791 sysf1 <> T2:226 var
+R13787:13788 sysf1 <> T1:227 var
+R13773:13773 sysf1 <> e:224 var
+R13771:13771 sysf1 <> G:223 var
+R13895:13897 sysf1 <> ctx def
+binder 13893:13893 <> G:228
+R13903:13905 sysf1 <> exp ind
+binder 13901:13901 <> e:229
+R13913:13915 sysf1 <> typ ind
+binder 13909:13909 <> T:230
+binder 13911:13911 <> S:231
+R13936:13944 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13954:13962 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13963:13968 sysf1 <> typing:201 ind
+R13974:13974 sysf1 <> T:230 var
+R13972:13972 sysf1 <> e:229 var
+R13970:13970 sysf1 <> G:228 var
+R13945:13947 sysf1 <> sub ind
+R13953:13953 sysf1 <> T:230 var
+R13951:13951 sysf1 <> S:231 var
+R13949:13949 sysf1 <> G:228 var
+R13924:13929 sysf1 <> typing:201 ind
+R13935:13935 sysf1 <> S:231 var
+R13933:13933 sysf1 <> e:229 var
+R13931:13931 sysf1 <> G:228 var
+R14003:14005 sysf1 <> ctx def
+binder 14001:14001 <> G:232
+R14022:14030 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14031:14036 sysf1 <> typing:201 ind
+R14045:14052 sysf1 <> typ_true constr
+R14040:14043 sysf1 <> true constr
+R14038:14038 sysf1 <> G:232 var
+R14014:14019 sysf1 <> wf_env ind
+R14021:14021 sysf1 <> G:232 var
+R14082:14084 sysf1 <> ctx def
+binder 14080:14080 <> G:233
+R14101:14109 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14110:14115 sysf1 <> typing:201 ind
+R14125:14133 sysf1 <> typ_false constr
+R14119:14123 sysf1 <> false constr
+R14117:14117 sysf1 <> G:233 var
+R14093:14098 sysf1 <> wf_env ind
+R14100:14100 sysf1 <> G:233 var
+R14160:14162 sysf1 <> ctx def
+binder 14158:14158 <> G:234
+R14172:14174 sysf1 <> exp ind
+binder 14166:14167 <> e1:235
+binder 14169:14170 <> e2:236
+R14184:14186 sysf1 <> typ ind
+binder 14178:14179 <> T1:237
+binder 14181:14182 <> T2:238
+R14206:14214 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14226:14234 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14249:14257 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14272:14280 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14281:14286 sysf1 <> typing:201 ind
+R14302:14310 sysf1 <> typ_union constr
+R14321:14329 sysf1 <> typ_false constr
+R14312:14319 sysf1 <> typ_true constr
+R14291:14292 sysf1 <> eq constr
+R14297:14298 sysf1 <> e2:236 var
+R14294:14295 sysf1 <> e1:235 var
+R14288:14288 sysf1 <> G:234 var
+R14258:14263 sysf1 <> typing:201 ind
+R14270:14271 sysf1 <> T2:238 var
+R14267:14268 sysf1 <> e2:236 var
+R14265:14265 sysf1 <> G:234 var
+R14235:14240 sysf1 <> typing:201 ind
+R14247:14248 sysf1 <> T1:237 var
+R14244:14245 sysf1 <> e1:235 var
+R14242:14242 sysf1 <> G:234 var
+R14215:14220 sysf1 <> wf_typ ind
+R14224:14225 sysf1 <> T2:238 var
+R14222:14222 sysf1 <> G:234 var
+R14195:14200 sysf1 <> wf_typ ind
+R14204:14205 sysf1 <> T1:237 var
+R14202:14202 sysf1 <> G:234 var
+R14358:14360 sysf1 <> ctx def
+binder 14356:14356 <> G:239
+R14370:14372 sysf1 <> exp ind
+binder 14364:14365 <> e1:240
+binder 14367:14368 <> e2:241
+R14423:14431 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14474:14482 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14483:14488 sysf1 <> typing:201 ind
+R14505:14513 sysf1 <> typ_union constr
+R14524:14532 sysf1 <> typ_false constr
+R14515:14522 sysf1 <> typ_true constr
+R14493:14495 sysf1 <> and constr
+R14500:14501 sysf1 <> e2:241 var
+R14497:14498 sysf1 <> e1:240 var
+R14490:14490 sysf1 <> G:239 var
+R14432:14437 sysf1 <> typing:201 ind
+R14445:14453 sysf1 <> typ_union constr
+R14464:14472 sysf1 <> typ_false constr
+R14455:14462 sysf1 <> typ_true constr
+R14441:14442 sysf1 <> e2:241 var
+R14439:14439 sysf1 <> G:239 var
+R14381:14386 sysf1 <> typing:201 ind
+R14394:14402 sysf1 <> typ_union constr
+R14413:14421 sysf1 <> typ_false constr
+R14404:14411 sysf1 <> typ_true constr
+R14390:14391 sysf1 <> e1:240 var
+R14388:14388 sysf1 <> G:239 var
+ind 14565:14567 <> red
+constr 14614:14621 <> red_app1
+constr 14723:14730 <> red_app2
+constr 14832:14842 <> red_app_abs
+constr 15002:15009 <> red_tapp
+constr 15115:15127 <> red_tapp_tabs
+constr 15316:15326 <> red_if_true
+constr 15418:15429 <> red_if_false
+constr 15522:15527 <> red_if
+constr 15650:15656 <> red_eql
+constr 15756:15762 <> red_eqr
+constr 15862:15867 <> red_eq
+constr 15955:15962 <> red_andl
+constr 16064:16071 <> red_andr
+constr 16173:16187 <> red_and_false_l
+constr 16259:16273 <> red_and_false_r
+constr 16345:16356 <> red_and_true
+R14574:14577 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14581:14584 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14578:14580 sysf1 <> exp ind
+R14571:14573 sysf1 <> exp ind
+R14643:14645 sysf1 <> exp ind
+binder 14633:14634 <> e1:244
+binder 14636:14637 <> e2:245
+binder 14639:14641 <> e1':246
+R14663:14671 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14682:14690 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14691:14693 sysf1 <> red:242 ind
+R14708:14710 sysf1 <> app constr
+R14716:14717 sysf1 <> e2:245 var
+R14712:14714 sysf1 <> e1':246 var
+R14696:14698 sysf1 <> app constr
+R14703:14704 sysf1 <> e2:245 var
+R14700:14701 sysf1 <> e1:244 var
+R14672:14674 sysf1 <> red:242 ind
+R14679:14681 sysf1 <> e1':246 var
+R14676:14677 sysf1 <> e1:244 var
+R14654:14659 sysf1 <> lc_exp ind
+R14661:14662 sysf1 <> e2:245 var
+R14752:14754 sysf1 <> exp ind
+binder 14742:14743 <> v1:247
+binder 14745:14746 <> e2:248
+binder 14748:14750 <> e2':249
+R14772:14780 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14791:14799 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14800:14802 sysf1 <> red:242 ind
+R14817:14819 sysf1 <> app constr
+R14824:14826 sysf1 <> e2':249 var
+R14821:14822 sysf1 <> v1:247 var
+R14805:14807 sysf1 <> app constr
+R14812:14813 sysf1 <> e2:248 var
+R14809:14810 sysf1 <> v1:247 var
+R14781:14783 sysf1 <> red:242 ind
+R14788:14790 sysf1 <> e2':249 var
+R14785:14786 sysf1 <> e2:248 var
+R14763:14768 sysf1 <> lc_exp ind
+R14770:14771 sysf1 <> v1:247 var
+R14856:14858 sysf1 <> typ ind
+binder 14854:14854 <> T:250
+R14868:14870 sysf1 <> exp ind
+binder 14862:14863 <> e1:251
+binder 14865:14866 <> v2:252
+R14887:14895 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14913:14921 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14931:14939 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14940:14942 sysf1 <> red:242 ind
+R14972:14987 sysf1 <> open_exp_wrt_exp def
+R14993:14994 sysf1 <> v2:252 var
+R14990:14991 sysf1 <> e1:251 var
+R14945:14947 sysf1 <> app constr
+R14966:14967 sysf1 <> v2:252 var
+R14953:14955 sysf1 <> abs constr
+R14959:14960 sysf1 <> e1:251 var
+R14957:14957 sysf1 <> T:250 var
+R14922:14927 sysf1 <> lc_exp ind
+R14929:14930 sysf1 <> v2:252 var
+R14896:14901 sysf1 <> lc_exp ind
+R14904:14906 sysf1 <> abs constr
+R14910:14911 sysf1 <> e1:251 var
+R14908:14908 sysf1 <> T:250 var
+R14879:14884 sysf1 <> lc_typ ind
+R14886:14886 sysf1 <> T:250 var
+R15023:15025 sysf1 <> exp ind
+binder 15021:15021 <> e:253
+R15031:15033 sysf1 <> typ ind
+binder 15029:15029 <> T:254
+R15040:15042 sysf1 <> exp ind
+binder 15037:15038 <> e':255
+R15059:15067 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15076:15084 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15085:15087 sysf1 <> red:242 ind
+R15101:15104 sysf1 <> tapp constr
+R15109:15109 sysf1 <> T:254 var
+R15106:15107 sysf1 <> e':255 var
+R15090:15093 sysf1 <> tapp constr
+R15097:15097 sysf1 <> T:254 var
+R15095:15095 sysf1 <> e:253 var
+R15068:15070 sysf1 <> red:242 ind
+R15074:15075 sysf1 <> e':255 var
+R15072:15072 sysf1 <> e:253 var
+R15051:15056 sysf1 <> lc_typ ind
+R15058:15058 sysf1 <> T:254 var
+R15141:15143 sysf1 <> typ ind
+binder 15139:15139 <> S:256
+R15149:15151 sysf1 <> exp ind
+binder 15147:15147 <> e:257
+R15157:15159 sysf1 <> typ ind
+binder 15155:15155 <> T:258
+R15166:15168 sysf1 <> exp ind
+binder 15163:15164 <> e1:259
+R15185:15193 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15211:15219 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15229:15237 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15246:15254 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15255:15257 sysf1 <> red:242 ind
+R15287:15302 sysf1 <> open_exp_wrt_typ def
+R15308:15308 sysf1 <> T:258 var
+R15305:15306 sysf1 <> e1:259 var
+R15260:15263 sysf1 <> tapp constr
+R15282:15282 sysf1 <> T:258 var
+R15269:15272 sysf1 <> tabs constr
+R15276:15276 sysf1 <> e:257 var
+R15274:15274 sysf1 <> S:256 var
+R15238:15243 sysf1 <> lc_typ ind
+R15245:15245 sysf1 <> T:258 var
+R15220:15225 sysf1 <> lc_exp ind
+R15227:15228 sysf1 <> e1:259 var
+R15194:15199 sysf1 <> lc_exp ind
+R15202:15205 sysf1 <> tabs constr
+R15209:15209 sysf1 <> e:257 var
+R15207:15207 sysf1 <> S:256 var
+R15177:15182 sysf1 <> lc_typ ind
+R15184:15184 sysf1 <> S:256 var
+R15344:15346 sysf1 <> exp ind
+binder 15338:15339 <> e1:260
+binder 15341:15342 <> e2:261
+R15364:15372 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15382:15390 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15391:15393 sysf1 <> red:242 ind
+R15412:15413 sysf1 <> e1:260 var
+R15396:15398 sysf1 <> ite constr
+R15408:15409 sysf1 <> e2:261 var
+R15405:15406 sysf1 <> e1:260 var
+R15400:15403 sysf1 <> true constr
+R15373:15378 sysf1 <> lc_exp ind
+R15380:15381 sysf1 <> e1:260 var
+R15355:15360 sysf1 <> lc_exp ind
+R15362:15363 sysf1 <> e2:261 var
+R15447:15449 sysf1 <> exp ind
+binder 15441:15442 <> e1:262
+binder 15444:15445 <> e2:263
+R15467:15475 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15485:15493 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15494:15496 sysf1 <> red:242 ind
+R15516:15517 sysf1 <> e2:263 var
+R15499:15501 sysf1 <> ite constr
+R15512:15513 sysf1 <> e2:263 var
+R15509:15510 sysf1 <> e1:262 var
+R15503:15507 sysf1 <> false constr
+R15476:15481 sysf1 <> lc_exp ind
+R15483:15484 sysf1 <> e2:263 var
+R15458:15463 sysf1 <> lc_exp ind
+R15465:15466 sysf1 <> e1:262 var
+R15550:15552 sysf1 <> exp ind
+binder 15539:15539 <> e:264
+binder 15541:15542 <> e1:265
+binder 15544:15545 <> e2:266
+binder 15547:15548 <> e':267
+R15570:15578 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15588:15596 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15605:15613 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15614:15616 sysf1 <> red:242 ind
+R15633:15635 sysf1 <> ite constr
+R15643:15644 sysf1 <> e2:266 var
+R15640:15641 sysf1 <> e1:265 var
+R15637:15638 sysf1 <> e':267 var
+R15619:15621 sysf1 <> ite constr
+R15628:15629 sysf1 <> e2:266 var
+R15625:15626 sysf1 <> e1:265 var
+R15623:15623 sysf1 <> e:264 var
+R15597:15599 sysf1 <> red:242 ind
+R15603:15604 sysf1 <> e':267 var
+R15601:15601 sysf1 <> e:264 var
+R15579:15584 sysf1 <> lc_exp ind
+R15586:15587 sysf1 <> e2:266 var
+R15561:15566 sysf1 <> lc_exp ind
+R15568:15569 sysf1 <> e1:265 var
+R15678:15680 sysf1 <> exp ind
+binder 15668:15669 <> e1:268
+binder 15671:15672 <> e2:269
+binder 15674:15676 <> e1':270
+R15698:15706 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15717:15725 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15726:15728 sysf1 <> red:242 ind
+R15742:15743 sysf1 <> eq constr
+R15749:15750 sysf1 <> e2:269 var
+R15745:15747 sysf1 <> e1':270 var
+R15731:15732 sysf1 <> eq constr
+R15737:15738 sysf1 <> e2:269 var
+R15734:15735 sysf1 <> e1:268 var
+R15707:15709 sysf1 <> red:242 ind
+R15714:15716 sysf1 <> e1':270 var
+R15711:15712 sysf1 <> e1:268 var
+R15689:15694 sysf1 <> lc_exp ind
+R15696:15697 sysf1 <> e2:269 var
+R15784:15786 sysf1 <> exp ind
+binder 15774:15775 <> v1:271
+binder 15777:15778 <> e2:272
+binder 15780:15782 <> e2':273
+R15804:15812 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15823:15831 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15832:15834 sysf1 <> red:242 ind
+R15848:15849 sysf1 <> eq constr
+R15854:15856 sysf1 <> e2':273 var
+R15851:15852 sysf1 <> v1:271 var
+R15837:15838 sysf1 <> eq constr
+R15843:15844 sysf1 <> e2:272 var
+R15840:15841 sysf1 <> v1:271 var
+R15813:15815 sysf1 <> red:242 ind
+R15820:15822 sysf1 <> e2':273 var
+R15817:15818 sysf1 <> e2:272 var
+R15795:15800 sysf1 <> lc_exp ind
+R15802:15803 sysf1 <> v1:271 var
+R15885:15887 sysf1 <> exp ind
+binder 15879:15880 <> v1:274
+binder 15882:15883 <> v2:275
+R15905:15913 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15923:15931 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15932:15934 sysf1 <> red:242 ind
+R15947:15950 sysf1 <> true constr
+R15937:15938 sysf1 <> eq constr
+R15943:15944 sysf1 <> v2:275 var
+R15940:15941 sysf1 <> v1:274 var
+R15914:15919 sysf1 <> lc_exp ind
+R15921:15922 sysf1 <> v2:275 var
+R15896:15901 sysf1 <> lc_exp ind
+R15903:15904 sysf1 <> v1:274 var
+R15984:15986 sysf1 <> exp ind
+binder 15974:15975 <> e1:276
+binder 15977:15978 <> e2:277
+binder 15980:15982 <> e1':278
+R16004:16012 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16023:16031 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16032:16034 sysf1 <> red:242 ind
+R16049:16051 sysf1 <> and constr
+R16057:16058 sysf1 <> e2:277 var
+R16053:16055 sysf1 <> e1':278 var
+R16037:16039 sysf1 <> and constr
+R16044:16045 sysf1 <> e2:277 var
+R16041:16042 sysf1 <> e1:276 var
+R16013:16015 sysf1 <> red:242 ind
+R16020:16022 sysf1 <> e1':278 var
+R16017:16018 sysf1 <> e1:276 var
+R15995:16000 sysf1 <> lc_exp ind
+R16002:16003 sysf1 <> e2:277 var
+R16093:16095 sysf1 <> exp ind
+binder 16083:16084 <> v1:279
+binder 16086:16087 <> e2:280
+binder 16089:16091 <> e2':281
+R16113:16121 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16132:16140 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16141:16143 sysf1 <> red:242 ind
+R16158:16160 sysf1 <> and constr
+R16165:16167 sysf1 <> e2':281 var
+R16162:16163 sysf1 <> v1:279 var
+R16146:16148 sysf1 <> and constr
+R16153:16154 sysf1 <> e2:280 var
+R16150:16151 sysf1 <> v1:279 var
+R16122:16124 sysf1 <> red:242 ind
+R16129:16131 sysf1 <> e2':281 var
+R16126:16127 sysf1 <> e2:280 var
+R16104:16109 sysf1 <> lc_exp ind
+R16111:16112 sysf1 <> v1:279 var
+R16202:16204 sysf1 <> exp ind
+binder 16199:16200 <> v2:282
+R16222:16230 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16231:16233 sysf1 <> red:242 ind
+R16250:16254 sysf1 <> false constr
+R16236:16238 sysf1 <> and constr
+R16246:16247 sysf1 <> v2:282 var
+R16240:16244 sysf1 <> false constr
+R16213:16218 sysf1 <> lc_exp ind
+R16220:16221 sysf1 <> v2:282 var
+R16288:16290 sysf1 <> exp ind
+binder 16285:16286 <> v1:283
+R16308:16316 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R16317:16319 sysf1 <> red:242 ind
+R16336:16340 sysf1 <> false constr
+R16322:16324 sysf1 <> and constr
+R16329:16333 sysf1 <> false constr
+R16326:16327 sysf1 <> v1:283 var
+R16299:16304 sysf1 <> lc_exp ind
+R16306:16307 sysf1 <> v1:283 var
+R16366:16368 sysf1 <> red:242 ind
+R16386:16389 sysf1 <> true constr
+R16371:16373 sysf1 <> and constr
+R16380:16383 sysf1 <> true constr
+R16375:16378 sysf1 <> true constr
+R16434:16439 sysf1 <> wf_typ ind
+R16441:16446 sysf1 <> wf_env ind
+R16448:16450 sysf1 <> sub ind
+R16452:16457 sysf1 <> typing ind
+R16459:16461 sysf1 <> red ind
+R16463:16468 sysf1 <> lc_typ ind
+R16470:16479 sysf1 <> lc_binding ind
+R16481:16486 sysf1 <> lc_exp ind

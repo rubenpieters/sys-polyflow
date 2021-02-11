@@ -1,0 +1,21 @@
+DIGEST 84787e78ebf4d1dc8a5e8fd24843d502
+Fsoundness
+R15:19 sysf1 <> <> lib
+R37:41 infra <> <> lib
+R59:64 lemmas <> <> lib
+R83:100 Metalib.Metatheory <> <> lib
+R118:123 Coq.Strings.String <> <> lib
+prf 133:147 <> sub_reflexivity
+binder 158:158 <> E:1
+binder 160:160 <> T:2
+R173:178 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R189:194 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R195:197 sysf1 <> sub ind
+R203:203 soundness <> T:2 var
+R201:201 soundness <> T:2 var
+R199:199 soundness <> E:1 var
+R179:184 sysf1 <> wf_typ ind
+R188:188 soundness <> T:2 var
+R186:186 soundness <> E:1 var
+R165:170 sysf1 <> wf_env ind
+R172:172 soundness <> E:1 var

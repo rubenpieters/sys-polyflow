@@ -1,0 +1,2 @@
+ott -i sysf1.ott -o sysf1.tex -o sysf1.v
+pdflatex sysf1.tex

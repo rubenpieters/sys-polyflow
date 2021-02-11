@@ -1,0 +1,212 @@
+Specification "lang".
+
+Import "context".
+Import "subtyping".
+
+Close tm, ty, temode.
+
+Define append : olist -> o -> olist -> prop by
+  append nil E (E :: nil);
+  append (H :: T) E (H :: T2) := append T E T2.
+
+Define intersect : condinfo -> condinfo -> condinfo -> prop by
+  intersect s_empty X s_empty;
+  intersect X s_empty s_empty;
+  intersect X X X;
+  intersect s_true_false X X;
+  intersect X s_true_false X;
+  intersect s_false s_true s_empty;
+  intersect s_true s_false s_empty.
+
+Theorem intersect_deterministic : forall X Y R1 R2, intersect X Y R1 -> intersect X Y R2 -> R1 = R2.
+intros. case H1.
+  case H2. search. search. search. search.
+  case H2. search. search. search. search.
+  case H2. search. search. search. search. search.
+  case H2. search. search. search. search.
+  case H2. search. search. search. search.
+  case H2. search.
+  case H2. search.
+
+Define replace_ctx : olist -> condinfo -> ty -> ty -> olist -> prop by
+  replace_ctx nil LX X UX nil;
+  replace_ctx (c_sub LX1 X UX :: L) LX2 X UX (c_sub LX2 X UX :: L);
+  replace_ctx (c_sub LX1 X1 UX1 :: L) LX2 X2 UX2 (c_sub LX1 X1 UX1 :: L2) := ((X1 = X2 -> false) \/ (UX1 = UX2 -> false)) /\ replace_ctx L LX2 X2 UX2 L2;
+  replace_ctx (c_of X T :: L) LX TX UX (c_of X T :: L).
+
+Theorem replace_ctx_deterministic : forall L LX X UX R1 R2, replace_ctx L LX X UX R1 -> replace_ctx L LX X UX R2 -> R1 = R2.
+induction on 1. intros. case H1.
+  case H2. search.
+  case H2.
+    search.
+    case H3. assert (X = X). apply H5 to H6. assert (UX = UX). apply H5 to H6.
+  case H2.
+    case H3. assert (X = X). apply H5 to H6. assert (UX = UX). apply H5 to H6.
+    apply IH to H4 H6. search.
+  case H2. search.
+
+
+Define intersect_ctx : olist -> olist -> olist -> prop by
+  % CO-IntersectEmpty
+  intersect_ctx G nil nil;
+  % CO-Intersect
+  intersect_ctx G (c_sub LX1 X UX :: D) G3 := exists G2 LX2, member (c_sub LX2 X UX) G /\ replace_ctx G LX1 X UX G2 /\ intersect_ctx G2 D G3.
+
+Define invert : condinfo -> ty -> condinfo -> prop by
+  invert s_true_false (or tytrue tyfalse) s_empty;
+  invert s_true (or tytrue tyfalse) s_false;
+  invert s_false (or tytrue tyfalse) s_true;
+  invert s_empty (or tytrue tyfalse) s_true_false;
+  invert s_true (tytrue) s_empty;
+  invert s_empty (tytrue) s_true;
+  invert s_false (tyfalse) s_empty;
+  invert s_empty (tyfalse) s_false.
+
+Define invert_ctx : olist -> olist -> prop by
+  % CO-InverseEmpty
+  invert_ctx nil nil;
+  % CO-InverseCons
+  invert_ctx (c_sub LX X UX :: D) (c_sub LX2 X UX :: D2) := invert LX UX LX2 /\ invert_ctx D D2;
+  % CO-InverseCons2
+  invert_ctx (c_of X T :: D) (c_of X T :: D2) := invert_ctx D D2.
+
+Define ci_result : olist -> tm -> olist -> prop by
+  % CI-True
+  ci_result L tmtrue nil;
+  % CI-False
+  ci_result L tmfalse nil;
+  % CI-EqTrueR
+  ci_result L (eq X tmtrue) (c_sub s_true TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqFalseR
+  ci_result L (eq X tmfalse) (c_sub s_false TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqTrueL
+  ci_result L (eq tmtrue X) (c_sub s_true TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqFalseL
+  ci_result L (eq tmfalse X) (c_sub s_false TX UX :: nil) := exists LX, nabla X, member (c_of X TX) L /\ member (c_sub LX TX UX) L /\ {L |- sub UX (or tytrue tyfalse)} /\ ctx L;
+  % CI-EqAnd
+  ci_result L (and X Y) CR := exists CX CY CR, ci_result L X CX /\ ci_result L Y CY /\ intersect_ctx CX CY CR.
+
+
+
+
+
+
+Define pinfers : olist -> tm -> ty -> prop,
+       pchecks : olist -> tm -> ty -> prop by
+  % -- INFER
+  % BT-App
+  pinfers L (app E1 E2) B := exists A, pinfers L E1 (arrow A B) /\ pchecks L E2 A /\ {wft A} /\ {wft B};
+  % BT-TAbs
+  pinfers L (tabs UX E) (all UX T) := exists LX, nabla X, pinfers (c_sub LX X UX :: L) (E X) (T X) /\ ctx (c_sub LX X UX :: L);
+  % BT-TApp
+  pinfers L (tapp E SX) (T SX) := exists UX, pinfers L E (all UX T) /\ {sub SX UX};
+  % BT-True
+  pinfers L tmtrue tytrue;
+  % BT-False
+  pinfers L tmfalse tyfalse;
+  % BT-If
+  pinfers L (ite E1 E2 E3) (or A B) := exists LE LT D DI, pchecks L E1 (or tytrue tyfalse) /\ ci_result L E1 D /\ intersect_ctx L D LT /\ invert_ctx D DI /\ intersect_ctx L DI LE /\ pinfers LT E2 A /\ pinfers LE E3 B;
+  % BT-Eq
+  pinfers L (eq E1 E2) (or tytrue tyfalse) := exists T1 T2, pinfers L E1 T1 /\ pinfers L E2 T2;
+  % BT-Var
+  pinfers L X TX := {L |- c_of X TX} /\ {wft TX};
+  % BT-Ann
+  % pinfers L (ann E T) T := pchecks L E T /\ {wft T};
+  % BT-Abs
+  pinfers L (abs E A B) (arrow A B) := forall X, pchecks (c_of X A :: L) (E X) B /\ {L |- wft A} /\ {L |- wft B} /\ ctx (c_of X A :: L);
+  % -- CHECK
+  % BT-Abs
+  %pchecks L (abs E) (arrow A B) := nabla x, pchecks (c_of x A :: L) (E x) B /\ {wft A} /\ {wft B} /\ ctx (c_of x A :: L);
+  % BT-Sub
+  pchecks L E T := exists S, pinfers L E S /\ {L |- sub S T} /\ {L |- wft S} /\ {L |- wft T}.
+
+%Theorem invert_of_abs : forall E A B,
+%  pinfers nil (abs E) (arrow A B) -> false.
+%intros. case H1. apply c_of_name to _ H2 with L = nil. case H4.
+
+Theorem canonical_form_arrow : forall E A B,
+  {value E} -> pinfers nil E (arrow A B) -> exists E1, E = abs E1 A B.
+intros. case H1.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2.
+    apply c_of_name to _ H3. case H5.
+    search.
+  case H2. apply c_of_name to _ H3. case H5.
+
+Theorem canonical_form_all : forall E UX T,
+  {value E} -> pinfers nil E (all UX T) -> exists E1, E = tabs UX E1.
+intros. case H1.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2. apply c_of_name to _ H3. case H5.
+  case H2.
+    search.
+    apply c_of_name to _ H3. case H5.
+
+Theorem progress :
+  (forall E T, pchecks nil E T -> exists E', {value E} \/ {step E E'}) /\
+  (forall E T, pinfers nil E T -> exists E', {value E} \/ {step E E'}).
+induction on 1 1. split.
+   intros. case H1 (keep).
+     % sub
+     apply IH1 to H2. search.
+   intros. case H1 (keep).
+     % app
+     apply IH1 to H2. case H6.
+       apply IH to H3. case H8.
+         apply canonical_form_arrow to H7 H2. search.
+         search.
+       search.
+     % tabs is a value
+     search.
+     % tapp
+     apply IH1 to H2. case H4.
+       apply canonical_form_all to H5 H2. search.
+       search.
+     % tmtrue
+     search.
+     % tmfalse
+     search.
+     % ite
+     skip.
+     % eq
+     apply IH1 to H2. case H4.
+       apply IH1 to H3. search.
+       search.
+     % var
+     skip. % c_of in empty context is impossible
+     % abs
+     search.
+
+Theorem invert_abs : forall E A1 B1 A B,
+  pinfers nil (abs E A1 B1) (arrow A B) -> forall X, (pchecks (c_of X A :: nil) (E X) B) /\ {wft A} /\ {wft B} /\ A1 = A /\ B1 = B.
+intros. case H1.
+  apply c_of_name to _ H2. case H4.
+  search.
+
+%Theorem test2
+
+Theorem test : forall L X A E T,
+  pchecks (c_of X A :: L) (E X) T -> pchecks L X A -> pchecks L (E X) T.
+skip. % induction on 1. intros. case H1.
+
+
+
+
+Theorem preserve :
+  (forall E E' T, pchecks nil E T -> {step E E'} -> pchecks nil E' T) /\
+  (forall E E' T, pinfers nil E T -> {step E E'} -> pinfers nil E' T).
+induction on 1 1. split.
+  intros. case H1 (keep).
+    % sub
+    apply IH1 to H3 H2. search.
+  intros. case H1 (keep).
+    % app
+    case H2 (keep).
+      apply invert_abs to H3. apply test to H9 H4 with L = nil. skip.
+      apply IH1 to H3 H7. search.
+
+
+
+% Theorem x : forall X, nabla 

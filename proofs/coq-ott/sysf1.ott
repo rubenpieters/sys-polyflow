@@ -1,0 +1,376 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% METAVARIABLES
+
+metavar typevar, X, Y ::=
+  {{ repr-locally-nameless }}
+  {{ com type variables }}
+  {{ lex alphanum }}
+
+metavar termvar, x, y ::=
+  {{ repr-locally-nameless }}
+  {{ com term variables }}
+  {{ lex alphanum }}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% GRAMMAR (LNgen portion)
+
+grammar
+
+typ, T, S :: 'typ_' ::= {{ com types }}
+  | X          ::   :: tvar
+  | Top        ::   :: top   {{ com top type }}
+  | T1 -> T2    ::   :: arrow  {{ com function types }}
+  | Forall X <: T1 . T2 ::  :: forall (+ bind X in T2 +)
+  | True ::  :: true
+  | False ::  :: false
+  | T1 Or T2 ::  :: union
+  | T [ X ~> T1 ] :: M :: Tsubstt
+     {{ coq (open_typ_wrt_typ [[X T]][[T1]]) }}
+
+exp, e, v :: ''     ::= {{ com expressions }}
+  | x              ::   :: var {{ com variables }}
+  | \ x : T . e        ::   :: abs
+    (+ bind x in e +)
+    {{ com abstractions }}
+	 {{ tex [[\]][[x]].[[e]] }}
+  | \ X <: T . e   ::   :: tabs (+ bind X in e +) {{ com type abstraction }}
+  | e [ T ]        ::   :: tapp {{ com type applications }}
+  | e1 e2          ::   :: app {{ com applications }}
+  | true           ::   :: true
+  | false          ::   :: false
+  | if e1 then e2 else e3 ::    :: ite
+  | e1 == e2       ::   :: eq
+  | e1 and e2      ::   :: and
+  | e1 [ x ~> e2 ] :: M :: tsubst
+     {{ coq (open_exp_wrt_exp [[x e1]][[e2]]) }}
+  | e [ X ~> T ] :: M :: Tsubst
+     {{ coq (open_exp_wrt_typ [[X e]][[T]]) }}
+  | ( e )          :: S :: paren
+     {{ coq ([[e]]) }}
+
+binding, b :: '' ::= {{ com bindings }}
+  | bind_typ T :: :: bind_typ
+  | bind_sub T :: :: bind_sub
+
+substitutions
+  single exp x   :: tsubst
+  single typ X   :: Tsubst
+
+
+freevars
+  exp x      :: fv_ee
+  typ X      :: fv_tt
+
+parsing
+  typ_arrow right typ_arrow
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% GRAMMAR  (non LNgen portion)
+
+grammar
+
+ctx, G {{ tex \Gamma }} :: ''     ::= {{ com typing context }} {{ coq list ( atom * binding ) }}
+  | empty          ::   :: Empty {{ coq nil }}
+                                 {{ tex \bullet }}
+                                 {{ com empty context }}
+  | G , x : T      ::   :: ECons {{ coq (([[x]]~bind_typ[[T]])++[[G]]) }}
+                                 {{ com type binding }}
+  | G , X <: T     ::   :: TCons {{ coq (([[X]]~bind_sub[[T]])++[[G]]) }}
+                                 {{ com subtype binding }}
+
+terminals :: 'terminals_' ::=
+    | \                   ::   :: lambda     {{ tex \lambda }}
+    | -->                 ::   :: red        {{ tex \longrightarrow }}
+    | ==>                 ::   :: bigred     {{ tex \Longrightarrow }}
+    |  ->                 ::   :: arrow      {{ tex \rightarrow }}
+    | |-                  ::   :: turnstile  {{ tex \vdash }}
+    | in                  ::   :: in         {{ tex \in }}
+    | fv                  ::   :: fv         {{ tex \mathsf{fv}\! }}
+    | ~>                  ::   :: leadsto    {{ tex \leadsto }}
+
+
+formula :: 'formula_' ::=
+  | judgement                ::   :: judgement
+  | is_value v               ::   :: is_value
+    {{ coq is_value [[v]] }}
+  | uniq G                   ::   :: uniqG
+    {{ coq uniq [[G]] }}
+	 {{ tex \mathsf{uniq}[[G]] }}
+  | x : T in G               ::   :: tinG
+    {{ coq binds [[x]](bind_typ[[T]])[[G]] }}
+  | X <: T in G               ::   :: TinG
+    {{ coq binds [[X]](bind_sub[[T]])[[G]] }}
+  | x notin fv e             ::   :: fresh
+    {{ coq [[x]] \notin fv[[e]] }}
+  | x notin dom G            ::   :: notInGx
+    {{ coq ~ AtomSetImpl.In [[x]] (dom [[G]]) }}
+  | X notin dom G            ::   :: notInGX
+    {{ coq ~ AtomSetImpl.In [[X]] (dom [[G]]) }}
+
+
+
+embed
+{{ coq
+
+Inductive value : exp -> Prop :=
+  | value_abs : forall T e1,
+      lc_exp (abs T e1) ->
+      value (abs T e1)
+  | value_tabs : forall T e1,
+      lc_exp (tabs T e1) ->
+      value (tabs T e1)
+  | value_true :
+      value (true)
+  | value_false :
+      value (false)
+.
+
+Notation empty := (@nil (atom * binding)).
+
+Definition open_tt T U := open_typ_wrt_typ_rec 0 U T.
+Definition open_te e U := open_exp_wrt_typ_rec 0 U e.
+Definition open_ee e1 e2 := open_exp_wrt_exp_rec 0 e2 e1.
+}}
+
+defns
+
+WFTyp :: '' ::=
+
+defn
+G |- T ::   :: wf_typ :: 'wf_typ_' 
+{{ com Well-Formed Type rules }}
+by
+
+-------- :: top
+G |- Top
+
+--------- :: true
+G |- True
+
+---------- :: false
+G |- False
+
+G |- T1
+G |- T2
+------------- :: arrow
+G |- T1 -> T2
+
+G |- T1
+G, X<:T1 |- T2
+------------------------ :: forall
+G |- Forall X <: T1 . T2
+
+G |- T1
+G |- T2
+------------- :: union
+G |- T1 Or T2
+
+X <: T in G
+----------- :: var
+G |- X
+
+defns
+
+WFEnv :: '' ::=
+
+defn
+|- G ::   :: wf_env :: 'wf_env_' 
+{{ com Well-Formed Environment rules }}
+by
+
+-------- :: empty
+|- empty
+
+|- G
+G |- T
+X notin dom G
+------------- :: sub
+|- G , X <: T
+
+|- G
+G |- T
+x notin dom G
+------------- :: typ
+|- G , x : T
+
+defns
+
+JSubTyping :: '' ::=
+
+defn
+G |- T1 <: T2 ::   :: sub :: 'sub_'
+{{ com Subtyping rules }}
+by
+
+|- G
+G |- T
+------------- :: top
+G |- T <: Top
+
+|- G
+----------------- :: refl_true
+G |- True <: True
+
+|- G
+------------------- :: refl_false
+G |- False <: False
+
+|- G
+G |- X
+------------------- :: refl_tvar
+G |- X <: X
+
+X <: T1 in G
+G |- T1 <: T2
+------------------- :: trans_tvar
+G |- X <: T2
+
+G |- T1 <: S1
+G |- T2 <: S2
+------------------- :: arrow
+G |- S1 -> S2 <: T1 -> T2
+
+G |- T1 <: S1
+G, X<:T1 |- S2 <: T2
+------------------- :: forall
+G |- Forall X <: S1 . S2 <: Forall X <: T1 . T2
+
+|- G
+G |- T2
+G |- S <: T1
+------------------- :: union_l
+G |- S Or T2 <: T1 Or T2
+
+|- G
+G |- T1
+G |- S <: T2
+------------------- :: union_r
+G |- T1 Or S <: T1 Or T2
+
+G |- S1 <: T
+G |- S2 <: T
+------------------- :: union_m
+G |- S1 Or S2 <: T
+
+defns
+
+JTyping :: '' ::=
+
+
+defn
+G |- e : T ::   :: typing :: 'typing_'
+{{ com Typing rules }}
+by
+
+|- G
+x : T in G
+------------ :: var
+G |- x : T
+
+G, x:T1 |- e : T2
+-------------------------- :: abs
+G |- \x:T1. e : T1 -> T2
+
+G |- e1 : T1 -> T2
+G |- e2 : T1
+------------------ :: app
+G |- e1 e2 : T2
+
+G, X<:T1 |- e : T2
+-------------------------- :: tabs
+G |- \X <: T1. e : Forall X <: T1 . T2
+
+G |- e : Forall X <: T1 . T2
+G |- S <: T1
+------------------ :: tapp
+G |- e [S] : T2 [X ~> S]
+
+G |- e : S
+G |- S <: T
+------------------ :: sub
+G |- e : T
+
+|- G
+------------------ :: true
+G |- true : True
+
+|- G
+------------------ :: false
+G |- false : False
+
+G |- T1
+G |- T2
+G |- e1 : T1
+G |- e2 : T2
+------------------ :: eq
+G |- e1 == e2 : True Or False
+
+G |- e1 : True Or False
+G |- e2 : True Or False
+------------------ :: and
+G |- e1 and e2 : True Or False
+
+defns
+
+JEval :: '' ::=
+
+defn
+e --> e' ::   :: red :: 'red_'
+{{ com Small-step operational semantics }}
+by
+
+e1 --> e1'
+----------------- :: app1
+e1 e2 --> e1' e2
+
+e2 --> e2'
+----------------- :: app2
+v1 e2 --> v1 e2'
+
+------------------------------- :: app_abs
+(\x:T.e1) v2 --> e1 [x ~> v2]
+
+e --> e'
+----------------- :: tapp
+e [T] --> e' [T]
+
+------------------------------- :: tapp_tabs
+(\X <: S.e) [T] --> e1 [X ~> T]
+
+------------------------------- :: if_true
+if true then e1 else e2 --> e1
+
+------------------------------- :: if_false
+if false then e1 else e2 --> e2
+
+e --> e'
+------------------------------- :: if
+if e then e1 else e2 --> if e' then e1 else e2
+
+e1 --> e1'
+------------------------------- :: eql
+e1 == e2 --> e1' == e2
+
+e2 --> e2'
+------------------------------- :: eqr
+v1 == e2 --> v1 == e2'
+
+------------------------------- :: eq
+v1 == v2 --> true
+
+e1 --> e1'
+------------------------------- :: andl
+e1 and e2 --> e1' and e2
+
+e2 --> e2'
+------------------------------- :: andr
+v1 and e2 --> v1 and e2'
+
+------------------------------- :: and_false_l
+false and v2 --> false
+
+------------------------------- :: and_false_r
+v1 and false --> false
+
+------------------------------- :: and_true
+true and true --> true

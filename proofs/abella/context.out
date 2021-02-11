@@ -1,0 +1,529 @@
+Welcome to Abella 2.0.5.
+Abella < Specification "lang".
+Reading specification "lang".
+
+Abella < Close tm, ty, temode.
+
+Abella < Define name : A -> prop by 
+nabla x, name x.
+
+Abella < Define ctx : olist -> prop by 
+ctx nil;
+ctx (c_of X T :: L) := name X /\ ctx L;
+ctx (c_sub X U :: L) := name X /\ ctx L;
+ctx (subt X :: L) := name X /\ ctx L;
+ctx (subf X :: L) := name X /\ ctx L.
+
+Abella < Theorem ctx_member : 
+forall E L, ctx L -> member E L -> (exists X U, E = c_sub X U /\ name X) \/
+  (exists X T, E = c_of X T /\ name X) \/ (exists X, E = subt X /\ name X) \/
+  (exists X, E = subf X /\ name X).
+
+
+============================
+ forall E L, ctx L -> member E L -> (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < induction on 2.
+
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+============================
+ forall E L, ctx L -> member E L @ ->
+   (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < intros.
+
+Variables: E L
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H1 : ctx L
+H2 : member E L @
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < case H2.
+Subgoal 1:
+
+Variables: E L1
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H1 : ctx (E :: L1)
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < case H1.
+Subgoal 1.1:
+
+Variables: L1 T X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : name X
+H4 : ctx L1
+============================
+ (exists X1 U, c_of X T = c_sub X1 U /\ name X1) \/
+   (exists X1 T1, c_of X T = c_of X1 T1 /\ name X1) \/
+   (exists X1, c_of X T = subt X1 /\ name X1) \/
+   (exists X1, c_of X T = subf X1 /\ name X1)
+
+Subgoal 1.2 is:
+ (exists X1 U1, c_sub X U = c_sub X1 U1 /\ name X1) \/
+   (exists X1 T, c_sub X U = c_of X1 T /\ name X1) \/
+   (exists X1, c_sub X U = subt X1 /\ name X1) \/
+   (exists X1, c_sub X U = subf X1 /\ name X1)
+
+Subgoal 1.3 is:
+ (exists X1 U, subt X = c_sub X1 U /\ name X1) \/
+   (exists X1 T, subt X = c_of X1 T /\ name X1) \/
+   (exists X1, subt X = subt X1 /\ name X1) \/
+   (exists X1, subt X = subf X1 /\ name X1)
+
+Subgoal 1.4 is:
+ (exists X1 U, subf X = c_sub X1 U /\ name X1) \/
+   (exists X1 T, subf X = c_of X1 T /\ name X1) \/
+   (exists X1, subf X = subt X1 /\ name X1) \/
+   (exists X1, subf X = subf X1 /\ name X1)
+
+Subgoal 2 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Subgoal 1.2:
+
+Variables: L1 U X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : name X
+H4 : ctx L1
+============================
+ (exists X1 U1, c_sub X U = c_sub X1 U1 /\ name X1) \/
+   (exists X1 T, c_sub X U = c_of X1 T /\ name X1) \/
+   (exists X1, c_sub X U = subt X1 /\ name X1) \/
+   (exists X1, c_sub X U = subf X1 /\ name X1)
+
+Subgoal 1.3 is:
+ (exists X1 U, subt X = c_sub X1 U /\ name X1) \/
+   (exists X1 T, subt X = c_of X1 T /\ name X1) \/
+   (exists X1, subt X = subt X1 /\ name X1) \/
+   (exists X1, subt X = subf X1 /\ name X1)
+
+Subgoal 1.4 is:
+ (exists X1 U, subf X = c_sub X1 U /\ name X1) \/
+   (exists X1 T, subf X = c_of X1 T /\ name X1) \/
+   (exists X1, subf X = subt X1 /\ name X1) \/
+   (exists X1, subf X = subf X1 /\ name X1)
+
+Subgoal 2 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Subgoal 1.3:
+
+Variables: L1 X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : name X
+H4 : ctx L1
+============================
+ (exists X1 U, subt X = c_sub X1 U /\ name X1) \/
+   (exists X1 T, subt X = c_of X1 T /\ name X1) \/
+   (exists X1, subt X = subt X1 /\ name X1) \/
+   (exists X1, subt X = subf X1 /\ name X1)
+
+Subgoal 1.4 is:
+ (exists X1 U, subf X = c_sub X1 U /\ name X1) \/
+   (exists X1 T, subf X = c_of X1 T /\ name X1) \/
+   (exists X1, subf X = subt X1 /\ name X1) \/
+   (exists X1, subf X = subf X1 /\ name X1)
+
+Subgoal 2 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Subgoal 1.4:
+
+Variables: L1 X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : name X
+H4 : ctx L1
+============================
+ (exists X1 U, subf X = c_sub X1 U /\ name X1) \/
+   (exists X1 T, subf X = c_of X1 T /\ name X1) \/
+   (exists X1, subf X = subt X1 /\ name X1) \/
+   (exists X1, subf X = subf X1 /\ name X1)
+
+Subgoal 2 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Subgoal 2:
+
+Variables: E L1 B
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H1 : ctx (B :: L1)
+H3 : member E L1 *
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < case H1.
+Subgoal 2.1:
+
+Variables: E L1 T X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.2 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.3 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.4 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < apply IH to H5 H3.
+Subgoal 2.1:
+
+Variables: E L1 T X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+H6 : (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.2 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.3 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.4 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Subgoal 2.2:
+
+Variables: E L1 U X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.3 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.4 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < apply IH to H5 H3.
+Subgoal 2.2:
+
+Variables: E L1 U X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+H6 : (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.3 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.4 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Subgoal 2.3:
+
+Variables: E L1 X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.4 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < apply IH to H5 H3.
+Subgoal 2.3:
+
+Variables: E L1 X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+H6 : (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+Subgoal 2.4 is:
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Subgoal 2.4:
+
+Variables: E L1 X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < apply IH to H5 H3.
+Subgoal 2.4:
+
+Variables: E L1 X
+IH : forall E L, ctx L -> member E L * ->
+       (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+H3 : member E L1 *
+H4 : name X
+H5 : ctx L1
+H6 : (exists X U, E = c_sub X U /\ name X) \/
+       (exists X T, E = c_of X T /\ name X) \/
+       (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+============================
+ (exists X U, E = c_sub X U /\ name X) \/
+   (exists X T, E = c_of X T /\ name X) \/
+   (exists X, E = subt X /\ name X) \/ (exists X, E = subf X /\ name X)
+
+ctx_member < search.
+Proof completed.
+Abella < Theorem c_sub_name : 
+forall L X U, ctx L -> {L |- c_sub X U} -> name X.
+
+
+============================
+ forall L X U, ctx L -> {L |- c_sub X U} -> name X
+
+c_sub_name < intros.
+
+Variables: L X U
+H1 : ctx L
+H2 : {L |- c_sub X U}
+============================
+ name X
+
+c_sub_name < case H2.
+
+Variables: L X U F
+H1 : ctx L
+H3 : {L, [F] |- c_sub X U}
+H4 : member F L
+============================
+ name X
+
+c_sub_name < apply ctx_member to _ _.
+
+Variables: L X U F
+H1 : ctx L
+H3 : {L, [F] |- c_sub X U}
+H4 : member F L
+H5 : (exists X U, F = c_sub X U /\ name X) \/
+       (exists X T, F = c_of X T /\ name X) \/
+       (exists X, F = subt X /\ name X) \/ (exists X, F = subf X /\ name X)
+============================
+ name X
+
+c_sub_name < case H5.
+Subgoal 1:
+
+Variables: L X U X1 U1
+H1 : ctx L
+H3 : {L, [c_sub X1 U1] |- c_sub X U}
+H4 : member (c_sub X1 U1) L
+H6 : name X1
+============================
+ name X
+
+Subgoal 2 is:
+ name X
+
+Subgoal 3 is:
+ name X
+
+Subgoal 4 is:
+ name X
+
+c_sub_name < case H3.
+Subgoal 1:
+
+Variables: L X U
+H1 : ctx L
+H4 : member (c_sub X U) L
+H6 : name X
+============================
+ name X
+
+Subgoal 2 is:
+ name X
+
+Subgoal 3 is:
+ name X
+
+Subgoal 4 is:
+ name X
+
+c_sub_name < search.
+Subgoal 2:
+
+Variables: L X U X1 T
+H1 : ctx L
+H3 : {L, [c_of X1 T] |- c_sub X U}
+H4 : member (c_of X1 T) L
+H6 : name X1
+============================
+ name X
+
+Subgoal 3 is:
+ name X
+
+Subgoal 4 is:
+ name X
+
+c_sub_name < case H3.
+Subgoal 3:
+
+Variables: L X U X1
+H1 : ctx L
+H3 : {L, [subt X1] |- c_sub X U}
+H4 : member (subt X1) L
+H6 : name X1
+============================
+ name X
+
+Subgoal 4 is:
+ name X
+
+c_sub_name < case H3.
+Subgoal 4:
+
+Variables: L X U X1
+H1 : ctx L
+H3 : {L, [subf X1] |- c_sub X U}
+H4 : member (subf X1) L
+H6 : name X1
+============================
+ name X
+
+c_sub_name < case H3.
+Proof completed.
+Abella < 

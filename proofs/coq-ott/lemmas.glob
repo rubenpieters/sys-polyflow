@@ -1,0 +1,706 @@
+DIGEST c75a65a769419c7f9e6e0a62e8cee43c
+Flemmas
+R15:19 sysf1 <> <> lib
+R37:41 infra <> <> lib
+R60:77 Metalib.Metatheory <> <> lib
+R95:100 Coq.Strings.String <> <> lib
+R164:168 Metalib.MetatheoryAtom <> atoms syndef
+binder 160:160 <> x:1
+R173:173 lemmas <> x:1 var
+R217:220 Metalib.MetatheoryAtom <> atom syndef
+binder 213:213 <> x:2
+R225:233 Metalib.Metatheory <> singleton syndef
+R235:235 lemmas <> x:2 var
+R279:281 sysf1 <> exp ind
+binder 275:275 <> x:3
+R286:294 sysf1 <> fv_tt_exp def
+R296:296 lemmas <> x:3 var
+R340:342 sysf1 <> exp ind
+binder 336:336 <> x:4
+R347:355 sysf1 <> fv_ee_exp def
+R357:357 lemmas <> x:4 var
+R401:403 sysf1 <> typ ind
+binder 397:397 <> x:5
+R408:416 sysf1 <> fv_tt_typ def
+R418:418 lemmas <> x:5 var
+R462:464 sysf1 <> ctx def
+binder 458:458 <> x:6
+R469:471 Metalib.Metatheory EnvImpl dom def
+R473:473 lemmas <> x:6 var
+R490:498 Metalib.Metatheory <> ::set_hs_scope:x_'`union`'_x not
+R500:508 Metalib.Metatheory <> ::set_hs_scope:x_'`union`'_x not
+R510:518 Metalib.Metatheory <> ::set_hs_scope:x_'`union`'_x not
+R520:528 Metalib.Metatheory <> ::set_hs_scope:x_'`union`'_x not
+R530:538 Metalib.Metatheory <> ::set_hs_scope:x_'`union`'_x not
+R660:664 Metalib.Metatheory EnvImpl binds def
+R673:682 sysf1 <> Tsubst_typ def
+R712:725 sysf1 <> Tsubst_binding def
+prf 753:768 <> type_from_wf_typ
+binder 779:779 <> E:7
+binder 781:781 <> T:8
+R796:799 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R800:805 sysf1 <> lc_typ ind
+R807:807 lemmas <> T:8 var
+R786:791 sysf1 <> wf_typ ind
+R795:795 lemmas <> T:8 var
+R793:793 lemmas <> E:7 var
+prf 865:880 <> wf_typ_weakening
+binder 891:891 <> T:9
+binder 893:893 <> E:10
+binder 895:895 <> F:11
+binder 897:897 <> G:12
+R919:924 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R943:948 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R949:954 sysf1 <> wf_typ ind
+R970:970 lemmas <> T:9 var
+R958:961 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R957:957 lemmas <> G:12 var
+R963:966 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R962:962 lemmas <> F:11 var
+R967:967 lemmas <> E:10 var
+R925:928 Metalib.Metatheory EnvImpl uniq ind
+R932:935 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R931:931 lemmas <> G:12 var
+R937:940 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R936:936 lemmas <> F:11 var
+R941:941 lemmas <> E:10 var
+R902:907 sysf1 <> wf_typ ind
+R918:918 lemmas <> T:9 var
+R911:914 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R910:910 lemmas <> G:12 var
+R915:915 lemmas <> E:10 var
+R1044:1047 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1044:1047 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1181:1193 sysf1 <> wf_typ_forall constr
+R1181:1193 sysf1 <> wf_typ_forall constr
+R1213:1221 Metalib.Metatheory EnvImpl app_assoc thm
+R1213:1221 Metalib.Metatheory EnvImpl app_assoc thm
+R1213:1221 Metalib.Metatheory EnvImpl app_assoc thm
+prf 1252:1269 <> wf_typ_weaken_head
+binder 1280:1280 <> T:13
+binder 1282:1282 <> E:14
+binder 1284:1284 <> F:15
+R1299:1304 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1318:1323 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1324:1329 sysf1 <> wf_typ ind
+R1340:1340 lemmas <> T:13 var
+R1333:1336 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1332:1332 lemmas <> F:15 var
+R1337:1337 lemmas <> E:14 var
+R1305:1308 Metalib.Metatheory EnvImpl uniq ind
+R1312:1315 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1311:1311 lemmas <> F:15 var
+R1316:1316 lemmas <> E:14 var
+R1289:1294 sysf1 <> wf_typ ind
+R1298:1298 lemmas <> T:13 var
+R1296:1296 lemmas <> E:14 var
+R1386:1389 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1375:1385 sysf1 <> empty syndef
+R1391:1394 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1386:1389 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1375:1385 sysf1 <> empty syndef
+R1391:1394 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1412:1427 lemmas <> wf_typ_weakening thm
+R1412:1427 lemmas <> wf_typ_weakening thm
+prf 1442:1457 <> wf_typ_narrowing
+binder 1468:1468 <> V:16
+binder 1470:1470 <> U:17
+binder 1472:1472 <> T:18
+binder 1474:1474 <> E:19
+binder 1476:1476 <> F:20
+binder 1478:1478 <> X:21
+R1518:1523 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1524:1529 sysf1 <> wf_typ ind
+R1558:1558 lemmas <> T:18 var
+R1533:1536 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1532:1532 lemmas <> F:20 var
+R1551:1554 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1538:1540 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R1537:1537 lemmas <> X:21 var
+R1541:1548 sysf1 <> bind_sub constr
+R1550:1550 lemmas <> U:17 var
+R1555:1555 lemmas <> E:19 var
+R1483:1488 sysf1 <> wf_typ ind
+R1517:1517 lemmas <> T:18 var
+R1492:1495 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1491:1491 lemmas <> F:20 var
+R1510:1513 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1497:1499 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R1496:1496 lemmas <> X:21 var
+R1500:1507 sysf1 <> bind_sub constr
+R1509:1509 lemmas <> V:16 var
+R1514:1514 lemmas <> E:19 var
+R1633:1636 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1651:1654 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1638:1640 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R1641:1648 sysf1 <> bind_sub constr
+R1633:1636 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1651:1654 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1638:1640 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R1641:1648 sysf1 <> bind_sub constr
+R1779:1791 sysf1 <> wf_typ_forall constr
+R1779:1791 sysf1 <> wf_typ_forall constr
+R1811:1819 Metalib.Metatheory EnvImpl app_assoc thm
+R1811:1819 Metalib.Metatheory EnvImpl app_assoc thm
+R1811:1819 Metalib.Metatheory EnvImpl app_assoc thm
+prf 1894:1913 <> wf_typ_strengthening
+binder 1924:1924 <> E:22
+binder 1926:1926 <> F:23
+binder 1928:1928 <> x:24
+binder 1930:1930 <> U:25
+binder 1932:1932 <> T:26
+R1971:1975 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R1976:1981 sysf1 <> wf_typ ind
+R1992:1992 lemmas <> T:26 var
+R1985:1988 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1984:1984 lemmas <> F:23 var
+R1989:1989 lemmas <> E:22 var
+R1936:1941 sysf1 <> wf_typ ind
+R1970:1970 lemmas <> T:26 var
+R1945:1948 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1944:1944 lemmas <> F:23 var
+R1963:1966 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R1950:1952 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R1949:1949 lemmas <> x:24 var
+R1953:1960 sysf1 <> bind_typ constr
+R1962:1962 lemmas <> U:25 var
+R1967:1967 lemmas <> E:22 var
+R2059:2062 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2077:2080 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2064:2066 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R2067:2074 sysf1 <> bind_typ constr
+R2059:2062 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2077:2080 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2064:2066 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R2067:2074 sysf1 <> bind_typ constr
+R2202:2214 sysf1 <> wf_typ_forall constr
+R2202:2214 sysf1 <> wf_typ_forall constr
+R2234:2242 Metalib.Metatheory EnvImpl app_assoc thm
+R2234:2242 Metalib.Metatheory EnvImpl app_assoc thm
+R2234:2242 Metalib.Metatheory EnvImpl app_assoc thm
+prf 2317:2331 <> wf_typ_subst_tb
+binder 2342:2342 <> F:27
+binder 2344:2344 <> Q:28
+binder 2346:2346 <> E:29
+binder 2348:2348 <> Z:30
+binder 2350:2350 <> P:31
+binder 2352:2352 <> T:32
+R2392:2397 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2408:2413 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2452:2457 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2458:2463 sysf1 <> wf_typ ind
+R2500:2509 sysf1 <> Tsubst_typ def
+R2515:2515 lemmas <> T:32 var
+R2513:2513 lemmas <> Z:30 var
+R2511:2511 lemmas <> P:31 var
+R2492:2495 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2466:2468 Metalib.Metatheory EnvImpl map def
+R2491:2491 lemmas <> F:27 var
+R2471:2484 sysf1 <> Tsubst_binding def
+R2488:2488 lemmas <> Z:30 var
+R2486:2486 lemmas <> P:31 var
+R2496:2496 lemmas <> E:29 var
+R2414:2417 Metalib.Metatheory EnvImpl uniq ind
+R2446:2449 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2420:2422 Metalib.Metatheory EnvImpl map def
+R2445:2445 lemmas <> F:27 var
+R2425:2438 sysf1 <> Tsubst_binding def
+R2442:2442 lemmas <> Z:30 var
+R2440:2440 lemmas <> P:31 var
+R2450:2450 lemmas <> E:29 var
+R2398:2403 sysf1 <> wf_typ ind
+R2407:2407 lemmas <> P:31 var
+R2405:2405 lemmas <> E:29 var
+R2357:2362 sysf1 <> wf_typ ind
+R2391:2391 lemmas <> T:32 var
+R2366:2369 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2365:2365 lemmas <> F:27 var
+R2384:2387 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2371:2373 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R2370:2370 lemmas <> Z:30 var
+R2374:2381 sysf1 <> bind_sub constr
+R2383:2383 lemmas <> Q:28 var
+R2388:2388 lemmas <> E:29 var
+R2553:2570 lemmas <> wf_typ_weaken_head thm
+R2573:2588 lemmas <> type_from_wf_typ thm
+R2632:2635 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2650:2653 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2637:2639 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R2640:2647 sysf1 <> bind_sub constr
+R2632:2635 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2650:2653 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2637:2639 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R2640:2647 sysf1 <> bind_sub constr
+R2798:2810 sysf1 <> wf_typ_forall constr
+R2798:2810 sysf1 <> wf_typ_forall constr
+R2827:2846 infra <> subst_tt_open_tt_var thm
+R2827:2846 infra <> subst_tt_open_tt_var thm
+R2827:2846 infra <> subst_tt_open_tt_var thm
+R2827:2846 infra <> subst_tt_open_tt_var thm
+R2827:2846 infra <> subst_tt_open_tt_var thm
+R2915:2918 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2868:2870 Metalib.Metatheory EnvImpl map def
+R2909:2912 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2895:2897 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R2898:2905 sysf1 <> bind_sub constr
+R2873:2886 sysf1 <> Tsubst_binding def
+R2915:2918 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2868:2870 Metalib.Metatheory EnvImpl map def
+R2909:2912 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R2895:2897 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R2898:2905 sysf1 <> bind_sub constr
+R2873:2886 sysf1 <> Tsubst_binding def
+R2977:2980 Metalib.CoqEqDec <> ::coqeqdec_scope:x_'=='_x not
+R2977:2980 Metalib.CoqEqDec <> ::coqeqdec_scope:x_'=='_x not
+R3052:3061 sysf1 <> wf_typ_var constr
+R3100:3109 sysf1 <> Tsubst_typ def
+R3090:3093 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R3064:3066 Metalib.Metatheory EnvImpl map def
+R3069:3082 sysf1 <> Tsubst_binding def
+R3052:3061 sysf1 <> wf_typ_var constr
+R3100:3109 sysf1 <> Tsubst_typ def
+R3090:3093 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R3064:3066 Metalib.Metatheory EnvImpl map def
+R3069:3082 sysf1 <> Tsubst_binding def
+prf 3134:3144 <> wf_typ_open
+binder 3155:3155 <> E:33
+binder 3157:3157 <> U:34
+binder 3159:3160 <> T1:35
+binder 3162:3163 <> T2:36
+R3174:3179 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3207:3212 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3223:3228 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3229:3234 sysf1 <> wf_typ ind
+R3239:3245 sysf1 <> open_tt def
+R3250:3250 lemmas <> U:34 var
+R3247:3248 lemmas <> T2:36 var
+R3236:3236 lemmas <> E:33 var
+R3213:3218 sysf1 <> wf_typ ind
+R3222:3222 lemmas <> U:34 var
+R3220:3220 lemmas <> E:33 var
+R3180:3185 sysf1 <> wf_typ ind
+R3190:3199 sysf1 <> typ_forall constr
+R3204:3205 lemmas <> T2:36 var
+R3201:3202 lemmas <> T1:35 var
+R3187:3187 lemmas <> E:33 var
+R3168:3171 Metalib.Metatheory EnvImpl uniq ind
+R3173:3173 lemmas <> E:33 var
+R3362:3375 infra <> subst_tt_intro thm
+R3362:3375 infra <> subst_tt_intro thm
+R3362:3375 infra <> subst_tt_intro thm
+R3362:3375 infra <> subst_tt_intro thm
+R3426:3429 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R3398:3400 Metalib.Metatheory EnvImpl map def
+R3423:3425 Coq.Init.Datatypes <> nil constr
+R3403:3416 sysf1 <> Tsubst_binding def
+R3426:3429 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R3398:3400 Metalib.Metatheory EnvImpl map def
+R3423:3425 Coq.Init.Datatypes <> nil constr
+R3403:3416 sysf1 <> Tsubst_binding def
+R3443:3457 lemmas <> wf_typ_subst_tb thm
+R3443:3457 lemmas <> wf_typ_subst_tb thm
+prf 3474:3489 <> uniq_from_wf_env
+binder 3500:3500 <> E:37
+R3513:3518 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3519:3522 Metalib.Metatheory EnvImpl uniq ind
+R3524:3524 lemmas <> E:37 var
+R3505:3510 sysf1 <> wf_env ind
+R3512:3512 lemmas <> E:37 var
+prf 3618:3638 <> wf_typ_from_binds_typ
+binder 3649:3649 <> x:38
+binder 3651:3651 <> U:39
+binder 3653:3653 <> E:40
+R3666:3671 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3694:3699 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3700:3705 sysf1 <> wf_typ ind
+R3709:3709 lemmas <> U:39 var
+R3707:3707 lemmas <> E:40 var
+R3672:3676 Metalib.Metatheory EnvImpl binds def
+R3693:3693 lemmas <> E:40 var
+R3681:3688 sysf1 <> bind_typ constr
+R3690:3690 lemmas <> U:39 var
+R3678:3678 lemmas <> x:38 var
+R3658:3663 sysf1 <> wf_env ind
+R3665:3665 lemmas <> E:40 var
+R3734:3751 lemmas <> wf_typ_weaken_head thm
+prf 3852:3873 <> wf_typ_from_wf_env_typ
+binder 3884:3884 <> x:41
+binder 3886:3886 <> T:42
+binder 3888:3888 <> E:43
+R3921:3926 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3927:3932 sysf1 <> wf_typ ind
+R3936:3936 lemmas <> T:42 var
+R3934:3934 lemmas <> E:43 var
+R3893:3898 sysf1 <> wf_env ind
+R3915:3918 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R3902:3904 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R3901:3901 lemmas <> x:41 var
+R3905:3912 sysf1 <> bind_typ constr
+R3914:3914 lemmas <> T:42 var
+R3919:3919 lemmas <> E:43 var
+prf 3995:4016 <> wf_typ_from_wf_env_sub
+binder 4027:4027 <> x:44
+binder 4029:4029 <> T:45
+binder 4031:4031 <> E:46
+R4064:4069 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4070:4075 sysf1 <> wf_typ ind
+R4079:4079 lemmas <> T:45 var
+R4077:4077 lemmas <> E:46 var
+R4036:4041 sysf1 <> wf_env ind
+R4058:4061 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4045:4047 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R4044:4044 lemmas <> x:44 var
+R4048:4055 sysf1 <> bind_sub constr
+R4057:4057 lemmas <> T:45 var
+R4062:4062 lemmas <> E:46 var
+prf 4138:4153 <> wf_env_narrowing
+binder 4164:4164 <> V:47
+binder 4166:4166 <> E:48
+binder 4168:4168 <> F:49
+binder 4170:4170 <> U:50
+binder 4172:4172 <> X:51
+R4210:4215 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4226:4231 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4232:4237 sysf1 <> wf_env ind
+R4241:4244 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4240:4240 lemmas <> F:49 var
+R4259:4262 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4246:4248 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R4245:4245 lemmas <> X:51 var
+R4249:4256 sysf1 <> bind_sub constr
+R4258:4258 lemmas <> U:50 var
+R4263:4263 lemmas <> E:48 var
+R4216:4221 sysf1 <> wf_typ ind
+R4225:4225 lemmas <> U:50 var
+R4223:4223 lemmas <> E:48 var
+R4177:4182 sysf1 <> wf_env ind
+R4186:4189 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4185:4185 lemmas <> F:49 var
+R4204:4207 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4191:4193 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R4190:4190 lemmas <> X:51 var
+R4194:4201 sysf1 <> bind_sub constr
+R4203:4203 lemmas <> V:47 var
+R4208:4208 lemmas <> E:48 var
+R4290:4305 lemmas <> wf_typ_narrowing thm
+prf 4404:4423 <> wf_env_strengthening
+binder 4434:4434 <> x:52
+binder 4436:4436 <> T:53
+binder 4438:4438 <> E:54
+binder 4440:4440 <> F:55
+R4478:4483 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4484:4489 sysf1 <> wf_env ind
+R4493:4496 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4492:4492 lemmas <> F:55 var
+R4497:4497 lemmas <> E:54 var
+R4445:4450 sysf1 <> wf_env ind
+R4454:4457 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4453:4453 lemmas <> F:55 var
+R4472:4475 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4459:4461 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R4458:4458 lemmas <> x:52 var
+R4462:4469 sysf1 <> bind_typ constr
+R4471:4471 lemmas <> T:53 var
+R4476:4476 lemmas <> E:54 var
+R4524:4543 lemmas <> wf_typ_strengthening thm
+prf 4631:4645 <> wf_env_subst_tb
+binder 4656:4656 <> Q:56
+binder 4658:4658 <> Z:57
+binder 4660:4660 <> P:58
+binder 4662:4662 <> E:59
+binder 4664:4664 <> F:60
+R4702:4707 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4718:4723 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4724:4729 sysf1 <> wf_env ind
+R4758:4761 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4732:4734 Metalib.Metatheory EnvImpl map def
+R4757:4757 lemmas <> F:60 var
+R4737:4750 sysf1 <> Tsubst_binding def
+R4754:4754 lemmas <> Z:57 var
+R4752:4752 lemmas <> P:58 var
+R4762:4762 lemmas <> E:59 var
+R4708:4713 sysf1 <> wf_typ ind
+R4717:4717 lemmas <> P:58 var
+R4715:4715 lemmas <> E:59 var
+R4669:4674 sysf1 <> wf_env ind
+R4678:4681 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4677:4677 lemmas <> F:60 var
+R4696:4699 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R4683:4685 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R4682:4682 lemmas <> Z:57 var
+R4686:4693 sysf1 <> bind_sub constr
+R4695:4695 lemmas <> Q:56 var
+R4700:4700 lemmas <> E:59 var
+R4791:4805 lemmas <> wf_typ_subst_tb thm
+prf 4926:4941 <> notin_fv_tt_open
+R4959:4962 Metalib.MetatheoryAtom <> atom syndef
+binder 4953:4953 <> Y:61
+binder 4955:4955 <> X:62
+binder 4965:4965 <> T:63
+R5016:5021 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5023:5031 Metalib.Metatheory <> ::set_hs_scope:x_'`notin`'_x not
+R5022:5022 lemmas <> X:62 var
+R5032:5040 sysf1 <> fv_tt_typ def
+R5042:5042 lemmas <> T:63 var
+R4971:4979 Metalib.Metatheory <> ::set_hs_scope:x_'`notin`'_x not
+R4970:4970 lemmas <> X:62 var
+R4980:4988 sysf1 <> fv_tt_typ def
+R4991:4997 sysf1 <> open_tt def
+R5002:5011 sysf1 <> typ_tvar_f constr
+R5013:5013 lemmas <> Y:61 var
+R4999:4999 lemmas <> T:63 var
+R5074:5080 sysf1 <> open_tt def
+prf 5151:5161 <> notin_fv_wf
+binder 5172:5172 <> E:64
+R5179:5182 Metalib.MetatheoryAtom <> atom syndef
+binder 5175:5175 <> X:65
+binder 5185:5185 <> T:66
+R5200:5205 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5221:5226 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5228:5236 Metalib.Metatheory <> ::set_hs_scope:x_'`notin`'_x not
+R5227:5227 lemmas <> X:65 var
+R5237:5245 sysf1 <> fv_tt_typ def
+R5247:5247 lemmas <> T:66 var
+R5207:5215 Metalib.Metatheory <> ::set_hs_scope:x_'`notin`'_x not
+R5206:5206 lemmas <> X:65 var
+R5216:5218 Metalib.Metatheory EnvImpl dom def
+R5220:5220 lemmas <> E:64 var
+R5190:5195 sysf1 <> wf_typ ind
+R5199:5199 lemmas <> T:66 var
+R5197:5197 lemmas <> E:64 var
+R5361:5371 Metalib.Metatheory <> notin_union syndef
+R5361:5371 Metalib.Metatheory <> notin_union syndef
+R5405:5420 lemmas <> notin_fv_tt_open thm
+R5405:5420 lemmas <> notin_fv_tt_open thm
+R5463:5469 Metalib.Metatheory <> ::set_hs_scope:x_'`in`'_x not
+R5475:5475 Metalib.Metatheory <> ::set_hs_scope:x_'`in`'_x not
+R5470:5472 Metalib.Metatheory EnvImpl dom def
+R5463:5469 Metalib.Metatheory <> ::set_hs_scope:x_'`in`'_x not
+R5475:5475 Metalib.Metatheory <> ::set_hs_scope:x_'`in`'_x not
+R5470:5472 Metalib.Metatheory EnvImpl dom def
+R5492:5499 Metalib.Metatheory EnvImpl binds_In thm
+R5492:5499 Metalib.Metatheory EnvImpl binds_In thm
+R5522:5525 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R5522:5525 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+prf 5563:5577 <> map_subst_tb_id
+binder 5588:5588 <> G:67
+binder 5590:5590 <> Z:68
+binder 5592:5592 <> P:69
+R5605:5610 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5626:5631 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5633:5635 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5632:5632 lemmas <> G:67 var
+R5636:5638 Metalib.Metatheory EnvImpl map def
+R5661:5661 lemmas <> G:67 var
+R5641:5654 sysf1 <> Tsubst_binding def
+R5658:5658 lemmas <> Z:68 var
+R5656:5656 lemmas <> P:69 var
+R5612:5620 Metalib.Metatheory <> ::set_hs_scope:x_'`notin`'_x not
+R5611:5611 lemmas <> Z:68 var
+R5621:5623 Metalib.Metatheory EnvImpl dom def
+R5625:5625 lemmas <> G:67 var
+R5597:5602 sysf1 <> wf_env ind
+R5604:5604 lemmas <> G:67 var
+R5785:5798 infra <> subst_tt_fresh thm
+R5785:5798 infra <> subst_tt_fresh thm
+R5785:5798 infra <> subst_tt_fresh thm
+R5785:5798 infra <> subst_tt_fresh thm
+R5810:5820 lemmas <> notin_fv_wf thm
+R5810:5820 lemmas <> notin_fv_wf thm
+R5870:5883 infra <> subst_tt_fresh thm
+R5870:5883 infra <> subst_tt_fresh thm
+R5870:5883 infra <> subst_tt_fresh thm
+R5870:5883 infra <> subst_tt_fresh thm
+R5895:5905 lemmas <> notin_fv_wf thm
+R5895:5905 lemmas <> notin_fv_wf thm
+prf 5927:5937 <> sub_regular
+binder 5948:5948 <> E:70
+binder 5950:5950 <> S:71
+binder 5952:5952 <> T:72
+R5966:5971 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5980:5983 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R5972:5977 sysf1 <> wf_env ind
+R5979:5979 lemmas <> E:70 var
+R5994:5997 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R5984:5989 sysf1 <> wf_typ ind
+R5993:5993 lemmas <> S:71 var
+R5991:5991 lemmas <> E:70 var
+R5998:6003 sysf1 <> wf_typ ind
+R6007:6007 lemmas <> T:72 var
+R6005:6005 lemmas <> E:70 var
+R5957:5959 sysf1 <> sub ind
+R5965:5965 lemmas <> T:72 var
+R5963:5963 lemmas <> S:71 var
+R5961:5961 lemmas <> E:70 var
+R6263:6275 sysf1 <> wf_typ_forall constr
+R6263:6275 sysf1 <> wf_typ_forall constr
+R6327:6330 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R6324:6326 Coq.Init.Datatypes <> nil constr
+R6346:6349 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R6332:6334 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R6335:6342 sysf1 <> bind_sub constr
+R6327:6330 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R6324:6326 Coq.Init.Datatypes <> nil constr
+R6346:6349 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R6332:6334 Metalib.AssocList Make ::list_scope:x_'~'_x not
+R6335:6342 sysf1 <> bind_sub constr
+R6367:6382 lemmas <> wf_typ_narrowing thm
+R6367:6382 lemmas <> wf_typ_narrowing thm
+R6467:6479 sysf1 <> wf_typ_forall constr
+R6467:6479 sysf1 <> wf_typ_forall constr
+prf 6521:6534 <> typing_regular
+binder 6545:6545 <> E:73
+binder 6547:6547 <> e:74
+binder 6549:6549 <> T:75
+R6566:6571 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6580:6583 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R6572:6577 sysf1 <> wf_env ind
+R6579:6579 lemmas <> E:73 var
+R6592:6595 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R6584:6589 sysf1 <> lc_exp ind
+R6591:6591 lemmas <> e:74 var
+R6596:6601 sysf1 <> wf_typ ind
+R6605:6605 lemmas <> T:75 var
+R6603:6603 lemmas <> E:73 var
+R6554:6559 sysf1 <> typing ind
+R6565:6565 lemmas <> T:75 var
+R6563:6563 lemmas <> e:74 var
+R6561:6561 lemmas <> E:73 var
+R6755:6775 lemmas <> wf_typ_from_binds_typ thm
+R6755:6775 lemmas <> wf_typ_from_binds_typ thm
+R6967:6972 sysf1 <> lc_abs constr
+R6967:6972 sysf1 <> lc_abs constr
+R6995:7010 lemmas <> type_from_wf_typ thm
+R7013:7034 lemmas <> wf_typ_from_wf_env_typ thm
+R6995:7010 lemmas <> type_from_wf_typ thm
+R7013:7034 lemmas <> wf_typ_from_wf_env_typ thm
+R7123:7134 sysf1 <> wf_typ_arrow constr
+R7149:7170 lemmas <> wf_typ_from_wf_env_typ thm
+R7123:7134 sysf1 <> wf_typ_arrow constr
+R7149:7170 lemmas <> wf_typ_from_wf_env_typ thm
+R7149:7170 lemmas <> wf_typ_from_wf_env_typ thm
+R7195:7198 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R7192:7194 Coq.Init.Datatypes <> nil constr
+R7195:7198 Coq.Init.Datatypes <> ::list_scope:x_'++'_x not
+R7192:7194 Coq.Init.Datatypes <> nil constr
+R7216:7235 lemmas <> wf_typ_strengthening thm
+R7216:7235 lemmas <> wf_typ_strengthening thm
+R7554:7560 sysf1 <> lc_tabs constr
+R7554:7560 sysf1 <> lc_tabs constr
+R7583:7598 lemmas <> type_from_wf_typ thm
+R7601:7622 lemmas <> wf_typ_from_wf_env_sub thm
+R7583:7598 lemmas <> type_from_wf_typ thm
+R7601:7622 lemmas <> wf_typ_from_wf_env_sub thm
+R7730:7742 sysf1 <> wf_typ_forall constr
+R7730:7742 sysf1 <> wf_typ_forall constr
+R7808:7818 lemmas <> sub_regular thm
+R7808:7818 lemmas <> sub_regular thm
+R7927:7933 sysf1 <> lc_tapp constr
+R7927:7933 sysf1 <> lc_tapp constr
+R7956:7971 lemmas <> type_from_wf_typ thm
+R7956:7971 lemmas <> type_from_wf_typ thm
+R8078:8088 lemmas <> wf_typ_open thm
+R8078:8088 lemmas <> wf_typ_open thm
+R8153:8163 lemmas <> sub_regular thm
+R8153:8163 lemmas <> sub_regular thm
+prf 8190:8202 <> value_regular
+binder 8213:8213 <> e:76
+R8225:8230 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8231:8236 sysf1 <> lc_exp ind
+R8238:8238 lemmas <> e:76 var
+R8218:8222 sysf1 <> value ind
+R8224:8224 lemmas <> e:76 var
+prf 8293:8303 <> red_regular
+binder 8314:8314 <> e:77
+binder 8316:8317 <> e':78
+R8330:8335 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8344:8347 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R8336:8341 sysf1 <> lc_exp ind
+R8343:8343 lemmas <> e:77 var
+R8348:8353 sysf1 <> lc_exp ind
+R8355:8356 lemmas <> e':78 var
+R8322:8324 sysf1 <> red ind
+R8328:8329 lemmas <> e':78 var
+R8326:8326 lemmas <> e:77 var
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8449:8461 lemmas <> value_regular thm
+R8535:8548 infra <> subst_ee_intro thm
+R8535:8548 infra <> subst_ee_intro thm
+R8535:8548 infra <> subst_ee_intro thm
+R8535:8548 infra <> subst_ee_intro thm
+R8618:8631 infra <> subst_te_intro thm
+R8618:8631 infra <> subst_te_intro thm
+R8618:8631 infra <> subst_te_intro thm
+R8618:8631 infra <> subst_te_intro thm
+R8653:8665 infra <> subst_te_expr thm
+R8653:8665 infra <> subst_te_expr thm
+R8688:8690 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8691:8697 sysf1 <> open_te def
+R8703:8712 sysf1 <> typ_tvar_f constr
+R8688:8690 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8691:8697 sysf1 <> open_te def
+R8703:8712 sysf1 <> typ_tvar_f constr
+R8729:8744 infra <> open_te_rec_expr thm
+R8729:8744 infra <> open_te_rec_expr thm
+R8820:8825 sysf1 <> wf_env ind
+R8859:8861 sysf1 <> sub ind
+R8859:8861 sysf1 <> sub ind
+R8920:8925 sysf1 <> typing ind
+R8920:8925 sysf1 <> typing ind
+R8948:8952 Coq.Init.Logic <> proj1 thm
+R8955:8968 lemmas <> typing_regular thm
+R8884:8888 Coq.Init.Logic <> proj1 thm
+R8891:8901 lemmas <> sub_regular thm
+R9010:9015 sysf1 <> wf_typ ind
+R9052:9057 sysf1 <> typing ind
+R9052:9057 sysf1 <> typing ind
+R9127:9129 sysf1 <> sub ind
+R9127:9129 sysf1 <> sub ind
+R9196:9198 sysf1 <> sub ind
+R9196:9198 sysf1 <> sub ind
+R9221:9225 Coq.Init.Logic <> proj2 thm
+R9228:9232 Coq.Init.Logic <> proj2 thm
+R9235:9245 lemmas <> sub_regular thm
+R9152:9156 Coq.Init.Logic <> proj1 thm
+R9159:9163 Coq.Init.Logic <> proj2 thm
+R9166:9176 lemmas <> sub_regular thm
+R9080:9084 Coq.Init.Logic <> proj2 thm
+R9087:9091 Coq.Init.Logic <> proj2 thm
+R9094:9107 lemmas <> typing_regular thm
+R9288:9293 sysf1 <> lc_typ ind
+R9323:9338 lemmas <> type_from_wf_typ thm
+R9377:9382 sysf1 <> typing ind
+R9377:9382 sysf1 <> typing ind
+R9411:9413 sysf1 <> sub ind
+R9411:9413 sysf1 <> sub ind
+R9442:9444 sysf1 <> sub ind
+R9442:9444 sysf1 <> sub ind
+R9496:9501 sysf1 <> lc_exp ind
+R9535:9540 sysf1 <> typing ind
+R9535:9540 sysf1 <> typing ind
+R9611:9613 sysf1 <> red ind
+R9611:9613 sysf1 <> red ind
+R9669:9671 sysf1 <> red ind
+R9669:9671 sysf1 <> red ind
+R9693:9697 Coq.Init.Logic <> proj2 thm
+R9700:9710 lemmas <> red_regular thm
+R9635:9639 Coq.Init.Logic <> proj1 thm
+R9642:9652 lemmas <> red_regular thm
+R9564:9568 Coq.Init.Logic <> proj1 thm
+R9571:9575 Coq.Init.Logic <> proj2 thm
+R9578:9591 lemmas <> typing_regular thm
