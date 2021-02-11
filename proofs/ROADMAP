@@ -1,0 +1,4 @@
+- implement variant of Fsub in coq/ott based on https://github.com/plclub/metalib/tree/master/Fsub
+- extend calculus to incorporate all features, still using the non context sensitive typechecking rule for if, update soundness proof
+- extend calculus with context sensitive typechecking rule for if, update soundness proof
+- relate prototype implementation ( https://github.com/microsoft/TypeScript/pull/33237 ) and extension and finalize paper
